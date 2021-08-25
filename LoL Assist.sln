@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31521.260
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoL Assist", "LoL Assist\LoL Assist.csproj", "{0BD0D0DA-C57A-43F1-A986-0B92F2235045}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueBuilderAPI", "D:\Visual Studio In Progress\League Builder\Projects\LeagueBuilderAPI\LeagueBuilderAPI\LeagueBuilderAPI.csproj", "{04C0DA79-1D8D-4567-8F7C-35D6AF9BE572}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoLAssist CAPP", "..\LoLAssist CAPP\LoLAssist CAPP\LoLAssist CAPP.csproj", "{1A837F91-7B84-4184-90B2-C17C13ACFAF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04C0DA79-1D8D-4567-8F7C-35D6AF9BE572}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04C0DA79-1D8D-4567-8F7C-35D6AF9BE572}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04C0DA79-1D8D-4567-8F7C-35D6AF9BE572}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04C0DA79-1D8D-4567-8F7C-35D6AF9BE572}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A837F91-7B84-4184-90B2-C17C13ACFAF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A837F91-7B84-4184-90B2-C17C13ACFAF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A837F91-7B84-4184-90B2-C17C13ACFAF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A837F91-7B84-4184-90B2-C17C13ACFAF8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FA84003E-B9D7-419B-93F9-BE07E0618F9D}
+	EndGlobalSection
+EndGlobal
