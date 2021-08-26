@@ -1,5 +1,5 @@
 # LoL Assist
-LoL Assist is an automatic Runes & Spells importer for League of Legends with simple looking GUI.
+LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple looking GUI.
 
 **Features**
 - Auto Import Runes
