@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.ComponentModel;
 using LoL_Assist_WAPP.Model;
 using static LoL_Assist_WAPP.Model.LoLAWrapper;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
@@ -135,17 +137,19 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private async void Phase_Changed(object sender, GameFlowMonitor.PhaseChangedArgs e)
         {
+            ChampMonitor.CurrentPhase = e.CurrentPhase;
             switch (e.CurrentPhase)
             {
                 case Phase.ChampSelect:
                     // Update The current champion for ChampionMonitor
                     ImportStatus = "Selecting a Champion...";
-                    ChampMonitor.CurrentPhase = e.CurrentPhase; 
                     break;
                 case Phase.ReadyCheck:
                     if(ConfigM.config.AutoAccept)
+                    {
                         await Main.leagueClient.AcceptMatchmakingAsync();
-                    ImportStatus = "Match Accepted!";
+                        ImportStatus = "Match Accepted!";
+                    }
                     break;
                 case Phase.None:
                 case Phase.WaitingForStats:
@@ -164,60 +168,78 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        ChampionBuild CurrentChampionBuild = null;
+        Task<ChampionBuild> CurrentChampionBuild = null;
         private async void Champion_Changed(object sender, ChampionMonitor.ChampionChangedArgs e)
         {
-            ChampionImage = null;
-            ChampionName = string.Empty;
-            while (IsBusy)
-                Thread.Sleep(ConfigM.config.MonitoringDelay);
-
-            ChampionName = e.Name;
-
-            bool IsSuccessFull = false;
-            if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
+            if (!string.IsNullOrEmpty(e.Name))
             {
+                ChampionImage = null;
+                ChampionName = string.Empty;
+                while (IsBusy)
+                    Thread.Sleep(ConfigM.config.MonitoringDelay);
+
                 ChampionName = e.Name;
-                var CurrentChampionId = DataConverter.ChampionNameToId(e.Name, Main.dataWrapper.Champions);
 
-                ImportStatus = "Fetching Builds...";
+                bool IsSuccessFull = false;
 
-                IsBusy = true;
-
-                Stopwatch sw = Stopwatch.StartNew();
-                sw.Start();
-                var currentPerks = await Main.leagueClient.GetCurrentRunePageAsync();
-                var CurrentGameMode = await Main.leagueClient.GetCurrentGameModeAsync();
-
-                CurrentChampionBuild = await Main.RequestDataAsync(CurrentChampionId, StatRequest.Metasrc, GlobalConfig.DataDragonPatch, CurrentGameMode);
-
-                ImportStatus = $"Importing {Utils.FixedName(e.Name)} Builds...";
-
-                if (ConfigM.config.AutoRune)
+                if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
                 {
-                    await SetRune(CurrentChampionBuild.RuneBuild, currentPerks, true);
-                    IsSuccessFull = true;
+                    IsBusy = true;
+
+                    var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName, Main.dataWrapper.Champions);
+
+                    ImportStatus = "Fetching Builds...";
+
+                    Stopwatch sw = Stopwatch.StartNew();
+                    sw.Start();
+
+                    var currentPerks = await Main.leagueClient.GetCurrentRunePageAsync();
+                    var CurrentGameMode = await Main.leagueClient.GetCurrentGameModeAsync();
+
+                    Task<string> ImageChampion;
+
+                    await Task.WhenAll(CurrentChampionBuild = Main.RequestDataAsync(CurrentChampionId, StatRequest.Metasrc, GlobalConfig.DataDragonPatch, CurrentGameMode),
+                    ImageChampion = Main.dataWrapper?.GetImage(CurrentChampionId, Main.ChampionInfo, "champion", 0, null, GlobalConfig.DataDragonPatch));
+
+                    ChampionImage = await ImageChampion;
+
+                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
+
+                    if (CurrentChampionBuild != null)
+                    {
+                        List<Task> ImportTasks = new List<Task>();
+
+                        if (ConfigM.config.AutoRune)
+                        {
+                            ImportTasks.Add(SetRuneAsync((await CurrentChampionBuild).RuneBuild, currentPerks, true));
+                            IsSuccessFull = true;
+                        }
+
+                        if (ConfigM.config.AutoSpells)
+                        {
+                            ImportTasks.Add(ImportSpellsAsync((await CurrentChampionBuild).SpellCombo, CurrentGameMode));
+                            IsSuccessFull = true;
+                        }
+
+                        Parallel.ForEach(ImportTasks, async task => {
+                            await task;
+                        });
+                    }
+
+                    sw.Stop();
+
+                    if (IsSuccessFull)
+                        ImportStatus = $"Builds Has Been Imported Successfully! Elapsed [{sw.ElapsedMilliseconds}ms]";
+                    else
+                        ImportStatus = "No Builds Found For The Current Champion. Sorry D:";
+
+
+                    IsBusy = false;
                 }
-
-                if (ConfigM.config.AutoSpells)
-                {
-                    ImportSpells(CurrentChampionBuild.SpellCombo, CurrentGameMode);
-                    IsSuccessFull = true;
-                }
-
-                sw.Stop();
-
-                if (IsSuccessFull)
-                    ImportStatus = $"Builds Has Been Imported Successfully! Elapsed [{sw.ElapsedMilliseconds}ms]";
-                else
-                    ImportStatus = "No Builds Found For The Current Champion. Sorry D:";
-
-                ChampionImage = await Main.dataWrapper.GetImage(CurrentChampionId, Main.ChampionInfo, "champion", 0, null, GlobalConfig.DataDragonPatch);
-                IsBusy = false;
             }
         }
 
-        private void LoLMonitor()
+        public void LoLMonitor()
         {
             CheckLoL();
 
@@ -238,7 +260,7 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public async void CheckLoL()
         {
-            WorkingStatus = "Connecting to League Client...";
+            WorkingStatus = "Waiting for League Client...";
             while (!await Main.leagueClient.PrepareAsync())
                 Thread.Sleep(1000);
 

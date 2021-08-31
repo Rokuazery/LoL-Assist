@@ -46,10 +46,10 @@ namespace LoL_Assist_WAPP
         {
             while (IsMonitoring)
             {
-                if (CurrentPhase == Phase.ChampSelect)
+                if (CurrentPhase != Phase.InProgress)
                 {
-                    CurrentChampion = await wrapper.GetCurrentChampionAsyncV2();
-                    if (LastChampion != CurrentChampion && !string.IsNullOrEmpty(CurrentChampion))
+                    CurrentChampion = await wrapper?.GetCurrentChampionAsyncV2();
+                    if (LastChampion != CurrentChampion)
                     {
                         LastChampion = CurrentChampion;
                         ChampionChanged.Invoke(this, new ChampionChangedArgs(CurrentChampion));

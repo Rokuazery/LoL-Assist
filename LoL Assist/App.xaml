@@ -48,10 +48,9 @@
             </Setter>
         </Style>
 
-        <!--#region LeagueCheckboxStyle-->
-        <LinearGradientBrush x:Key="CheckBoxSelectedBorder" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop x:Name="BorderBrushTop" Color="{DynamicResource aPrimary}" Offset="0"/>
-            <GradientStop x:Name="BorderBrushBot" Color="#A093EF" Offset="1"/>
+        <LinearGradientBrush x:Key="CheckboxSelectedBorder" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{DynamicResource aPrimary}" Offset="0"/>
+            <GradientStop Color="#A093EF" Offset="1"/>
         </LinearGradientBrush>
         
         <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#FFF3F9FF"/>
@@ -87,7 +86,7 @@
                                 <Setter Property="Padding" Value="4,-1,0,0"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource CheckBoxSelectedBorder}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource CheckboxSelectedBorder}"/>
                                 <Setter Property="Foreground" Value="{DynamicResource FontPrimaryBrush}"/>
                                 <Setter Property="Fill" TargetName="optionMark" Value="{DynamicResource FontPrimaryBrush}"/>
                                 <Setter Property="Fill" TargetName="indeterminateMark" Value="{DynamicResource FontPrimaryBrush}"/>
@@ -107,6 +106,5 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--#endregion-->
     </Application.Resources>
 </Application>

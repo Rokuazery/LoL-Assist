@@ -28,16 +28,8 @@ namespace LoL_Assist_WAPP
             DataContext = new MainViewModel();
         }
 
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e)
-        {
-            Environment.Exit(69);
-        }
-
-        private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
+        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Environment.Exit(69);
+        private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)

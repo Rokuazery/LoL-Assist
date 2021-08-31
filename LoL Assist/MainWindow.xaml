@@ -30,7 +30,7 @@
                 <view:IconButton x:Name="MinimzieBtn" Clicked="MinimzieBtn_Clicked" IconStretch="Uniform" IconGeometry="M6 19h12v2H6z" Margin="0,0,6,0"/>
                 <view:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" Clicked="CloseBtn_Clicked"/>
             </DockPanel>
-            <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource BorderGradientBrush}"/>
+            <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource PrimaryBrush}"/>
         </Grid>
 
         <Grid Grid.Row="1">

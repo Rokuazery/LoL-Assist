@@ -1,4 +1,5 @@
 ﻿using LoLA;
+using System;
 using LoLA.Data.Objects;
 using System.Threading.Tasks;
 using LoLA.LeagueClient.Objects;
@@ -7,7 +8,7 @@ namespace LoL_Assist_WAPP.Model
 {
     public class LoLAWrapper
     {
-        public static async Task<bool> SetRune(RuneObj rune, RunePage CurrentRunePage, bool IsUsingV2)
+        public static async Task<bool> SetRuneAsync(RuneObj rune, RunePage CurrentRunePage, bool IsUsingV2)
         {
             if (CurrentRunePage != null)
             {
@@ -23,21 +24,24 @@ namespace LoL_Assist_WAPP.Model
             return false;
         }
 
-        public async static void ImportSpells(SpellObj spell, GameMode gameMode)
+        public async static Task ImportSpellsAsync(SpellObj spell, GameMode gameMode)
         {
-            if (ConfigM.config.FlashPlacementToRight)
-            {
-                if (spell.Spell0 == "SummonerFlash")
+            await Task.Run(() => {
+                if (ConfigM.config.FlashPlacementToRight)
                 {
-                    var flash = spell.Spell0;
-                    spell.Spell0 = spell.Spell1;
-                    spell.Spell1 = flash;
+                    if (spell.Spell0 == "SummonerFlash")
+                    {
+                        var flash = spell.Spell0;
+                        spell.Spell0 = spell.Spell1;
+                        spell.Spell1 = flash;
+                    }
                 }
-            }
 
-            await Main.leagueClient.SetSummonerSpells(
-            Dictionaries.SpellIdToKey(spell.Spell0),
-            Dictionaries.SpellIdToKey(spell.Spell1), gameMode);
+                Main.leagueClient.SetSummonerSpells(
+                Dictionaries.SpellIdToKey(spell.Spell0),
+                Dictionaries.SpellIdToKey(spell.Spell1), gameMode).Wait();
+            });
+
         }
     }
 }

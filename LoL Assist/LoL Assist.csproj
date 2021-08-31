@@ -40,6 +40,9 @@
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LoLA">
       <HintPath>D:\Visual Studio In Progress\League Builder\Projects\LeagueBuilderAPI\LeagueBuilderAPI\bin\Debug\LoLA.dll</HintPath>
