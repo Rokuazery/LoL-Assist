@@ -18,7 +18,7 @@
         <Grid Grid.Row="0" x:Name="wBorder">
             <DockPanel HorizontalAlignment="Left" >
                 <TextBlock x:Name="AppName" Margin="5,1,0,0" FontWeight="DemiBold" FontSize="11"
-             Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Path=AppName, UpdateSourceTrigger=PropertyChanged}"/>
+             Foreground="White" Text="LoL Assist"/>
 
                 <view:IconButton x:Name="InfoBtn" Clicked="Info_Clicked" IconStretch="Uniform" Margin="5,0,0,1.5" StaticColor="{DynamicResource FontSecondaryColor}"
                 IconGeometry="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -34,6 +34,9 @@
         </Grid>
 
         <Grid Grid.Row="1">
+            <TextBlock x:Name="gMode" Text="{Binding Path=gMode, UpdateSourceTrigger=PropertyChanged}" 
+            Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11" Margin="5" HorizontalAlignment="Left"/>
+
             <TextBlock x:Name="wStatus" Text="{Binding Path=WorkingStatus, UpdateSourceTrigger=PropertyChanged}" FontWeight="DemiBold"
             Foreground="{DynamicResource FontSecondaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
@@ -56,10 +59,11 @@
                     </Ellipse>
                 </Grid>
                 <TextBlock Text="{Binding Path=ChampionName, UpdateSourceTrigger=PropertyChanged}" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" HorizontalAlignment="Center" FontSize="14"/>
-                <TextBlock Text="{Binding Path=ImportStatus, UpdateSourceTrigger=PropertyChanged}" Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding Path=ImportStatus, UpdateSourceTrigger=PropertyChanged}" Foreground="{DynamicResource FontTritaryBrush}" FontWeight="DemiBold" FontSize="11" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
         <view:ConfigPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0" x:Name="ConfPanel"/>
         <view:InfoPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0" x:Name="InfPanel"/>
+        <view:MatchFoundPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0"/>
     </Grid>
 </Window>

@@ -6,8 +6,7 @@
              xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="#72000000">
-    <Grid Width="350" Height="240" x:Name="MainGrid">
-        <Border Background="{DynamicResource BorderGradientBrush}" CornerRadius="5"/>
+    <Grid Width="340" Height="240" x:Name="MainGrid">
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="5" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
         <!--<Image Source="{DynamicResource BackgroundImage}" Stretch="Fill" Margin="1" RenderOptions.BitmapScalingMode="HighQuality"/>-->
         <Grid>
@@ -17,10 +16,10 @@
                 <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <TextBlock Text="Settings" Foreground="White" Margin="0,2,5,0" FontWeight="DemiBold" HorizontalAlignment="Right"/>
+                <TextBlock Text="Settings" Foreground="White" Margin="0,0,7,0" FontWeight="DemiBold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource PrimaryBrush}" Margin="1.5,0"/>
-                <local:IconButton x:Name="CloseBtn" OnHoverColor="{DynamicResource FontPrimaryColor}" Clicked="CloseBtn_Clicked"
-                HorizontalAlignment="Left" Margin="5,0" IconGeometry="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                <local:IconButton x:Name="CloseBtn" OnHoverColor="{DynamicResource FontPrimaryColor}" Clicked="CloseBtn_Clicked" VerticalAlignment="Center"
+                HorizontalAlignment="Left" Margin="6,0,0,0" IconGeometry="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -30,19 +29,19 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="5,5,5,5" Grid.ColumnSpan="2">
                     <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,5"/>
-                    <CheckBox Style="{DynamicResource LeagueCheckboxStyle}" Content="Auto Rune"
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Rune"
                     IsChecked="{Binding Path=AutoRune, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3"/>
-                    <CheckBox Style="{DynamicResource LeagueCheckboxStyle}" Content="Auto Spells" 
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Spells" 
                     IsChecked="{Binding Path=AutoSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3"/>
-                    <CheckBox Style="{DynamicResource LeagueCheckboxStyle}" Content="Auto Accept" 
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Accept" 
                     IsChecked="{Binding Path=AutoAccept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3"/>
-                    <CheckBox Style="{DynamicResource LeagueCheckboxStyle}" Content="Flash Placement to Right"
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash Placement to Right"
                     IsChecked="{Binding Path=FlashPlacementToRight, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Margin="5,5,5,5">
                     <TextBlock Text="Misc" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,5"/>
-                    <CheckBox Style="{DynamicResource LeagueCheckboxStyle}" Content="Low Spec Mode"
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Low Spec Mode"
                     IsChecked="{Binding Path=LowSpecMode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3"/>
                 </StackPanel>
             </Grid>

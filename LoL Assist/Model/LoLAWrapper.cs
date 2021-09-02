@@ -1,6 +1,7 @@
 ﻿using LoLA;
 using System;
 using LoLA.Data.Objects;
+using LoLA.LeagueClient;
 using System.Threading.Tasks;
 using LoLA.LeagueClient.Objects;
 
@@ -8,17 +9,15 @@ namespace LoL_Assist_WAPP.Model
 {
     public class LoLAWrapper
     {
-        public static async Task<bool> SetRuneAsync(RuneObj rune, RunePage CurrentRunePage, bool IsUsingV2)
+        public static GameFlowMonitor PhaseMonitor = new GameFlowMonitor(Main.leagueClient);
+        public static ChampionMonitor ChampMonitor = new ChampionMonitor(Main.leagueClient);
+
+        public static async Task<bool> SetRuneAsync(RuneObj rune, RunePage CurrentRunePage)
         {
             if (CurrentRunePage != null)
             {
                 if (CurrentRunePage.name != rune.Name)
-                {
-                    if (IsUsingV2)
-                        return await Main.leagueClient.SetRune(DataConverter.RuneBuildToRunePageV2(rune));
-                    else
-                        return await Main.leagueClient.SetRune(DataConverter.RuneBuildToRunePage(rune));
-                }
+                    return await Main.leagueClient.SetRune(DataConverter.RuneBuildToRunePage(rune));
 
             }
             return false;

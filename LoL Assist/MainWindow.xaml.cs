@@ -40,12 +40,14 @@ namespace LoL_Assist_WAPP
         {
             if(cStatus.Text == "Not Connected!")
             {
+                gMode.Visibility = Visibility.Hidden;
                 ChampionContainer.Visibility = Visibility.Hidden;
                 cStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
             }
             else
             {
-                ChampionContainer.Visibility = Visibility.Visible; 
+                gMode.Visibility = Visibility.Visible;
+                ChampionContainer.Visibility = Visibility.Visible;
                 cStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
             }
         }

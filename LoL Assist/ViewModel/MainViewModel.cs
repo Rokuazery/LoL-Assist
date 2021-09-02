@@ -13,20 +13,6 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private string _AppName;
-        public string AppName
-        {
-            get { return _AppName; }
-            set
-            {
-                if (_AppName != value)
-                {
-                    _AppName = value;
-                    OnPropertyChanged("AppName");
-                }
-            }
-        }
-
         private string _ChampionImage;
         public string ChampionImage
         {
@@ -37,6 +23,20 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     _ChampionImage = value;
                     OnPropertyChanged("ChampionImage");
+                }
+            }
+        }
+
+        private string _gMode;
+        public string gMode
+        {
+            get { return _gMode; }
+            set
+            {
+                if (_gMode != value)
+                {
+                    _gMode = value;
+                    OnPropertyChanged("gMode");
                 }
             }
         }
@@ -100,12 +100,10 @@ namespace LoL_Assist_WAPP.ViewModel
         private bool IsBusy = false;
         private bool IsLoLMonitoringPuased = false;
         private const string ProccName = "LeagueClient";
-        public GameFlowMonitor PhaseMonitor = new GameFlowMonitor(Main.leagueClient);
-        public ChampionMonitor ChampMonitor = new ChampionMonitor(Main.leagueClient);
+        private GameMode CurrentGameMode = GameMode.NONE;
 
         public MainViewModel()
         {
-            AppName = "LoL Assist";
             InitLoLA();
         }
 
@@ -131,25 +129,24 @@ namespace LoL_Assist_WAPP.ViewModel
             IsLoLMonitoringPuased = true;
             new Thread(LoLMonitor).Start();
 
-            ImportStatus = "Waiting For a Game Queue...";
             PhaseMonitor.PhaseChanged += Phase_Changed;
+            Phase_Changed(null, null); // Trigger init
         }
 
         private async void Phase_Changed(object sender, GameFlowMonitor.PhaseChangedArgs e)
         {
-            ChampMonitor.CurrentPhase = e.CurrentPhase;
-            switch (e.CurrentPhase)
+            ChampMonitor.CurrentPhase = e == null ? Phase.None : e.CurrentPhase;
+            if(ChampMonitor.CurrentPhase != Phase.InProgress)
+            {
+                CurrentGameMode = await Main.leagueClient.GetCurrentGameModeAsync();
+                gMode = $"Game Mode: {CurrentGameMode}";
+            }
+
+            switch (ChampMonitor.CurrentPhase)
             {
                 case Phase.ChampSelect:
                     // Update The current champion for ChampionMonitor
                     ImportStatus = "Selecting a Champion...";
-                    break;
-                case Phase.ReadyCheck:
-                    if(ConfigM.config.AutoAccept)
-                    {
-                        await Main.leagueClient.AcceptMatchmakingAsync();
-                        ImportStatus = "Match Accepted!";
-                    }
                     break;
                 case Phase.None:
                 case Phase.WaitingForStats:
@@ -175,12 +172,14 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 ChampionImage = null;
                 ChampionName = string.Empty;
+
                 while (IsBusy)
                     Thread.Sleep(ConfigM.config.MonitoringDelay);
 
                 ChampionName = e.Name;
 
-                bool IsSuccessFull = false;
+                bool RB_IsSuccessFull = false;
+                bool SC_IsSuccessFull = false;
 
                 if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
                 {
@@ -194,7 +193,6 @@ namespace LoL_Assist_WAPP.ViewModel
                     sw.Start();
 
                     var currentPerks = await Main.leagueClient.GetCurrentRunePageAsync();
-                    var CurrentGameMode = await Main.leagueClient.GetCurrentGameModeAsync();
 
                     Task<string> ImageChampion;
 
@@ -205,20 +203,23 @@ namespace LoL_Assist_WAPP.ViewModel
 
                     ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
 
+                    RuneObj RB = (await CurrentChampionBuild).RuneBuild;
+                    SpellObj SC = (await CurrentChampionBuild).SpellCombo;
+
                     if (CurrentChampionBuild != null)
                     {
                         List<Task> ImportTasks = new List<Task>();
 
-                        if (ConfigM.config.AutoRune)
+                        if (ConfigM.config.AutoRune && RB != null)
                         {
-                            ImportTasks.Add(SetRuneAsync((await CurrentChampionBuild).RuneBuild, currentPerks, true));
-                            IsSuccessFull = true;
+                            ImportTasks.Add(SetRuneAsync(RB, currentPerks));
+                            RB_IsSuccessFull = true;
                         }
 
-                        if (ConfigM.config.AutoSpells)
+                        if (ConfigM.config.AutoSpells && SC != null)
                         {
-                            ImportTasks.Add(ImportSpellsAsync((await CurrentChampionBuild).SpellCombo, CurrentGameMode));
-                            IsSuccessFull = true;
+                            ImportTasks.Add(ImportSpellsAsync(SC, CurrentGameMode));
+                            SC_IsSuccessFull = true;
                         }
 
                         Parallel.ForEach(ImportTasks, async task => {
@@ -228,11 +229,9 @@ namespace LoL_Assist_WAPP.ViewModel
 
                     sw.Stop();
 
-                    if (IsSuccessFull)
+                    if (RB_IsSuccessFull && SC_IsSuccessFull)
                         ImportStatus = $"Builds Has Been Imported Successfully! Elapsed [{sw.ElapsedMilliseconds}ms]";
-                    else
-                        ImportStatus = "No Builds Found For The Current Champion. Sorry D:";
-
+                    else ImportStatus = $"Uh Oh, Something Went Wrong. Try Deleting {Utils.FixedName(ChampionName)} Data Might Fix The Issue.";
 
                     IsBusy = false;
                 }
@@ -269,7 +268,8 @@ namespace LoL_Assist_WAPP.ViewModel
             while (string.IsNullOrEmpty(DisplayName))
                 DisplayName = (await Main.leagueClient?.GetCurrentSummonerAsync())?.displayName;
 
-            ConnectionStatus = $"Logged as {DisplayName}";
+            var Summoner = await Main.leagueClient?.GetCurrentSummonerAsync();
+            ConnectionStatus = $"Logged as {DisplayName} | Lvl {Summoner.summonerLevel}";
             WorkingStatus = string.Empty;
 
             IsLoLMonitoringPuased = false;
