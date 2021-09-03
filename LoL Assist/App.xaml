@@ -53,9 +53,7 @@
             <GradientStop Color="#A093EF" Offset="1"/>
         </LinearGradientBrush>
 
-
         <!--#region Styles-->
-        <SolidColorBrush x:Key="ProgressBar.Background" Color="{DynamicResource bPrimary}"/>
         <Style x:Key="FlatStyleProgressbar" TargetType="{x:Type ProgressBar}">
             <Setter Property="Foreground" Value="{DynamicResource aBrushPrimary}"/>
             <Setter Property="Background" Value="{DynamicResource bBrushPrimary}"/>
@@ -117,9 +115,6 @@
             </Setter>
         </Style>
 
-        <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#FFF3F9FF"/>
-        <SolidColorBrush x:Key="OptionMark.Disabled.Border" Color="#FFBCBCBC"/>
-        <SolidColorBrush x:Key="OptionMark.Disabled.Glyph" Color="#FF707070"/>
         <SolidColorBrush x:Key="OptionMark.Static.Glyph" Color="White"/>
         <Style x:Key="FlatStyleCheckbox" TargetType="{x:Type CheckBox}">
             <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual}"/>

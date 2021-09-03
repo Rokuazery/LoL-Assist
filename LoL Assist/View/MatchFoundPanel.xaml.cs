@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LoLA;
-using System.Threading.Tasks;
+﻿using LoLA;
+using System;
 using System.Windows;
+using System.Threading;
+using LoLA.LeagueClient;
+using System.Windows.Media;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using System.Windows.Media;
 using static LoL_Assist_WAPP.Model.LoLAWrapper;
-using LoLA.LeagueClient;
-using System.Threading;
 
 namespace LoL_Assist_WAPP.View
 {
@@ -18,16 +16,32 @@ namespace LoL_Assist_WAPP.View
     /// </summary>
     public partial class MatchFoundPanel : UserControl
     {
-        public MatchFoundPanel()
+        private Window mainWnd = new Window();
+        public MatchFoundPanel(Window mainWindow)
         {
             InitializeComponent();
+
+            mainWnd = mainWindow;
+
+            Opacity = 0;
+            Visibility = Visibility.Hidden;
             PhaseMonitor.PhaseChanged += Phase_Changed;
         }
 
         private async void Phase_Changed(object sender, GameFlowMonitor.PhaseChangedArgs e)
         {
-            if (e.CurrentPhase == Phase.ReadyCheck) await MatchFound();
-            else Dispatcher.Invoke(new Action(() => { MatchCanceled(); }));
+            switch (e.CurrentPhase)
+            {
+                case Phase.ReadyCheck:
+                    await MatchFound();
+                    break;
+                case Phase.ChampSelect:
+                    Dispatcher.Invoke(new Action(() => { mainWnd.Topmost = true; }));
+                    break;
+                default:
+                    Dispatcher.Invoke(new Action(() => { MatchCanceled(); }));
+                    break;
+            }
         }
 
         bool IsFound = false, IsDecided = false;
@@ -40,10 +54,16 @@ namespace LoL_Assist_WAPP.View
                 aaStatus.Text = string.Empty;
                 aaStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontSecondaryBrush"];
 
-                Utils.Animation.In(this, 200);
-                Duration duration = new Duration(TimeSpan.FromSeconds(11));
-                DoubleAnimation doubleanimation = new DoubleAnimation(100, duration);
-                pBar.BeginAnimation(ProgressBar.ValueProperty, doubleanimation);
+                Utils.Animation.FadeIn(this, 200);
+                if (!Model.ConfigM.config.LowSpecMode)
+                {
+                    Duration duration = new Duration(TimeSpan.FromSeconds(11));
+                    DoubleAnimation dbAnimation = new DoubleAnimation(100, duration);
+                    dbAnimation.Completed += (s, _) => { dbAnimation = null; pBar.BeginAnimation(ProgressBar.ValueProperty, null); };
+                    pBar.BeginAnimation(ProgressBar.ValueProperty, dbAnimation);
+                }
+
+                mainWnd.Topmost = true;
             }));
 
             int i = 0, a = 5;
@@ -61,8 +81,7 @@ namespace LoL_Assist_WAPP.View
                                     a--;
                                     aaStatus.Text = $"Auto Accept In {a}s";
                                 }
-
-                                if (a == 0) AcceptMatch();
+                                else AcceptMatch();
                             }
                             else
                             {
@@ -71,11 +90,10 @@ namespace LoL_Assist_WAPP.View
                             }
                         }
 
-                        if (i == 11)
-                        {
-                            IsFound = false;
-                            Utils.Animation.Out(this, 200);
-                        }
+                        if (i == 11) MatchCanceled();
+
+                        if (Model.ConfigM.config.LowSpecMode)
+                            pBar.Value += 9.090909090909091;
                     });
                     
                     i++;
@@ -104,28 +122,11 @@ namespace LoL_Assist_WAPP.View
 
         private void MatchCanceled()
         {
-            Utils.Animation.Out(this, 200);
+            Utils.Animation.FadeOut(this, 200);
+            mainWnd.Topmost = false;
+            mainWnd.Activate(); // Activate the window to fix topmost
             IsDecided = false;
             IsFound = false;
-        }
-
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if(Visibility == Visibility.Visible)
-            {
-                Storyboard storyboard= new Storyboard();
-
-                DoubleAnimation valueAnim = new DoubleAnimation()
-                {
-                    To = 100,
-                    Duration = new Duration(TimeSpan.FromSeconds(10)),
-                    FillBehavior = FillBehavior.HoldEnd
-                };
-
-                Storyboard.SetTarget(valueAnim, pBar);
-                Storyboard.SetTargetProperty(valueAnim, new PropertyPath("Value", 100));
-                storyboard.Begin(this);
-            }
         }
 
         private void AcceptBtn_Click(object sender, RoutedEventArgs e) => AcceptMatch();

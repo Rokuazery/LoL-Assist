@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:view="clr-namespace:LoL_Assist_WAPP.View"
+        xmlns:view="clr-namespace:LoL_Assist_WAPP.View" x:Name="Me"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" Background="{DynamicResource bBrushSecondary}" MouseDown="Window_MouseDown" RenderOptions.BitmapScalingMode="HighQuality"
         Title="LoL Assist" Height="330" Width="475" MinHeight="330" MinWidth="475" MaxHeight="330" MaxWidth="475" BorderBrush="{DynamicResource BorderGradientBrush}" BorderThickness="1">
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="5"/>
     </WindowChrome.WindowChrome>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="1*"/>
@@ -17,8 +17,7 @@
 
         <Grid Grid.Row="0" x:Name="wBorder">
             <DockPanel HorizontalAlignment="Left" >
-                <TextBlock x:Name="AppName" Margin="5,1,0,0" FontWeight="DemiBold" FontSize="11"
-             Foreground="White" Text="LoL Assist"/>
+                <TextBlock x:Name="AppName" Margin="5,1,0,0" FontWeight="DemiBold" FontSize="11" Foreground="White" Text="LoL Assist"/>
 
                 <view:IconButton x:Name="InfoBtn" Clicked="Info_Clicked" IconStretch="Uniform" Margin="5,0,0,1.5" StaticColor="{DynamicResource FontSecondaryColor}"
                 IconGeometry="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
@@ -64,6 +63,5 @@
         </Grid>
         <view:ConfigPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0" x:Name="ConfPanel"/>
         <view:InfoPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0" x:Name="InfPanel"/>
-        <view:MatchFoundPanel Grid.RowSpan="2" Visibility="Hidden" Opacity="0"/>
     </Grid>
 </Window>

@@ -1,11 +1,7 @@
-﻿using LoL_Assist_WAPP.Model;
-using LoLA;
+﻿using LoLA;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using LoL_Assist_WAPP.Model;
 
 namespace LoL_Assist_WAPP
 {
@@ -29,10 +25,10 @@ namespace LoL_Assist_WAPP
             wrapper = requestWrapper;
         }
 
-        public string LastChampion;
-        public string CurrentChampion;
-        public Thread MonitorThread;
         public bool IsMonitoring;
+        private string LastChampion;
+        private Thread MonitorThread;
+        public string CurrentChampion;
         public Phase CurrentPhase { get; set; }
 
         public void InitMonitor()

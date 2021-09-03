@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800" Background="#72000000">
     <Grid Width="340" Height="240" x:Name="MainGrid">
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="5" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
-        <!--<Image Source="{DynamicResource BackgroundImage}" Stretch="Fill" Margin="1" RenderOptions.BitmapScalingMode="HighQuality"/>-->
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
