@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Reflection;
+using System.Windows;
 using Newtonsoft.Json;
 
 namespace LoL_Assist_WAPP.Model
@@ -6,6 +8,9 @@ namespace LoL_Assist_WAPP.Model
     public static class ConfigM
     {
         public static Config config = new Config(); 
+        public static Thickness marginOpen = new Thickness(0, 0, 0, 0);
+        public static Thickness marginClose = new Thickness(465, 0, 0, 0);
+        public static readonly string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public class Config
         {
@@ -13,8 +18,11 @@ namespace LoL_Assist_WAPP.Model
             public bool AutoRune { get; set; } = true;
             public bool AutoAccept { get; set; } = true;
             public bool AutoSpells { get; set; } = true;
-            public bool LowSpecMode { get; set; } = false;
             public bool FlashPlacementToRight { get; set; } = false;
+
+            public bool Logging { get; set; } = false;
+            public bool LowSpecMode { get; set; } = false;
+            public bool BuildCache { get; set; } = true;
         }
 
         private const string ConfigFileName = "LoLA Config.json";
@@ -32,7 +40,7 @@ namespace LoL_Assist_WAPP.Model
 
         public static void SaveConfig()
         {
-            var json = JsonConvert.SerializeObject(config);
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
             if (File.Exists(ConfigFileName))
                 File.WriteAllText(ConfigFileName, json);

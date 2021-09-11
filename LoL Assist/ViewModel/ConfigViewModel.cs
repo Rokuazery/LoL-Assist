@@ -1,4 +1,5 @@
 ﻿using LoL_Assist_WAPP.Model;
+using LoLA;
 using System.ComponentModel;
 
 namespace LoL_Assist_WAPP.ViewModel
@@ -85,6 +86,38 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
+        private bool _Logging;
+        public bool Logging
+        {
+            get { return _Logging; }
+            set
+            {
+                if (_Logging != value)
+                {
+                    _Logging = value;
+                    ConfigM.config.Logging = value;
+                    Global.Config.logging = value;
+                    OnPropertyChanged("Logging");
+                }
+            }
+        }
+
+        private bool _BuildCache;
+        public bool BuildCache
+        {
+            get { return _BuildCache; }
+            set
+            {
+                if (_BuildCache != value)
+                {
+                    _BuildCache = value;
+                    ConfigM.config.BuildCache = value;
+                    Global.Config.caching = value;
+                    OnPropertyChanged("BuildCache");
+                }
+            }
+        }
+
         public ConfigViewModel()
         {
             ConfigM.LoadConfig();
@@ -94,6 +127,10 @@ namespace LoL_Assist_WAPP.ViewModel
             AutoAccept = ConfigM.config.AutoAccept;
             FlashPlacementToRight = ConfigM.config.FlashPlacementToRight;
             LowSpecMode = ConfigM.config.LowSpecMode;
+            Logging = ConfigM.config.Logging;
+            BuildCache = ConfigM.config.BuildCache;
+            Global.Config.logging = Logging;
+            Global.Config.caching = BuildCache;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

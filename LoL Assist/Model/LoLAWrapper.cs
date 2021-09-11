@@ -1,24 +1,24 @@
-﻿using LoLA;
+﻿using System.Threading.Tasks;
+using LoLA.LCU.Objects;
+using LoLA.LCU.Events;
+using LoLA.Objects;
+using LoLA.LCU;
 using System;
-using LoLA.Data.Objects;
-using LoLA.LeagueClient;
-using System.Threading.Tasks;
-using LoLA.LeagueClient.Objects;
+using LoLA;
 
 namespace LoL_Assist_WAPP.Model
 {
     public class LoLAWrapper
     {
-        public static GameFlowMonitor PhaseMonitor = new GameFlowMonitor(Main.leagueClient);
-        public static ChampionMonitor ChampMonitor = new ChampionMonitor(Main.leagueClient);
+        public static PhaseMonitor phaseMonitor = new PhaseMonitor();
+        public static ChampionMonitor champMonitor = new ChampionMonitor();
 
         public static async Task<bool> SetRuneAsync(RuneObj rune, RunePage CurrentRunePage)
         {
             if (CurrentRunePage != null)
             {
                 if (CurrentRunePage.name != rune.Name)
-                    return await Main.leagueClient.SetRune(DataConverter.RuneBuildToRunePage(rune));
-
+                    return await LCUWrapper.SetRune(DataConverter.RuneBuildToRunePage(rune));
             }
             return false;
         }
@@ -35,12 +35,10 @@ namespace LoL_Assist_WAPP.Model
                         spell.Spell1 = flash;
                     }
                 }
-
-                Main.leagueClient.SetSummonerSpells(
-                Dictionaries.SpellIdToKey(spell.Spell0),
-                Dictionaries.SpellIdToKey(spell.Spell1), gameMode).Wait();
+                spell.Spell0 = Dictionaries.SpellIdToKey(spell.Spell0).ToString();
+                spell.Spell1 = Dictionaries.SpellIdToKey(spell.Spell1).ToString();
+                LCUWrapper.SetSummonerSpells(spell, gameMode).Wait();
             });
-
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31521.260
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoL Assist", "LoL Assist\LoL Assist.csproj", "{0BD0D0DA-C57A-43F1-A986-0B92F2235045}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoLA Updater", "LoLA Updater\LoLA Updater.csproj", "{CF6C8D8A-8DDA-4BD1-80E4-82C3436840B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BD0D0DA-C57A-43F1-A986-0B92F2235045}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF6C8D8A-8DDA-4BD1-80E4-82C3436840B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF6C8D8A-8DDA-4BD1-80E4-82C3436840B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF6C8D8A-8DDA-4BD1-80E4-82C3436840B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF6C8D8A-8DDA-4BD1-80E4-82C3436840B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,13 +1,15 @@
-﻿using LoLA;
-using System;
-using System.Windows;
-using System.Threading;
-using LoLA.LeagueClient;
-using System.Windows.Media;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using static LoL_Assist_WAPP.Model.LoLAWrapper;
 using System.Windows.Media.Animation;
-using static LoL_Assist_WAPP.Model.LoLAWrapper;
+using System.Windows.Controls;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Threading;
+using LoLA.LCU.Objects;
+using LoLA.LCU.Events;
+using System.Windows;
+using LoLA.LCU;
+using System;
+using LoLA;
 
 namespace LoL_Assist_WAPP.View
 {
@@ -25,10 +27,10 @@ namespace LoL_Assist_WAPP.View
 
             Opacity = 0;
             Visibility = Visibility.Hidden;
-            PhaseMonitor.PhaseChanged += Phase_Changed;
+            phaseMonitor.PhaseChanged += Phase_Changed;
         }
 
-        private async void Phase_Changed(object sender, GameFlowMonitor.PhaseChangedArgs e)
+        private async void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e)
         {
             switch (e.CurrentPhase)
             {
@@ -62,26 +64,26 @@ namespace LoL_Assist_WAPP.View
                     dbAnimation.Completed += (s, _) => { dbAnimation = null; pBar.BeginAnimation(ProgressBar.ValueProperty, null); };
                     pBar.BeginAnimation(ProgressBar.ValueProperty, dbAnimation);
                 }
-
                 mainWnd.Topmost = true;
             }));
 
-            int i = 0, a = 5;
+            int a = 5;
             await Task.Run(() => {
                 while (IsFound) 
                 {
+                    var matchInfo = LCUWrapper.GetMatchmakingInfo().Result;
                     Dispatcher.Invoke(() => {
-                        aCount.Text = $"{10 - i}s";
+                        aCount.Text = $"{10 - matchInfo?.timer}s";
                         if (!IsDecided)
                         {
                             if(Model.ConfigM.config.AutoAccept)
                             {
-                                if (a != 0)
+                                if (!(a <= 1))
                                 {
-                                    a--;
+                                    a = a - (int)matchInfo?.timer;
                                     aaStatus.Text = $"Auto Accept In {a}s";
                                 }
-                                else AcceptMatch();
+                                else Accept();
                             }
                             else
                             {
@@ -90,34 +92,37 @@ namespace LoL_Assist_WAPP.View
                             }
                         }
 
-                        if (i == 10) HideMatchFound();
+                        if (matchInfo.playerResponse == "Accepted")
+                        {
+                            IsDecided = true;
+                            aaStatus.Text = matchInfo.playerResponse;
+                            aaStatus.Foreground = new SolidColorBrush(Color.FromRgb(41, 171, 135));
+                        }
+                        else if(matchInfo.playerResponse == "Declined")
+                        {
+                            IsDecided = true;
+                            aaStatus.Text = matchInfo.playerResponse;
+                            aaStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
+                        }
+
+                        if (matchInfo.timer == 10) HideMatchFound();
 
                         if (Model.ConfigM.config.LowSpecMode)
                             pBar.Value += 9.090909090909091;
                     });
-                    
-                    i++;
                     Thread.Sleep(1000);
                 }
             });
         }
 
-        private async void AcceptMatch()
+        private async void Accept()
         {
-            await Main.leagueClient.AcceptMatchmakingAsync();
-
-            IsDecided = true;
-            aaStatus.Text = "ACCEPTED";
-            aaStatus.Foreground = new SolidColorBrush(Color.FromRgb(41, 171, 135));
+            await LCUWrapper.AcceptMatchmakingAsync();
         }
 
-        private async void DeclineMatch()
+        private async void Decline()
         {
-            await Main.leagueClient.DeclineMatchmakingAsync();
-
-            IsDecided = true;
-            aaStatus.Text = "DECLINED";
-            aaStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
+            await LCUWrapper.DeclineMatchmakingAsync();
         }
 
         private void HideMatchFound(bool topmost = false)
@@ -134,7 +139,7 @@ namespace LoL_Assist_WAPP.View
             pBar.Value = 0;
         }
 
-        private void AcceptBtn_Click(object sender, RoutedEventArgs e) => AcceptMatch();
-        private void DeclineBtn_Click(object sender, RoutedEventArgs e) => DeclineMatch();
+        private void AcceptBtn_Click(object sender, RoutedEventArgs e) => Accept();
+        private void DeclineBtn_Click(object sender, RoutedEventArgs e) => Decline();
     }
 }

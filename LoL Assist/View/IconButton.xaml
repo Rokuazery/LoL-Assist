@@ -82,5 +82,9 @@
                 </PathGeometry>
             </Path.Data>
         </Path>
+
+        <!--<Grid.ToolTip>
+            <TextBlock x:Name="IconBtnToolTip"/>
+        </Grid.ToolTip>-->
     </Grid>
 </UserControl>

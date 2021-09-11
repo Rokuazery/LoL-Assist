@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Windows.Controls;
 using System.Windows;
+
 
 namespace LoL_Assist_WAPP
 {
@@ -15,6 +11,8 @@ namespace LoL_Assist_WAPP
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            // make the tooltip stays
+            ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
             base.OnStartup(e);
         }
     }

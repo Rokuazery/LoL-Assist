@@ -44,8 +44,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LoLA">
-      <HintPath>D:\Visual Studio In Progress\League Builder\Projects\LeagueBuilderAPI\LeagueBuilderAPI\bin\Debug\LoLA.dll</HintPath>
+    <Reference Include="LoLA, Version=1.5.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\LoLA\LoLA\bin\Debug\LoLA.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -53,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -71,7 +73,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ChampionMonitor.cs" />
     <Compile Include="Model\ConfigM.cs" />
     <Compile Include="Model\LoLAWrapper.cs" />
     <Compile Include="Utils.cs" />

@@ -80,7 +80,6 @@ namespace LoL_Assist_WAPP.View
 
             IconGeometryPropertyDescriptor.AddValueChanged(this, IconGeometryChanged);
             IconStretchPrpertyDescriptor.AddValueChanged(this, IconStretchChanged);
-
             StaticColorPropertyDescriptor.AddValueChanged(this, StaticColorChanged);
 
             StaticColor = Color.FromRgb(114, 117, 122);
