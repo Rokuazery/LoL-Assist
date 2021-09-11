@@ -11,8 +11,8 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="45"/>
         </Grid.RowDefinitions>
-        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="5" BorderThickness="1.5" 
-        BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="2"/>
+        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" 
+        BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="2" />
 
         <Grid Grid.Row="0">
             <StackPanel Margin="0,5,0,0">

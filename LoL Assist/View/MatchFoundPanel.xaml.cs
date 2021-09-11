@@ -81,7 +81,7 @@ namespace LoL_Assist_WAPP.View
                                 if (!(a <= 1))
                                 {
                                     a = a - (int)matchInfo?.timer;
-                                    aaStatus.Text = $"Auto Accept In {a}s";
+                                    aaStatus.Text = $"Auto Accept In {Math.Abs(a)}s";
                                 }
                                 else Accept();
                             }
@@ -92,13 +92,13 @@ namespace LoL_Assist_WAPP.View
                             }
                         }
 
-                        if (matchInfo.playerResponse == "Accepted")
+                        if (matchInfo?.playerResponse == "Accepted")
                         {
                             IsDecided = true;
                             aaStatus.Text = matchInfo.playerResponse;
                             aaStatus.Foreground = new SolidColorBrush(Color.FromRgb(41, 171, 135));
                         }
-                        else if(matchInfo.playerResponse == "Declined")
+                        else if(matchInfo?.playerResponse == "Declined")
                         {
                             IsDecided = true;
                             aaStatus.Text = matchInfo.playerResponse;

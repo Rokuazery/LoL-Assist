@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 using System.Windows;
+using LoLA;
 using Newtonsoft.Json;
 
 namespace LoL_Assist_WAPP.Model
@@ -36,6 +37,8 @@ namespace LoL_Assist_WAPP.Model
             }
 
             config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFileName));
+            Global.Config.logging = config.Logging;
+            Global.Config.caching = config.BuildCache;
         }
 
         public static void SaveConfig()

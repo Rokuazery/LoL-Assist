@@ -120,8 +120,6 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public ConfigViewModel()
         {
-            ConfigM.LoadConfig();
-
             AutoRune = ConfigM.config.AutoRune;
             AutoSpells = ConfigM.config.AutoSpells;
             AutoAccept = ConfigM.config.AutoAccept;

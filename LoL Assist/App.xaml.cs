@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
+using LoL_Assist_WAPP.Model;
 using System.Windows;
-
 
 namespace LoL_Assist_WAPP
 {
@@ -11,7 +11,6 @@ namespace LoL_Assist_WAPP
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            // make the tooltip stays
             ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
             base.OnStartup(e);
         }

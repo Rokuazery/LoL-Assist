@@ -129,7 +129,7 @@ namespace LoL_Assist_WAPP.ViewModel
             phaseMonitor.IsMonitoring = true;
             phaseMonitor.InitPhaseMonitor();
 
-            champMonitor.InitMonitor();
+            champMonitor.InitChampionMonitor();
             champMonitor.IsMonitoring = true;
             champMonitor.ChampionChanged += Champion_Changed;
 
@@ -138,32 +138,31 @@ namespace LoL_Assist_WAPP.ViewModel
             lolMonitorThread.Start();
 
             phaseMonitor.PhaseChanged += Phase_Changed;
-            Phase_Changed(null, null); // Trigger init
+            ResetStatus();
         }
 
         private async void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e)
         {
             Phase phase = e == null ? Phase.None : e.CurrentPhase;
+            CurrentGameMode = await LCUWrapper.GetCurrentGameModeAsync();
 
-            if(phase != Phase.InProgress)
-            {
-                CurrentGameMode = await LCUWrapper.GetCurrentGameModeAsync();
+            if (phase != Phase.InProgress)
                 gMode = $"Game Mode: {CurrentGameMode}";
-            }
 
             switch (phase)
             {
                 case Phase.ChampSelect:
                     ImportStatus = "Selecting a champion...";
                     break;
+                case Phase.None:
+                case Phase.Lobby:
                 case Phase.WaitingForStats:
+                    ResetStatus();
+                    break;
+                case Phase.EndOfGame:
                     ResetStatus();
                     var summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
                     ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
-                    break;
-                case Phase.None:
-                case Phase.Lobby:
-                    ResetStatus();
                     break;
                 case Phase.InProgress:
                     ImportStatus = "Game in progress...";
@@ -193,19 +192,18 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 ClearChamp();
 
-                ChampionName = e.Name;
-
                 while (IsBusy)
                     Thread.Sleep(ConfigM.config.MonitoringDelay);
 
+                IsBusy = true;
                 bool RB_IsSuccessFull = false, SC_IsSuccessFull = false;
                 if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
                 {
-                    IsBusy = true;
+                    ChampionName = e.Name;
 
                     var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName);
 
-                    ImportStatus = "Fetching Builds...";
+                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
 
                     Stopwatch sw = Stopwatch.StartNew();
                     sw.Start();
@@ -218,15 +216,13 @@ namespace LoL_Assist_WAPP.ViewModel
                     champImage = DataDragonWrapper.GetChampionImage(CurrentChampionId, Global.Config.dDragonPatch));
 
                     ChampionImage = await champImage;
-                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
 
-                    RuneObj RB = (await CurrentChampionBuild).rune;
-                    SpellObj SC = (await CurrentChampionBuild).spell;
+                    RuneObj RB = (await CurrentChampionBuild)?.rune;
+                    SpellObj SC = (await CurrentChampionBuild)?.spell;
 
                     if (CurrentChampionBuild != null)
                     {
                         List<Task> ImportTasks = new List<Task>();
-
                         if (ConfigM.config.AutoRune && RB != null)
                         {
                             ImportTasks.Add(SetRuneAsync(RB, currentPerks));
