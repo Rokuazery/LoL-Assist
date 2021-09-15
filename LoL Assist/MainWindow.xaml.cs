@@ -16,6 +16,7 @@ namespace LoL_Assist_WAPP
     {
         private View.InfoPanel InfoPanel;
         private View.ConfigPanel ConfigPanel;
+        private View.ExitMsg ExitMessage;
         public MainWindow()
         {
             InitializeComponent();
@@ -24,16 +25,20 @@ namespace LoL_Assist_WAPP
             var MatchFoundPanel = new View.MatchFoundPanel(Me);
             ConfigPanel = new View.ConfigPanel(BackDrop);
             InfoPanel = new View.InfoPanel(BackDrop);
+            ExitMessage = new View.ExitMsg(BackDrop);
 
             ConfigPanel.Margin = ConfigM.marginClose;
             InfoPanel.Margin = ConfigM.marginClose;
+            ExitMessage.Margin = new Thickness(0, 330, 0, 0);
 
             Grid.SetRowSpan(InfoPanel, 2);
             Grid.SetRowSpan(ConfigPanel, 2);
+            Grid.SetRowSpan(ExitMessage, 2);
             Grid.SetRowSpan(MatchFoundPanel, 2);
 
             MainGrid.Children.Add(InfoPanel);
             MainGrid.Children.Add(ConfigPanel);
+            MainGrid.Children.Add(ExitMessage);
             MainGrid.Children.Add(MatchFoundPanel);
         }
 
@@ -53,17 +58,15 @@ namespace LoL_Assist_WAPP
             }
         }
 
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Environment.Exit(69);
         private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
-        private void Info_Clicked(object sender, MouseButtonEventArgs e)
+        private void Info_Clicked(object sender, MouseButtonEventArgs e) => Animate(InfoPanel, ConfigM.marginClose, ConfigM.marginOpen);
+        private void SettingsBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ConfigPanel, ConfigM.marginClose, ConfigM.marginOpen);
+        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ExitMessage, new Thickness(0, 330, 0, 0), ConfigM.marginOpen, 0.15);
+
+        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
-            Utils.Animation.FadeIn(BackDrop);
-            Utils.Animation.Margin(InfoPanel, ConfigM.marginClose, ConfigM.marginOpen, 0.2);
-        }
-        private void SettingsBtn_Clicked(object sender, MouseButtonEventArgs e) 
-        {
-            Utils.Animation.FadeIn(BackDrop);
-            Utils.Animation.Margin(ConfigPanel, ConfigM.marginClose, ConfigM.marginOpen);
+            Utils.Animation.FadeIn(BackDrop, time);
+            Utils.Animation.Margin(element, from, to, time);
         }
 
         private void Me_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

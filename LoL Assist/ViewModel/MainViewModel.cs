@@ -4,12 +4,15 @@ using LoLA.WebAPIs.DataDragon;
 using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Diagnostics;
 using System.Threading;
 using LoLA.LCU.Objects;
 using LoLA.LCU.Events;
+using System.Windows;
 using LoLA.Objects;
 using LoLA.Enums;
+using LoLA.Utils;
 using LoLA.LCU;
 using System;
 using LoLA;
@@ -18,6 +21,8 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        public ICommand ManualImportCommand { get; set; }
+
         private string _ChampionImage;
         public string ChampionImage
         {
@@ -102,6 +107,20 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
+        private Visibility _ManualImportVisibility = Visibility.Hidden;
+        public Visibility ManualImportVisibility
+        {
+            get { return _ManualImportVisibility; }
+            set
+            {
+                if (_ManualImportVisibility != value)
+                {
+                    _ManualImportVisibility = value;
+                    OnPropertyChanged("ManualImportVisibility");
+                }
+            }
+        }
+
         private bool IsBusy = false;
         private bool IsLoLMonitoringPuased = false;
         private const string ProccName = "LeagueClient";
@@ -110,11 +129,13 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public MainViewModel()
         {
+            ManualImportCommand = new RelayCommand(ManualImportExecute, o => true);
             InitLoLA();
         }
 
         private async void InitLoLA()
         {
+            Log.Clear();
             WorkingStatus = "Loading in configuration...";
             ConfigM.LoadConfig();
 
@@ -125,13 +146,12 @@ namespace LoL_Assist_WAPP.ViewModel
             WorkingStatus = "Initializing LoLA components...";
             Global.Config.dDragonPatch = DataDragonWrapper.patchVersions[0];
 
+            phaseMonitor.InitPhaseMonitor(); 
             phaseMonitor.MonitorDelay = ConfigM.config.MonitoringDelay;
-            phaseMonitor.IsMonitoring = true;
-            phaseMonitor.InitPhaseMonitor();
 
             champMonitor.InitChampionMonitor();
-            champMonitor.IsMonitoring = true;
             champMonitor.ChampionChanged += Champion_Changed;
+            champMonitor.MonitorDelay = ConfigM.config.MonitoringDelay;
 
             IsLoLMonitoringPuased = true;
             var lolMonitorThread = new Thread(LoLMonitor);
@@ -153,6 +173,7 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 case Phase.ChampSelect:
                     ImportStatus = "Selecting a champion...";
+                    ManualImportVisibility = Visibility.Visible;
                     break;
                 case Phase.None:
                 case Phase.Lobby:
@@ -166,6 +187,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     break;
                 case Phase.InProgress:
                     ImportStatus = "Game in progress...";
+                    ManualImportVisibility = Visibility.Hidden;
                     break;
                 case Phase.Matchmaking:
                     ClearChamp();
@@ -174,23 +196,65 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private void ClearChamp()
+        private void Champion_Changed(object sender, ChampionMonitor.ChampionChangedArgs e) => ImportBuilds(e.Name);
+        private async void ManualImportExecute(object e) => ImportBuilds(await LCUWrapper.GetCurrentChampionAsyncV2());
+
+        private void ClearChamp(bool hideManualImport = true)
         {
             ChampionImage = null;
             ChampionName = string.Empty;
+
+            if(hideManualImport)
+                ManualImportVisibility = Visibility.Hidden;
         }
 
         private void ResetStatus()
         {
             ClearChamp();
+            ManualImportVisibility = Visibility.Hidden;
             ImportStatus = "Waiting for a game queue...";
         }
 
-        private async void Champion_Changed(object sender, ChampionMonitor.ChampionChangedArgs e)
+        public void LoLMonitor()
         {
-            if (!string.IsNullOrEmpty(e.Name))
+            CheckLoL();
+
+            while (true)
             {
-                ClearChamp();
+                if (!IsLoLMonitoringPuased)
+                {
+                    if (Process.GetProcessesByName(ProccName).Length == 0)
+                    {
+                        ConnectionStatus = "Disconnected.";
+                        IsLoLMonitoringPuased = true;
+                        CheckLoL();
+                    }
+                }
+                Thread.Sleep(ConfigM.config.MonitoringDelay * 3);
+            }
+        }
+
+        public async void CheckLoL()
+        {
+            WorkingStatus = "Waiting for League to start...";
+            var summonerInfo = new Summoner();
+            while (string.IsNullOrEmpty(summonerInfo?.displayName))
+            {
+                summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
+                Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
+            }
+
+            ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
+            WorkingStatus = string.Empty;
+
+            IsLoLMonitoringPuased = false;
+        }
+
+        private async void ImportBuilds(string championName)
+        {
+            if (!string.IsNullOrEmpty(championName))
+            {
+                ClearChamp(false);
 
                 while (IsBusy)
                     Thread.Sleep(ConfigM.config.MonitoringDelay);
@@ -199,11 +263,11 @@ namespace LoL_Assist_WAPP.ViewModel
                 bool RB_IsSuccessFull = false, SC_IsSuccessFull = false;
                 if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
                 {
-                    ChampionName = e.Name;
+                    ChampionName = championName;
 
                     var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName);
 
-                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
+                    ImportStatus = $"Fetching Builds...";
 
                     Stopwatch sw = Stopwatch.StartNew();
                     sw.Start();
@@ -219,6 +283,9 @@ namespace LoL_Assist_WAPP.ViewModel
 
                     RuneObj RB = (await CurrentChampionBuild)?.rune;
                     SpellObj SC = (await CurrentChampionBuild)?.spell;
+
+                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
+                    Log.Append(ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...");
 
                     if (CurrentChampionBuild != null)
                     {
@@ -248,45 +315,6 @@ namespace LoL_Assist_WAPP.ViewModel
                     currentPerks = null;
                 }
             }
-        }
-
-        public void LoLMonitor()
-        {
-            CheckLoL();
-
-            while (true)
-            {
-                if (!IsLoLMonitoringPuased)
-                {
-                    if (Process.GetProcessesByName(ProccName).Length == 0)
-                    {
-                        ConnectionStatus = "Disconnected.";
-                        IsLoLMonitoringPuased = true;
-                        CheckLoL();
-                    }
-                }
-                Thread.Sleep(ConfigM.config.MonitoringDelay * 3);
-            }
-        }
-
-        public async void CheckLoL()
-        {
-            WorkingStatus = "Waiting for League to start...";
-            while (!await LCUWrapper.InitAsync())
-                Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
-
-            var summonerInfo = new Summoner();
-
-            while (string.IsNullOrEmpty(summonerInfo?.displayName))
-            {
-                summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
-                Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
-            }
-
-            ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
-            WorkingStatus = string.Empty;
-
-            IsLoLMonitoringPuased = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

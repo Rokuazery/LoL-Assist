@@ -1,39 +1,36 @@
-﻿<UserControl x:Class="LoL_Assist_WAPP.View.MatchFoundPanel"
+﻿<UserControl x:Class="LoL_Assist_WAPP.View.ExitMsg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Background="#72000000">
-    <Grid Width="220" Height="145">
+             Width="250" Height="160">
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
-        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" 
-        BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="2" />
-
-        <Grid Grid.Row="0">
-            <StackPanel Margin="0,5,0,0">
-                <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="White" Margin="0,0,0,5"/>
-                <TextBlock x:Name="aaStatus" Text="Auto Accept In 5s" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top"
-            Foreground="{DynamicResource FontSecondaryBrush}" FontSize="11" />
-                <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" x:Name="pBar"/>
-                <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" VerticalAlignment="Bottom"
-            HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="aCount"/>
-            </StackPanel>
-
-
-        </Grid>
+        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="3"/>
         
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
+            <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" Clicked="CloseBtn_Clicked" ToolTip="Cancel" 
+            Width="10" Height="10" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5"/>
+            <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
+        </Grid>
+
+        <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,5"
+        Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" FontWeight="DemiBold">
+            Are you sure you want to exit LoL Assist?
+        </TextBlock>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-
-            <Button Margin="10" Grid.Column="0" x:Name="AcceptBtn" Click="AcceptBtn_Click">
+            <Button Margin="10,0,10,5" Grid.Column="0" x:Name="YesBtn" Click="YesBtn_Click" Height="23">
                 <Button.Template>
                     <ControlTemplate>
                         <ControlTemplate.Triggers>
@@ -41,7 +38,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor"
+            Storyboard.TargetName="yesBtnColor"
             Storyboard.TargetProperty="Color"
             To="#29AB87" Duration="0:0:0.2" 
             AutoReverse="False"/>
@@ -52,7 +49,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
+            Storyboard.TargetName="yesBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aPrimary}" Duration="0:0:0.1" 
             AutoReverse="False"/>
@@ -63,7 +60,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
+            Storyboard.TargetName="yesBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aSecondary}" Duration="0:0:0.1" 
             AutoReverse="False"/>
@@ -74,7 +71,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
+            Storyboard.TargetName="yesBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aSecondary}" Duration="0:0:0.2" 
             AutoReverse="False"/>
@@ -86,16 +83,16 @@
                         <Grid>
                             <Border CornerRadius="0,5,0,5">
                                 <Border.Background>
-                                    <SolidColorBrush x:Name="acceptBtnColor" Color="{DynamicResource aSecondary}"/>
+                                    <SolidColorBrush x:Name="yesBtnColor" Color="{DynamicResource aSecondary}"/>
                                 </Border.Background>
                             </Border>
-                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Accept" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Yes" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
 
-            <Button Margin="10" Grid.Column="1" x:Name="DeclineBtn" Click="DeclineBtn_Click">
+            <Button Margin="10,0,10,5" Grid.Column="1" x:Name="NoBtn" Click="NoBtn_Click" Height="23">
                 <Button.Template>
                     <ControlTemplate>
                         <ControlTemplate.Triggers>
@@ -103,7 +100,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="declineBtnColor"
+            Storyboard.TargetName="noBtnColor"
             Storyboard.TargetProperty="Color"
             To="#E74856" Duration="0:0:0.2" 
             AutoReverse="False"/>
@@ -114,7 +111,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
+            Storyboard.TargetName="noBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aPrimary}" Duration="0:0:0.1" 
             AutoReverse="False"/>
@@ -125,7 +122,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
+            Storyboard.TargetName="noBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aSecondary}" Duration="0:0:0.1" 
             AutoReverse="False"/>
@@ -136,7 +133,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
+            Storyboard.TargetName="noBtnColor" 
             Storyboard.TargetProperty="Color"
             To="{StaticResource aSecondary}" Duration="0:0:0.2" 
             AutoReverse="False"/>
@@ -148,10 +145,10 @@
                         <Grid>
                             <Border CornerRadius="0,5,0,5">
                                 <Border.Background>
-                                    <SolidColorBrush x:Name="declineBtnColor" Color="{DynamicResource aSecondary}"/>
+                                    <SolidColorBrush x:Name="noBtnColor" Color="{DynamicResource aSecondary}"/>
                                 </Border.Background>
                             </Border>
-                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Decline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="No" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                     </ControlTemplate>
                 </Button.Template>

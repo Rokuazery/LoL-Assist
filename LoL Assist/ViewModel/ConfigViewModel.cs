@@ -138,7 +138,7 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-            ConfigM.SaveConfig();
+            ConfigM.SaveConfig(false);
         }
     }
 }

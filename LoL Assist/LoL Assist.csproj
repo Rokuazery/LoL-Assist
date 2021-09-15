@@ -98,8 +98,12 @@
     <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\ConfigViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="View\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ExitMsg.xaml.cs">
+      <DependentUpon>ExitMsg.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\IconButton.xaml.cs">
       <DependentUpon>IconButton.xaml</DependentUpon>
@@ -123,6 +127,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\ConfigPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ExitMsg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

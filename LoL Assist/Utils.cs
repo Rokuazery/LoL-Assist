@@ -26,18 +26,18 @@ namespace LoL_Assist_WAPP
 
         public static class Animation
         {
-            public static void FadeIn(FrameworkElement element, double duration = 250)
+            public static void FadeIn(FrameworkElement element, double duration = 0.2)
             {
                 element.Visibility = Visibility.Visible;
                 var sb = new Storyboard();
                 DoubleAnimation fadeInAnimation = new DoubleAnimation() {
                     To = 1,
-                    Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
+                    Duration = new Duration(TimeSpan.FromSeconds(duration)),
                     FillBehavior = FillBehavior.HoldEnd
                 };
 
                 if (ConfigM.config.LowSpecMode)
-                    fadeInAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(0));
+                    fadeInAnimation.Duration = new Duration(TimeSpan.FromSeconds(0));
 
                 Storyboard.SetTarget(fadeInAnimation, element);
                 Storyboard.SetTargetProperty(fadeInAnimation, new PropertyPath("Opacity", 1));
@@ -51,17 +51,17 @@ namespace LoL_Assist_WAPP
                 sb.Remove();
             }
 
-            public static void FadeOut(FrameworkElement element, double duration = 250)
+            public static void FadeOut(FrameworkElement element, double duration = 0.2)
             {
                 var sb = new Storyboard();
                 DoubleAnimation fadeOutAnimation = new DoubleAnimation() {
                     To = 0,
-                    Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
+                    Duration = new Duration(TimeSpan.FromSeconds(duration)),
                     FillBehavior = FillBehavior.HoldEnd
                 };
 
                 if ( ConfigM.config.LowSpecMode)
-                    fadeOutAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(0));
+                    fadeOutAnimation.Duration = new Duration(TimeSpan.FromSeconds(0));
 
                 Storyboard.SetTarget(fadeOutAnimation, element);
                 Storyboard.SetTargetProperty(fadeOutAnimation, new PropertyPath("Opacity", 0));
