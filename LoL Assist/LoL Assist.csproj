@@ -95,6 +95,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\ConfigM.cs" />
     <Compile Include="Model\LoLAWrapper.cs" />
+    <Compile Include="Update.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\ConfigViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

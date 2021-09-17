@@ -1,6 +1,6 @@
 ﻿using LoL_Assist_WAPP.Model;
-using LoLA;
 using System.ComponentModel;
+using LoLA;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
@@ -118,17 +118,35 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
+        private bool _UpdateOnStartup;
+        public bool UpdateOnStartup
+        {
+            get { return _UpdateOnStartup; }
+            set
+            {
+                if (_UpdateOnStartup != value)
+                {
+                    _UpdateOnStartup = value;
+                    ConfigM.config.UpdateOnStartup = value;
+                    Global.Config.caching = value;
+                    OnPropertyChanged("UpdateOnStartup");
+                }
+            }
+        }
+
         public ConfigViewModel()
         {
             AutoRune = ConfigM.config.AutoRune;
             AutoSpells = ConfigM.config.AutoSpells;
             AutoAccept = ConfigM.config.AutoAccept;
             FlashPlacementToRight = ConfigM.config.FlashPlacementToRight;
-            LowSpecMode = ConfigM.config.LowSpecMode;
+
             Logging = ConfigM.config.Logging;
-            BuildCache = ConfigM.config.BuildCache;
             Global.Config.logging = Logging;
+            LowSpecMode = ConfigM.config.LowSpecMode;
+            BuildCache = ConfigM.config.BuildCache;
             Global.Config.caching = BuildCache;
+            UpdateOnStartup = ConfigM.config.UpdateOnStartup;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

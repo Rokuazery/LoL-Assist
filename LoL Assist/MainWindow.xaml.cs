@@ -47,12 +47,14 @@ namespace LoL_Assist_WAPP
             if (cStatus.Text == "Disconnected.")
             {
                 gMode.Visibility = Visibility.Hidden;
+                wStatus.Visibility = Visibility.Visible;
                 ChampionContainer.Visibility = Visibility.Hidden;
                 cStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
             }
             else
             {
                 gMode.Visibility = Visibility.Visible;
+                wStatus.Visibility = Visibility.Hidden;
                 ChampionContainer.Visibility = Visibility.Visible;
                 cStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
             }
@@ -61,7 +63,7 @@ namespace LoL_Assist_WAPP
         private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
         private void Info_Clicked(object sender, MouseButtonEventArgs e) => Animate(InfoPanel, ConfigM.marginClose, ConfigM.marginOpen);
         private void SettingsBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ConfigPanel, ConfigM.marginClose, ConfigM.marginOpen);
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ExitMessage, new Thickness(0, 330, 0, 0), ConfigM.marginOpen, 0.15);
+        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ExitMessage, new Thickness(0, 330, 0, 0), ConfigM.marginOpen, 0.13);
 
         private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {

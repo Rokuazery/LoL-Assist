@@ -25,6 +25,7 @@ namespace LoL_Assist_WAPP.Model
             public bool Logging { get; set; } = false;
             public bool LowSpecMode { get; set; } = false;
             public bool BuildCache { get; set; } = true;
+            public bool UpdateOnStartup { get; set; } = true;
         }
 
         private const string ConfigFileName = "LoLA Config.json";
@@ -34,7 +35,10 @@ namespace LoL_Assist_WAPP.Model
             {
                 File.Create(ConfigFileName).Dispose();
                 var json = JsonConvert.SerializeObject(config);
-                File.WriteAllText(ConfigFileName, json);
+                using (var stream = new StreamWriter(ConfigFileName))
+                {
+                    stream.Write(json);
+                }
             }
 
             config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFileName));
@@ -50,7 +54,12 @@ namespace LoL_Assist_WAPP.Model
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
             if (File.Exists(ConfigFileName))
-                File.WriteAllText(ConfigFileName, json);
+            {
+                using(var stream = new StreamWriter(ConfigFileName))
+                {
+                    stream.Write(json);
+                }
+            }
             else LoadConfig();
         }
     }

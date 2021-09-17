@@ -77,6 +77,13 @@
                             Save champion builds to a json format file
                         </CheckBox.ToolTip>
                     </CheckBox>
+
+                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update On Startup" HorizontalAlignment="Left"
+                    IsChecked="{Binding Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,3">
+                        <CheckBox.ToolTip>
+                            Update LoL Assist on startup if available
+                        </CheckBox.ToolTip>
+                    </CheckBox>
                 </StackPanel>
             </Grid>
 

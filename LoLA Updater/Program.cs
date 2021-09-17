@@ -35,6 +35,7 @@ namespace LoLA_Updater
                 }
                 else Environment.Exit(69);
 
+                Console.WriteLine("Launching LoL Assist...", Console.ForegroundColor = ConsoleColor.Green);
                 if (Process.GetProcessesByName("LoL Assist").Length < 1)
                     Process.Start("LoL Assist.exe");
             }
@@ -45,12 +46,10 @@ namespace LoLA_Updater
 
         public static void DownloadExec(string execVersion)
         {
+            var fileName = "LoL Assist.exe";
             try
             {
                 WebClient client = new WebClient();
-
-                var fileName = "LoL Assist.exe";
-
                 Console.WriteLine($"Deleteing {fileName}...");
                 File.Delete(fileName);
                 Console.WriteLine($"Downloading LoL Assist v{execVersion}...");
@@ -58,20 +57,18 @@ namespace LoLA_Updater
                 client.Dispose();
                 Console.WriteLine("Done.");
             }
-            catch
+            catch(Exception ex)
             {
-                Console.WriteLine("Process failed.");
+                Console.WriteLine($"failed to update {fileName}. {ex.Message}");
             }
-
         }
 
         public static void DownloadLib(string libVersion)
         {
+            var fileName = "LoLA.dll";
             try
             {
                 WebClient client = new WebClient();
-
-                var fileName = "LoLA.dll";
                 Console.WriteLine($"Deleteing {fileName}...");
                 File.Delete(fileName);
                 Console.WriteLine($"Downloading LoLA v{libVersion}...");
@@ -79,9 +76,9 @@ namespace LoLA_Updater
                 client.Dispose();
                 Console.WriteLine("Done.");
             }
-            catch
+            catch(Exception ex)
             {
-                Console.WriteLine("Process failed.");
+                Console.WriteLine($"failed to update {fileName}. {ex.Message}");
             }
         }
 

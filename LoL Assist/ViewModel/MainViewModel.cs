@@ -139,6 +139,12 @@ namespace LoL_Assist_WAPP.ViewModel
             WorkingStatus = "Loading in configuration...";
             ConfigM.LoadConfig();
 
+            if(ConfigM.config.UpdateOnStartup)
+            {
+                WorkingStatus = "Checking for updates...";
+                await Update.Start();
+            }
+
             WorkingStatus = "Downloading prerequisite...";
             while (!await Main.Init())
                 Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
@@ -230,7 +236,7 @@ namespace LoL_Assist_WAPP.ViewModel
                         CheckLoL();
                     }
                 }
-                Thread.Sleep(ConfigM.config.MonitoringDelay * 3);
+                Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
             }
         }
 
@@ -244,8 +250,8 @@ namespace LoL_Assist_WAPP.ViewModel
                 Thread.Sleep(ConfigM.config.MonitoringDelay * 2);
             }
 
-            ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
             WorkingStatus = string.Empty;
+            ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
 
             IsLoLMonitoringPuased = false;
         }
@@ -260,60 +266,67 @@ namespace LoL_Assist_WAPP.ViewModel
                     Thread.Sleep(ConfigM.config.MonitoringDelay);
 
                 IsBusy = true;
-                bool RB_IsSuccessFull = false, SC_IsSuccessFull = false;
-                if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
+                try
                 {
-                    ChampionName = championName;
-
-                    var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName);
-
-                    ImportStatus = $"Fetching Builds...";
-
-                    Stopwatch sw = Stopwatch.StartNew();
-                    sw.Start();
-
-                    var currentPerks = await LCUWrapper.GetCurrentRunePageAsync();
-
-                    Task<string> champImage;
-
-                    await Task.WhenAll(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, BuildsProvider.Metasrc),
-                    champImage = DataDragonWrapper.GetChampionImage(CurrentChampionId, Global.Config.dDragonPatch));
-
-                    ChampionImage = await champImage;
-
-                    RuneObj RB = (await CurrentChampionBuild)?.rune;
-                    SpellObj SC = (await CurrentChampionBuild)?.spell;
-
-                    ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
-                    Log.Append(ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...");
-
-                    if (CurrentChampionBuild != null)
+                    bool RB_IsSuccessFull = false, SC_IsSuccessFull = false;
+                    if (ConfigM.config.AutoRune || ConfigM.config.AutoSpells)
                     {
-                        List<Task> ImportTasks = new List<Task>();
-                        if (ConfigM.config.AutoRune && RB != null)
+                        Task<string> champImage;
+                        List<Task> tasks = new List<Task>();
+
+                        ChampionName = championName;
+                        var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName);
+
+                        ImportStatus = $"Fetching Builds...";
+
+                        Stopwatch sw = Stopwatch.StartNew();
+                        sw.Start();
+
+                        tasks.Add(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, BuildsProvider.Metasrc));
+                        tasks.Add(champImage = DataDragonWrapper.GetChampionImage(CurrentChampionId, Global.Config.dDragonPatch));
+                        Parallel.ForEach(tasks, async task => { await task; });
+
+                        ChampionImage = await champImage;
+
+                        ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...";
+                        Log.Append(ImportStatus = $"Importing {Utils.FixedName(ChampionName)} Builds...");
+
+                        RuneObj RB = (await CurrentChampionBuild)?.rune;
+                        SpellObj SC = (await CurrentChampionBuild)?.spell;
+
+                        if (CurrentChampionBuild != null)
                         {
-                            ImportTasks.Add(SetRuneAsync(RB, currentPerks));
-                            RB_IsSuccessFull = true;
+                            var currentPerks = await LCUWrapper.GetCurrentRunePageAsync();
+                            List<Task> ImportTasks = new List<Task>();
+                            if (ConfigM.config.AutoRune && RB != null)
+                            {
+                                ImportTasks.Add(SetRuneAsync(RB, currentPerks));
+                                RB_IsSuccessFull = true;
+                            }
+
+                            if (ConfigM.config.AutoSpells && SC != null)
+                            {
+                                ImportTasks.Add(ImportSpellsAsync(SC, CurrentGameMode));
+                                SC_IsSuccessFull = true;
+                            }
+
+                            Parallel.ForEach(ImportTasks, async task => { await task; });
+                            currentPerks = null;
                         }
 
-                        if (ConfigM.config.AutoSpells && SC != null)
-                        {
-                            ImportTasks.Add(ImportSpellsAsync(SC, CurrentGameMode));
-                            SC_IsSuccessFull = true;
-                        }
+                        sw.Stop();
 
-                        Parallel.ForEach(ImportTasks, async task => { await task; });
+                        if (RB_IsSuccessFull && SC_IsSuccessFull)
+                            ImportStatus = $"Builds has been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]";
+                        else ImportStatus = $"Uh Oh, something went wrong.\ntry deleting {Utils.FixedName(ChampionName)} data might fix the issue.";
+
                     }
-
-                    sw.Stop();
-
-                    if (RB_IsSuccessFull && SC_IsSuccessFull)
-                        ImportStatus = $"Builds has been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]";
-                    else ImportStatus = $"Uh Oh, something went wrong.\ntry deleting {Utils.FixedName(ChampionName)} data might fix the issue.";
-
-                    IsBusy = false;
-                    currentPerks = null;
                 }
+                catch 
+                {
+                    Log.Append("Uh oh, something went wrong with LoL Assist.");
+                }
+                IsBusy = false;
             }
         }
 

@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LoL Assist")]
-[assembly: AssemblyDescription("League of Legends Auto Importer")]
+[assembly: AssemblyDescription("Rune & Spells Automation for League of Legends by Rokuazery")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rokuazery")]
 [assembly: AssemblyProduct("LoL Assist by Rokuazery")]
@@ -51,6 +51,6 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.1.0")]
-[assembly: AssemblyFileVersion("1.5.1.0")]
+[assembly: AssemblyVersion("1.5.6.9")]
+[assembly: AssemblyFileVersion("1.5.6.9")]
 [assembly: NeutralResourcesLanguage("")]
