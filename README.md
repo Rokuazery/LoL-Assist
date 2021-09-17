@@ -2,10 +2,15 @@
 LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking GUI.<br />
 Builds are scraped from [Metasrc](http://metasrc.com). Adding more options soon!
 
-**Features**
+# Features
 - Auto Import Runes
 - Auto Import Spells
 - Auto Accept Matchmaking
+- Built in Updater
+
+**To Do:**
+- Custom Builds Profile
+- More Website Support
 
 **Screenshots:**
 
