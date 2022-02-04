@@ -12,21 +12,22 @@ namespace LoL_Assist_WAPP.View
     /// </summary>
     public partial class InfoPanel : UserControl
     {
-        private Border backDrop = new Border();
+        private readonly Border backDrop = new Border();
         public InfoPanel(Border border)
         {
             InitializeComponent();
             backDrop = border;
-            Version.Text = $"App Verion {ConfigM.version} | Lib Version {Global.version}";
+            Version.Text = $"App Verion {ConfigModel.version} | Lib Version {Global.version}";
         }
 
         private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) 
         {
             Utils.Animation.FadeOut(backDrop);
-            Utils.Animation.Margin(this, ConfigM.marginOpen, ConfigM.marginClose, 0.2);
+            Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose, 0.2);
         }
 
         private void CreatorLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
         private void TesterLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
+        private void Github_Click(object sender, System.Windows.RoutedEventArgs e) => Process.Start("https://github.com/Rokuazery/LoL-Assist");
     }
 }

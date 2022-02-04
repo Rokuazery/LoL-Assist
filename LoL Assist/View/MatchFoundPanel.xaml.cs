@@ -1,4 +1,5 @@
 ﻿using static LoL_Assist_WAPP.Model.LoLAWrapper;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
 using System.Windows.Controls;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace LoL_Assist_WAPP.View
     /// </summary>
     public partial class MatchFoundPanel : UserControl
     {
-        private Window mainWnd = new Window();
+        private readonly Window mainWnd = new Window();
         public MatchFoundPanel(Window mainWindow)
         {
             InitializeComponent();
@@ -32,7 +33,7 @@ namespace LoL_Assist_WAPP.View
 
         private void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e)
         {
-            switch (e.CurrentPhase)
+            switch (e.currentPhase)
             {
                 case Phase.ReadyCheck:
                     MatchFound();
@@ -56,18 +57,9 @@ namespace LoL_Assist_WAPP.View
                 SetAaStatus(string.Empty, (Color)Application.Current.Resources["FontSecondaryColor"]);
                 Utils.Animation.FadeIn(this);
                 mainWnd.Topmost = true;
-
-                if(!Model.ConfigM.config.LowSpecMode)
-                {
-                    Duration duration = new Duration(TimeSpan.FromSeconds(10));
-                    DoubleAnimation dbAnimation = new DoubleAnimation(100, duration);
-                    dbAnimation.FillBehavior = FillBehavior.HoldEnd;
-                    dbAnimation.Completed += (s, _) => { dbAnimation = null; pBar.BeginAnimation(ProgressBar.ValueProperty, null); };
-                    pBar.BeginAnimation(ProgressBar.ValueProperty, dbAnimation);
-                }
             }));
 
-            int a = 5;
+            int autoAcceptTimer = 5;
             while (IsFound)
             {
                 var matchInfo = await LCUWrapper.GetMatchmakingInfo();
@@ -76,13 +68,10 @@ namespace LoL_Assist_WAPP.View
                 SetAaTime($"{10 - timer}s");
                 if (!IsDecided)
                 {
-                    if (Model.ConfigM.config.AutoAccept)
+                    if (Model.ConfigModel.config.AutoAccept)
                     {
-                        if (!(a <= 1))
-                        {
-                            a = a - timer;
-                            SetAaStatus($"Auto Accept in {Math.Abs(a)}s");
-                        }
+                        if (!(autoAcceptTimer <= timer))
+                            SetAaStatus($"Auto Accept in {autoAcceptTimer - timer}s");
                         else Accept();
                     }
                     else SetAaStatus("Auto Accept is disabled!", Color.FromRgb(255, 196, 12));
@@ -99,10 +88,19 @@ namespace LoL_Assist_WAPP.View
                     SetAaStatus(matchInfo.playerResponse, Color.FromRgb(231, 72, 86));
                 }
 
-                if (timer == 10) HideMatchFound();
-                if (Model.ConfigM.config.LowSpecMode)
+                if (Model.ConfigModel.config.LowSpecMode)
                     SetTimeoutBarValue(10 * timer);
+                else
+                {
+                    Dispatcher.Invoke(() => {
+                        Duration duration = new Duration(TimeSpan.FromSeconds(1));
+                        DoubleAnimation dbAnimation = new DoubleAnimation(11 * timer, duration);
+                        dbAnimation.Completed += (s, _) => { dbAnimation = null; };
+                        pBar.BeginAnimation(RangeBase.ValueProperty, dbAnimation);
+                    });
+                }
 
+                if (timer == 10) HideMatchFound();
                 Thread.Sleep(1000);
             }
         }
@@ -128,7 +126,7 @@ namespace LoL_Assist_WAPP.View
         private void HideMatchFound(bool topmost = false)
         {
             Dispatcher.Invoke(() => {
-                pBar.BeginAnimation(ProgressBar.ValueProperty, null); // clear the animation
+                pBar.BeginAnimation(RangeBase.ValueProperty, null); // clear the animation
                 Utils.Animation.FadeOut(this);
                 mainWnd.Topmost = topmost;
 

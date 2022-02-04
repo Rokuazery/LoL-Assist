@@ -1,0 +1,402 @@
+﻿<Window x:Class="LoL_Assist_WAPP.BuildEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoL_Assist_WAPP" xmlns:view="clr-namespace:LoL_Assist_WAPP.View"
+        mc:Ignorable="d" MouseLeftButtonDown="Window_MouseLeftButtonDown" SnapsToDevicePixels="True"
+        MinHeight="463" MinWidth="650" Height="463" Width="650" MaxHeight="463" MaxWidth="650" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Title="LoL Assist - Runes &amp; Spells Editor">
+    <!--Height="440" Width="585"-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="5"/>
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <DataTemplate x:Key="ItemImage">
+            <DockPanel>
+                <Border CornerRadius="5" Width="16" Height="16" Margin="0,0,5,0">
+                    <Border.Background>
+                        <ImageBrush ImageSource="{Binding Image}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border.Background>
+                </Border>
+                <TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemEllipsis">
+            <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+        </DataTemplate>
+    </Window.Resources>
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Border Background="{DynamicResource bBrushSecondary}" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="3"/>
+
+        <Grid Grid.Row="0">
+            <TextBlock Text="LoL Assist - Runes &amp; Spells Editor" Foreground="White" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
+            <DockPanel HorizontalAlignment="Right">
+                <view:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" VerticalAlignment="Center" ToolTip="Close"
+                Margin="0,0,6,0" Clicked="CloseBtn_Clicked"/>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="10,5,10,5">
+            <Border Background="{DynamicResource aBrushPrimary}" Opacity="0.3" CornerRadius="5,0,5,0"/>
+            <DockPanel VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource FontTritaryBrush}" 
+            Margin="5" TextBlock.FontWeight="DemiBold" HorizontalAlignment="Left">
+                <DockPanel ToolTip="Selected Champion">
+                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Champion: "/>
+                    <TextBlock x:Name="slChampion" Text="{Binding Path=slChampion}"/>
+                </DockPanel>
+                <Border Background="{DynamicResource aBrushPrimary}" Width="1" Margin="5,0,5,0"/>
+                <DockPanel ToolTip="Selected Game Mode">
+                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Game Mode: "/>
+                    <TextBlock x:Name="slGameMode" Text="{Binding Path=slGameMode}"/>
+                </DockPanel>
+                <Border Background="{DynamicResource aBrushPrimary}" Width="1" Margin="5,0,5,0"/>
+                <DockPanel>
+                    <DockPanel.ToolTip>
+                        <TextBlock>
+                        Default/Main Runes &amp; Spells Config based on Champion and Game Mode
+                        </TextBlock>
+                    </DockPanel.ToolTip>
+                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Default Config Source: "/>
+                    <TextBlock x:Name="slDefaultConfig" Text="{Binding Path=slDefaultConfig}" MaxWidth="130" TextTrimming="CharacterEllipsis"/>
+                </DockPanel>
+            </DockPanel>
+            <TextBlock x:Name="saveStatus" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5"
+            Foreground="White" Text="{Binding Path=saveInfo}" FontSize="10" FontWeight="DemiBold"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="5,0,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" Margin="0,2">
+                <StackPanel>
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Current Config" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="champion (1):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" IsEditable="True" Style="{DynamicResource FlatComboboxStyle}"
+                        ItemsSource="{Binding Path=ChampionList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedChampion, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="game mode (2):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=GameModes, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedGameMode, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="build file (3):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=BuildsName, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedBuildName, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10, 5">
+
+                        <Button Grid.Column="1" x:Name="setDefaultBtn" Height="23" Command="{Binding Path=SetAsDefaultCommand}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ControlTemplate.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="setDefaultBtnColor"
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aPrimary}" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="setDefaultBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="setDefaultBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="setDefaultBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ControlTemplate.Triggers>
+
+                                    <Grid>
+                                        <Border CornerRadius="0,5,0,5">
+                                            <Border.Background>
+                                                <SolidColorBrush x:Name="setDefaultBtnColor" Color="{DynamicResource aSecondary}"/>
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Set as Default" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Margin="0,10,0,10" Grid.Column="0" x:Name="SaveBtn" Height="23" Command="{Binding Path=SaveCommand}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ControlTemplate.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="saveBtnColor"
+            Storyboard.TargetProperty="Color"
+            To="#29AB87" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="saveBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="saveBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="saveBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ControlTemplate.Triggers>
+
+                                    <Grid>
+                                        <Border CornerRadius="0,5,0,5">
+                                            <Border.Background>
+                                                <SolidColorBrush x:Name="saveBtnColor" Color="{DynamicResource aSecondary}"/>
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Save Config" 
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                            
+                        <Button Grid.Column="1" x:Name="DeleteBtn" Height="23" Click="DeleteBtn_Click">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ControlTemplate.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="deleteBtnColor"
+            Storyboard.TargetProperty="Color"
+            To="#E74856" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="deleteBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="deleteBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="deleteBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ControlTemplate.Triggers>
+
+                                    <Grid>
+                                        <Border CornerRadius="0,5,0,5">
+                                            <Border.Background>
+                                                <SolidColorBrush x:Name="deleteBtnColor" Color="{DynamicResource aSecondary}"/>
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Delete Config"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <TextBlock Text="{Binding Path=WarningTxt}" Foreground="#E74856" HorizontalAlignment="Center"/>
+                        
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Column="1" Margin="0,2">
+                <StackPanel>
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="File" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="file name:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=FileName}" MaxLength="35"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="Spells" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="left (1):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedSpell1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="right (2):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedSpell2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"/>
+                    </StackPanel>
+
+
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="Rune" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="name:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=RuneName}" MaxLength="20"/>
+
+                        <TextBlock Text="primary path:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPath1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,2"/>
+
+                        <TextBlock Text="keystone:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=KeystoneList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedKeystone, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="slot 1:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk1List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="slot 2:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk2List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="slot 3:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk3List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk3, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+                    </StackPanel>
+                    <Border Margin="10,0" Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="secondary path:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPath2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"/>
+
+                        <TextBlock Text="slot 4:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk4List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk4, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"/>
+
+                        <TextBlock Text="slot 5:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk5List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk5, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="offense:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=OffenseList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedOffense, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="flex:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=FlexList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedFlex, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="defense:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=DefenseList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedDefense, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        
+        <Border Background="{DynamicResource bBrushPrimary}" Grid.Row="2" HorizontalAlignment="Center" Width="3" Margin="0,5,13,5" CornerRadius="1"/>
+        <!--<Grid Grid.Row="2">
+            <Border Background="{DynamicResource bBrushPrimary}" Margin="1.5" CornerRadius="0,0,8,0"/>
+        </Grid>-->
+        <Border Grid.RowSpan="3" Background="#7F000000" CornerRadius="8,0,8,0" Opacity="0" Margin="1.5" x:Name="BackDrop" Visibility="Hidden"/>
+    </Grid>
+</Window>

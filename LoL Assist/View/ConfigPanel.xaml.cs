@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Net;
 using LoLA.Utils;
+using System.IO;
 using System;
 using LoLA;
 
@@ -18,7 +19,7 @@ namespace LoL_Assist_WAPP.View
     /// </summary>
     public partial class ConfigPanel : UserControl
     {
-        private Border backDrop = new Border();
+        private readonly Border backDrop = new Border();
         public ConfigPanel(Border border)
         {
             InitializeComponent();
@@ -28,9 +29,9 @@ namespace LoL_Assist_WAPP.View
 
         private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e)
         {
-            ConfigM.LoadConfig();
+            ConfigModel.LoadConfig(false);
             Utils.Animation.FadeOut(backDrop);
-            Utils.Animation.Margin(this, ConfigM.marginOpen, ConfigM.marginClose);
+            Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -44,6 +45,30 @@ namespace LoL_Assist_WAPP.View
             CheckForUpdatesContent.Text = "Checking for updates...";
             await Update.Start();
             CheckForUpdatesContent.Text = "Check for updates";
+        }
+
+        private void clearCacheBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MsgBox exitMsg = new MsgBox("By clicking 'Yes' Champions folder which contains images and data for the the champion will be deleted permanently. Do you want to continue this action?", 230, 130);
+            exitMsg.Margin = new Thickness(0, Height, 0, 0);
+            MainGrid.Children.Add(exitMsg);
+            Grid.SetRowSpan(exitMsg, 2);
+            exitMsg.Decided += delegate (bool result)
+            {
+                var path = Global.libraryFolder + "\\Champions";
+                if (result && Directory.Exists(path))
+                    Directory.Delete(path, true);
+
+                Utils.Animation.FadeOut(BackDrop, 0.13);
+                Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+            };
+            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
+        }
+
+        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
+        {
+            Utils.Animation.FadeIn(BackDrop, time);
+            Utils.Animation.Margin(element, from, to, time);
         }
     }
 }

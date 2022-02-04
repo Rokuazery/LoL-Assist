@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LoL_Assist_WAPP</RootNamespace>
     <AssemblyName>LoL Assist</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -71,6 +71,7 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -93,18 +94,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\ConfigM.cs" />
+    <Compile Include="BuildEditorWindow.xaml.cs">
+      <DependentUpon>BuildEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ConfigModel.cs" />
+    <Compile Include="Model\DefaultBuildConfig.cs" />
+    <Compile Include="Model\ItemImageModel.cs" />
     <Compile Include="Model\LoLAWrapper.cs" />
+    <Compile Include="Model\PathModel.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ViewModel\BuildEditorViewModel.cs" />
     <Compile Include="ViewModel\ConfigViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="View\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ExitMsg.xaml.cs">
-      <DependentUpon>ExitMsg.xaml</DependentUpon>
+    <Compile Include="View\MsgBox.xaml.cs">
+      <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\IconButton.xaml.cs">
       <DependentUpon>IconButton.xaml</DependentUpon>
@@ -115,6 +123,10 @@
     <Compile Include="View\MatchFoundPanel.xaml.cs">
       <DependentUpon>MatchFoundPanel.xaml</DependentUpon>
     </Compile>
+    <Page Include="BuildEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,7 +143,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ExitMsg.xaml">
+    <Page Include="View\MsgBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -172,6 +184,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\axe.webp" />
+    <Resource Include="Resources\circle.webp" />
+    <Resource Include="Resources\diamond.webp" />
+    <Resource Include="Resources\heart.webp" />
+    <Resource Include="Resources\shield.webp" />
+    <Resource Include="Resources\time.webp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -184,6 +202,255 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Untitled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Triumph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ultimate Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Unflinching.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Unsealed Spellbook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Waterwalking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Zombie Ward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Absolute Focus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Aftershock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Approach Velocity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Arcane Comet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Biscuit Delivery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Bone Plating.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Celerity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cheap Shot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Conditioning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Conqueror.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cosmic Insight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Coup de Grace.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cut Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Dark Harvest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Demolish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Domination.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Electrocute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Eyeball Collection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fleet Footwork.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Font of Life.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Future%27s Market.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Gathering Storm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ghost Poro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Glacial Augment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Grasp of the Undying.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Guardian.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hail of Blades.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hextech Flashtraption.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ingenious Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Inspiration.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Jungle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Last Stand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\LeagueBuilder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Alacrity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Bloodline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Tenacity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Lethal Tempo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Magical Footwear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Manaflow Band.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Minion Dematerializer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Nimbus Cloak.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Nullifying Orb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Overgrowth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Overheal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Perfect Timing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Phase Rush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Precision.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Predator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Presence of Mind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Press the Attack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Prototype Omnistone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ravenous Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Relentless Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Resolve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Revitalize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Scorch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Second Wind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Shield Bash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Sorcery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Sudden Impact.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Summon Aery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerBarrier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerBoost.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerDot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerExhaust.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerFlash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerHaste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerHeal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerMana.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerSmite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerTeleport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Taste of Blood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Time Warp Tonic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Transcendence.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerSnowball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GitHub-Mark-Light-32px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\First Strike.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

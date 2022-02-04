@@ -1,21 +1,25 @@
 ﻿using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
 using LoLA;
+using System.Windows.Input;
+using System.Threading.Tasks;
+using System;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
     public class ConfigViewModel : INotifyPropertyChanged
     {
-        private bool _AutoRune;
-        public bool AutoRune
+        #region General
+        private bool _AutoRunes;
+        public bool AutoRunes
         {
-            get { return _AutoRune; }
+            get { return _AutoRunes; }
             set
             {
-                if (_AutoRune != value)
+                if (_AutoRunes != value)
                 {
-                    _AutoRune = value;
-                    ConfigM.config.AutoRune = value;
+                    _AutoRunes = value;
+                    ConfigModel.config.AutoRunes = value;
                     OnPropertyChanged("AutoRune");
                 }
             }
@@ -30,7 +34,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_AutoSpells != value)
                 {
                     _AutoSpells = value;
-                    ConfigM.config.AutoSpells = value;
+                    ConfigModel.config.AutoSpells = value;
                     OnPropertyChanged("AutoSpells");
                 }
             }
@@ -45,7 +49,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_AutoAccept != value)
                 {
                     _AutoAccept = value;
-                    ConfigM.config.AutoAccept = value;
+                    ConfigModel.config.AutoAccept = value;
                     OnPropertyChanged("AutoAccept");
                 }
             }
@@ -60,12 +64,45 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_FlashPlacementToRight != value)
                 {
                     _FlashPlacementToRight = value;
-                    ConfigM.config.FlashPlacementToRight = value;
+                    ConfigModel.config.FlashPlacementToRight = value;
                     OnPropertyChanged("FlashPlacementToRight");
                 }
             }
         }
 
+        private bool _UseLatestPatch;
+        public bool UseLatestPatch
+        {
+            get { return _UseLatestPatch; }
+            set
+            {
+                if (_UseLatestPatch != value)
+                {
+                    _UseLatestPatch = value;
+                    ConfigModel.config.UseLatestPatch = value;
+                    Global.Config.useLatestPatch = value;
+                    OnPropertyChanged("UseLatestPatch");
+                }
+            }
+        }
+
+        private bool _CustomRunesSpells;
+        public bool CustomRunesSpells
+        {
+            get { return _CustomRunesSpells; }
+            set
+            {
+                if (_CustomRunesSpells != value)
+                {
+                    _CustomRunesSpells = value;
+                    ConfigModel.config.CustomRunesSpells = value;
+                    OnPropertyChanged("CustomRunesSpells");
+                }
+            }
+        }
+        #endregion
+
+        #region Miscellaneous
         private bool _LowSpecMode;
         public bool LowSpecMode
         {
@@ -75,11 +112,11 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_LowSpecMode != value)
                 {
                     _LowSpecMode = value;
-                    ConfigM.config.LowSpecMode = value;
+                    ConfigModel.config.LowSpecMode = value;
 
-                    if (ConfigM.config.LowSpecMode)
-                        ConfigM.config.MonitoringDelay = 550;
-                    else ConfigM.config.MonitoringDelay = 300;
+                    if (ConfigModel.config.LowSpecMode)
+                        ConfigModel.config.MonitoringDelay = 550;
+                    else ConfigModel.config.MonitoringDelay = 300;
 
                     OnPropertyChanged("LowSpecMode");
                 }
@@ -95,7 +132,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_Logging != value)
                 {
                     _Logging = value;
-                    ConfigM.config.Logging = value;
+                    ConfigModel.config.Logging = value;
                     Global.Config.logging = value;
                     OnPropertyChanged("Logging");
                 }
@@ -111,7 +148,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_BuildCache != value)
                 {
                     _BuildCache = value;
-                    ConfigM.config.BuildCache = value;
+                    ConfigModel.config.BuildCache = value;
                     Global.Config.caching = value;
                     OnPropertyChanged("BuildCache");
                 }
@@ -127,36 +164,39 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (_UpdateOnStartup != value)
                 {
                     _UpdateOnStartup = value;
-                    ConfigM.config.UpdateOnStartup = value;
+                    ConfigModel.config.UpdateOnStartup = value;
                     Global.Config.caching = value;
                     OnPropertyChanged("UpdateOnStartup");
                 }
             }
         }
+        #endregion
 
         public ConfigViewModel()
         {
-            AutoRune = ConfigM.config.AutoRune;
-            AutoSpells = ConfigM.config.AutoSpells;
-            AutoAccept = ConfigM.config.AutoAccept;
-            FlashPlacementToRight = ConfigM.config.FlashPlacementToRight;
+            AutoRunes = ConfigModel.config.AutoRunes;
+            AutoSpells = ConfigModel.config.AutoSpells;
+            AutoAccept = ConfigModel.config.AutoAccept;
+            FlashPlacementToRight = ConfigModel.config.FlashPlacementToRight;
+            UseLatestPatch = ConfigModel.config.UseLatestPatch;
+            Global.Config.useLatestPatch = UseLatestPatch;
+            CustomRunesSpells = ConfigModel.config.CustomRunesSpells;
 
-            Logging = ConfigM.config.Logging;
+            Logging = ConfigModel.config.Logging;
             Global.Config.logging = Logging;
-            LowSpecMode = ConfigM.config.LowSpecMode;
-            BuildCache = ConfigM.config.BuildCache;
+            LowSpecMode = ConfigModel.config.LowSpecMode;
+            BuildCache = ConfigModel.config.BuildCache;
             Global.Config.caching = BuildCache;
-            UpdateOnStartup = ConfigM.config.UpdateOnStartup;
+            UpdateOnStartup = ConfigModel.config.UpdateOnStartup;
         }
 
+        #region Space junk
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-            ConfigM.SaveConfig(false);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            ConfigModel.SaveConfig(false);
         }
+        #endregion
     }
 }

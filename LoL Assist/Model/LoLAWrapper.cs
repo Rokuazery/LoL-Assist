@@ -26,7 +26,7 @@ namespace LoL_Assist_WAPP.Model
         public async static Task ImportSpellsAsync(SpellObj spell, GameMode gameMode)
         {
             await Task.Run(() => {
-                if (ConfigM.config.FlashPlacementToRight)
+                if (ConfigModel.config.FlashPlacementToRight)
                 {
                     if (spell.Spell0 == "SummonerFlash")
                     {
@@ -35,8 +35,8 @@ namespace LoL_Assist_WAPP.Model
                         spell.Spell1 = flash;
                     }
                 }
-                spell.Spell0 = Dictionaries.SpellIdToKey(spell.Spell0).ToString();
-                spell.Spell1 = Dictionaries.SpellIdToKey(spell.Spell1).ToString();
+                spell.Spell0 = Dictionaries.SpellIdToSpellKey[spell.Spell0].ToString();
+                spell.Spell1 = Dictionaries.SpellIdToSpellKey[spell.Spell1].ToString();
                 LCUWrapper.SetSummonerSpells(spell, gameMode).Wait();
             });
         }

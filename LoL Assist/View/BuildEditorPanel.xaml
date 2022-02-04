@@ -1,0 +1,195 @@
+﻿<UserControl x:Class="LoL_Assist_WAPP.View.BuildEditorPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
+             mc:Ignorable="d"  Background="#7F000000"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
+    <UserControl.Resources>
+        <DataTemplate x:Key="ItemImage">
+            <DockPanel>
+                <Border CornerRadius="5" Width="16" Height="16" Margin="0,0,5,0">
+                    <Border.Background>
+                        <ImageBrush ImageSource="{Binding Image}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border.Background>
+                </Border>
+                <TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemEllipsis">
+            <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <!--height 270-->
+    <Grid  Height="270" Width="375">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="2"/>
+
+        <Grid Grid.Row="0">
+            <TextBlock Text="Build Editor" Foreground="White" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
+            <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" VerticalAlignment="Center" ToolTip="Close"
+            HorizontalAlignment="Right" Margin="0,0,6,0" Clicked="CloseBtn_Clicked"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5,0,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" Margin="0,2">
+                <StackPanel>
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="Current Config" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="champion (1):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}"
+                        ItemsSource="{Binding Path=ChampionList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedChampion, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="game mode (2):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=GameModes, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedGameMode, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10,5">
+                        <TextBlock Text="build file (3):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=BuildsName, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedBuildName, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Column="1" Margin="0,2">
+                <StackPanel>
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="File" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+                        
+                        <TextBlock Text="file name:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=FileName}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="Spells" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+                        
+                        <TextBlock Text="left (1):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedSpell1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="right (2):" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedSpell2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="Rune" Foreground="{DynamicResource FontPrimaryBrush}" Margin="0,0,0,5" FontWeight="DemiBold" HorizontalAlignment="Left"/>
+                        <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+
+                        <TextBlock Text="name:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=RuneName}"/>
+
+                        <TextBlock Text="primary path:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPath1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,2"/>
+
+                        <TextBlock Text="keystone:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=KeystoneList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedKeystone, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="slot 1:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk1List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk1, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="slot 2:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk2List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk2, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="slot 3:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk3List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk3, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <Border Margin="10,0" Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
+                    <StackPanel Margin="10, 5">
+                        <TextBlock Text="secondary path:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPath2, UpdateSourceTrigger=PropertyChanged}"  ItemTemplate="{DynamicResource ItemImage}"/>
+
+                        <TextBlock Text="slot 4:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk4List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk4, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="slot 5:" VerticalAlignment="Center" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"/>
+                        <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
+                        ItemsSource="{Binding Path=Perk5List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedPerk5, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        
+                        
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!--<Grid Grid.Row="2">
+            <Border Background="{DynamicResource bBrushPrimary}" Margin="1.5" CornerRadius="0,0,8,0"/>
+        </Grid>-->
+        <Border Grid.RowSpan="2" Background="#7F000000" Opacity="0" Margin="1.5" x:Name="BackDrop" Visibility="Hidden"/>
+    </Grid>
+</UserControl>

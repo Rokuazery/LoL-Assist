@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="IcButton"
              d:DesignHeight="12" d:DesignWidth="10" Width="11" Height="11" SizeChanged="UserControl_SizeChanged">
-    <Grid x:Name="ButtonGrid" Background="Transparent" MouseLeftButtonDown="ButtonGrid_MouseLeftButtonDown"
+    <Grid x:Name="ButtonGrid" Background="Transparent" MouseLeftButtonDown="ButtonGrid_MouseLeftButtonDown" Cursor="Hand"
      MouseLeftButtonUp="ButtonGrid_MouseLeftButtonUp" MouseEnter="ButtonGrid_MouseEnter" VerticalAlignment="Center" HorizontalAlignment="Center">
         <Grid.Triggers>
             <EventTrigger RoutedEvent="Grid.MouseEnter">

@@ -14,9 +14,11 @@ namespace LoL_Assist_WAPP
     /// </summary>
     public partial class MainWindow : Window
     {
-        private View.InfoPanel InfoPanel;
-        private View.ConfigPanel ConfigPanel;
-        private View.ExitMsg ExitMessage;
+        private readonly View.InfoPanel InfoPanel;
+        private readonly View.ConfigPanel ConfigPanel;
+        //private readonly View.BuildEditorPanel BuildEditorPanel;
+
+        private BuildEditorWindow buildEditorWindow;
         public MainWindow()
         {
             InitializeComponent();
@@ -25,45 +27,57 @@ namespace LoL_Assist_WAPP
             var MatchFoundPanel = new View.MatchFoundPanel(Me);
             ConfigPanel = new View.ConfigPanel(BackDrop);
             InfoPanel = new View.InfoPanel(BackDrop);
-            ExitMessage = new View.ExitMsg(BackDrop);
+            //BuildEditorPanel = new View.BuildEditorPanel();
 
-            ConfigPanel.Margin = ConfigM.marginClose;
-            InfoPanel.Margin = ConfigM.marginClose;
-            ExitMessage.Margin = new Thickness(0, 330, 0, 0);
+            ConfigPanel.Margin = ConfigModel.marginClose;
+            InfoPanel.Margin = ConfigModel.marginClose;
 
             Grid.SetRowSpan(InfoPanel, 2);
             Grid.SetRowSpan(ConfigPanel, 2);
-            Grid.SetRowSpan(ExitMessage, 2);
             Grid.SetRowSpan(MatchFoundPanel, 2);
+            //Grid.SetRowSpan(BuildEditorPanel, 2);
 
             MainGrid.Children.Add(InfoPanel);
             MainGrid.Children.Add(ConfigPanel);
-            MainGrid.Children.Add(ExitMessage);
             MainGrid.Children.Add(MatchFoundPanel);
+            //MainGrid.Children.Add(BuildEditorPanel);
         }
 
-        private void cStatus_TargetUpdated(object sender, DataTransferEventArgs e)
+        private void CStatus_TargetUpdated(object sender, DataTransferEventArgs e)
         {
             if (cStatus.Text == "Disconnected.")
             {
-                gMode.Visibility = Visibility.Hidden;
+                GMode.Visibility = Visibility.Collapsed;
                 wStatus.Visibility = Visibility.Visible;
-                ChampionContainer.Visibility = Visibility.Hidden;
+                ChampionContainer.Visibility = Visibility.Collapsed;
                 cStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
             }
             else
             {
-                gMode.Visibility = Visibility.Visible;
-                wStatus.Visibility = Visibility.Hidden;
+                GMode.Visibility = Visibility.Visible;
+                wStatus.Visibility = Visibility.Collapsed;
                 ChampionContainer.Visibility = Visibility.Visible;
                 cStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
             }
         }
 
         private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
-        private void Info_Clicked(object sender, MouseButtonEventArgs e) => Animate(InfoPanel, ConfigM.marginClose, ConfigM.marginOpen);
-        private void SettingsBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ConfigPanel, ConfigM.marginClose, ConfigM.marginOpen);
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ExitMessage, new Thickness(0, 330, 0, 0), ConfigM.marginOpen, 0.13);
+        private void Info_Clicked(object sender, MouseButtonEventArgs e) => Animate(InfoPanel, ConfigModel.marginClose, ConfigModel.marginOpen);
+        private void SettingsBtn_Clicked(object sender, MouseButtonEventArgs e) => Animate(ConfigPanel, ConfigModel.marginClose, ConfigModel.marginOpen);
+        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e)
+        {
+            View.MsgBox exitMsg = new View.MsgBox("Are you sure you want to exit LoL Assist?");
+            exitMsg.Margin = new Thickness(0, Height, 0, 0);
+            MainGrid.Children.Add(exitMsg);
+            Grid.SetRowSpan(exitMsg, 2);
+            exitMsg.Decided += delegate (bool result)
+            {
+                if (result) Environment.Exit(0);
+                Utils.Animation.FadeOut(BackDrop, 0.13);
+                Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+            };
+            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
+        } 
 
         private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
@@ -75,6 +89,13 @@ namespace LoL_Assist_WAPP
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
+        }
+
+        private void EditBtn_Clicked(object sender, MouseButtonEventArgs e)
+        {
+            buildEditorWindow = new BuildEditorWindow();
+            buildEditorWindow.Owner = this;
+            buildEditorWindow.ShowDialog();
         }
     }
 }

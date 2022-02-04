@@ -18,13 +18,11 @@
             <StackPanel Margin="0,5,0,0">
                 <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="White" Margin="0,0,0,5"/>
                 <TextBlock x:Name="aaStatus" Text="Auto Accept In 5s" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top"
-            Foreground="{DynamicResource FontSecondaryBrush}" FontSize="11" />
+                Foreground="{DynamicResource FontSecondaryBrush}" FontSize="11" />
                 <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" x:Name="pBar"/>
                 <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" VerticalAlignment="Bottom"
-            HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="aCount"/>
+                HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="aCount"/>
             </StackPanel>
-
-
         </Grid>
         
         <Grid Grid.Row="1">

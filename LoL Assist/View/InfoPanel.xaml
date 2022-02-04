@@ -10,11 +10,43 @@
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.Foreground="{DynamicResource FontTritaryBrush}">
-            <Image Width="64" Height="64" Margin="0,0,0,5" Source="{DynamicResource Icon}" RenderOptions.BitmapScalingMode="HighQuality">
-                <Image.Effect>
-                    <DropShadowEffect Opacity="0.5"/>
-                </Image.Effect>
-            </Image>
+            <Button x:Name="Github" Width="76" Height="76" Margin="0,0,0,5" Background="Transparent" BorderThickness="0" Click="Github_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Grid x:Name="LogoGrid" Width="76" Height="76" >
+                    <Image Source="{DynamicResource LoLAIcon}" RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.Effect>
+                            <DropShadowEffect Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                    <Grid Width="26" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Right" ToolTip="Visit LoL Assist on Github">
+                        <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16"/>
+                        <Image Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality">
+                            <Image.Effect>
+                                <DropShadowEffect Opacity="0.5"/>
+                            </Image.Effect>
+                        </Image>
+                    </Grid>
+                </Grid>
+            </Button>
+            
             <TextBlock HorizontalAlignment="Center" Margin="0,0,0,3" Foreground="{DynamicResource FontPrimaryBrush}">
                 Created by 
                 <Hyperlink x:Name="CreatorLink" NavigateUri="https://www.youtube.com/watch?v=dQw4w9WgXcQ"

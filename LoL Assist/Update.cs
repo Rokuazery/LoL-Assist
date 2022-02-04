@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
 using System.Diagnostics;
+using LoLA.Utils.Log;
 using System.Net;
-using LoLA.Utils;
 using System;
 using LoLA;
+using System.Threading;
 
 namespace LoL_Assist_WAPP
 {
@@ -18,39 +19,57 @@ namespace LoL_Assist_WAPP
                 IsCheckerBusy = true;
                 try
                 {
-                    Log.Append("Checking for updates...");
-                    WebClient client = new WebClient();
-                    var versions = await client.DownloadStringTaskAsync(new Uri("https://raw.githubusercontent.com/Rokuazery/LoL-Assist/master/Version.txt"));
-                    string appVersion = Utils.GetLine(versions, 1);
-                    string libVersion = Utils.GetLine(versions, 2);
+                    await Task.Run(() => {
+                        Utils.Log("Checking for updates...", LogType.INFO);
+                        WebClient client = new WebClient();
+                        var versions = client.DownloadString(new Uri("https://raw.githubusercontent.com/Rokuazery/LoL-Assist/master/Version.txt"));
+                        string appVersion = Utils.GetLine(versions, 1);
+                        string libVersion = Utils.GetLine(versions, 2);
 
-                    Process process = new Process();
-                    ProcessStartInfo processInfo = new ProcessStartInfo();
-                    processInfo.FileName = "LoLA Updater.exe";
-                    processInfo.UseShellExecute = true;
+                        Process process = new Process();
+                        ProcessStartInfo processInfo = new ProcessStartInfo {
+                            FileName = "LoLA Updater.exe",
+                            UseShellExecute = true
+                        };
 
-                    bool IsUpdateAvailable = true;
+                        bool IsUpdateAvailable = true;
 
-                    if (appVersion != ConfigM.version && libVersion != Global.version)
-                        processInfo.Arguments = "updateBoth";
-                    else if (appVersion != ConfigM.version)
-                        processInfo.Arguments = "updateExec";
-                    else if (libVersion != Global.version)
-                        processInfo.Arguments = "updateLib";
-                    else IsUpdateAvailable = false;
+                        if (appVersion != ConfigModel.version && libVersion != Global.version)
+                        {
+                            Utils.Log($"Newer version of 'LoL Assist v{appVersion}' & 'LoLA.dll v{libVersion}' is available", LogType.INFO);
+                            processInfo.Arguments = "updateBoth";
+                        }
+                        else if (appVersion != ConfigModel.version)
+                        {
+                            Utils.Log($"Newer version of 'LoL Assist v{appVersion}' is available", LogType.INFO);
+                            processInfo.Arguments = "updateExec";
+                        }
+                        else if (libVersion != Global.version)
+                        {
+                            Utils.Log($"Newer version of 'LoLA.dll v{libVersion}' is available", LogType.INFO);
+                            processInfo.Arguments = "updateLib";
+                        }
+                        else
+                        {
+                            Utils.Log("No updates available", LogType.INFO);
+                            IsUpdateAvailable = false;
+                        }
 
-                    if (IsUpdateAvailable)
-                    {
-                        process.StartInfo = processInfo;
-                        process.Start();
-                        Environment.Exit(69);
-                    }
+                        if (IsUpdateAvailable)
+                        {
+                            Utils.Log("Updating...", LogType.INFO);
+                            process.StartInfo = processInfo;
+                            process.Start();
+                            Environment.Exit(69);
+                        }
+                    });
+                    Thread.Sleep(1000);
                     IsCheckerBusy = false;
                 }
                 catch
                 {
+                    Utils.Log("Failed to check for updates", LogType.EROR);
                     IsCheckerBusy = false;
-                    Log.Append("Failed to check for updates.");
                 }
             }
         }

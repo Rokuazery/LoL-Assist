@@ -8,6 +8,10 @@ namespace LoLA_Updater
 {
     class Program
     {
+        const string Lib = "LolA.dll";
+        const string Exe = "LoL Assist.exe";
+        const string urlLib = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214953&authkey=AKMvepedMnjGt_c";
+        const string urlExe = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214954&authkey=AJkleVt8SSljXJY";
         static void Main(string[] args)
         {
             Console.Title = "LoLA Updater";
@@ -22,16 +26,16 @@ namespace LoLA_Updater
                 foreach (var process in Process.GetProcessesByName("LoL Assist"))
                     process.Kill();
 
-                Thread.Sleep(1500); // add a delay to wait for the process to shutdown completely
+                Thread.Sleep(1300); // add a delay to wait for the process to shutdown completely
 
                 if (args[0] == "updateExec")
-                    DownloadExec(execVersion);
+                    DownloadFunction(Exe, execVersion, urlExe);
                 else if (args[0] == "updateLib")
-                    DownloadLib(libVersion);
+                    DownloadFunction(Lib, libVersion, urlLib);
                 else if (args[0] == "updateBoth")
                 {
-                    DownloadExec(execVersion);
-                    DownloadLib(libVersion);
+                    DownloadFunction(Lib, libVersion, urlLib);
+                    DownloadFunction(Exe, execVersion, urlExe);
                 }
                 else Environment.Exit(69);
 
@@ -44,39 +48,19 @@ namespace LoLA_Updater
             Console.ReadLine();
         }
 
-        public static void DownloadExec(string execVersion)
+        public static void DownloadFunction(string fileName, string version, string url)
         {
-            var fileName = "LoL Assist.exe";
             try
             {
                 WebClient client = new WebClient();
                 Console.WriteLine($"Deleteing {fileName}...");
                 File.Delete(fileName);
-                Console.WriteLine($"Downloading LoL Assist v{execVersion}...");
-                client.DownloadFile("https://onedrive.live.com/download?resid=5E12824F9E63EA74%214954&authkey=AJkleVt8SSljXJY", fileName);
+                Console.WriteLine($"Downloading {fileName} v{version}...");
+                client.DownloadFile(url, fileName);
                 client.Dispose();
                 Console.WriteLine("Done.");
             }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"failed to update {fileName}. {ex.Message}");
-            }
-        }
-
-        public static void DownloadLib(string libVersion)
-        {
-            var fileName = "LoLA.dll";
-            try
-            {
-                WebClient client = new WebClient();
-                Console.WriteLine($"Deleteing {fileName}...");
-                File.Delete(fileName);
-                Console.WriteLine($"Downloading LoLA v{libVersion}...");
-                client.DownloadFile("https://onedrive.live.com/download?resid=5E12824F9E63EA74%214953&authkey=AKMvepedMnjGt_c", fileName);
-                client.Dispose();
-                Console.WriteLine("Done.");
-            }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"failed to update {fileName}. {ex.Message}");
             }
