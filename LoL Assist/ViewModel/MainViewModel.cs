@@ -357,17 +357,19 @@ namespace LoL_Assist_WAPP.ViewModel
                             if (!File.Exists(fullPath))
                                 defaultBuildConfig.resetDefaultConfig(CurrentGameMode);
 
+                            writeDefaultBuildConfig(CurrentChampionId, defaultBuildConfig);
+
                             if (buildName == ConfigModel.DefaultSource)
                                 tasks.Add(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, BuildsProvider.Metasrc));
                             else
                                 tasks.Add(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, 
-                                BuildsProvider.Local, defaultBuildConfig.getDefaultConfig(CurrentGameMode)));
+                                BuildsProvider.Local, Path.GetFileNameWithoutExtension(buildName)));
                         }
 
                         tasks.Add(Task.Run(() => ChampionImage = DataDragonWrapper.GetChampionImage(CurrentChampionId, Global.Config.dDragonPatch).Result));
-                        Parallel.ForEach(tasks, task => { /*Console.WriteLine("PALA");*/ Task.Run(() => task).Wait(); });
+                        Parallel.ForEach(tasks, task => { Task.Run(() => task).Wait(); });
 
-                        SetImportStatus($"Importing {Utils.FixedName(ChampionName)} Runes & Spells...", LogType.INFO);
+                        SetImportStatus($"Importing {FixedName(ChampionName)} Runes & Spells...", LogType.INFO);
 
                         RuneObj RB = (await CurrentChampionBuild)?.rune;
                         SpellObj SC = (await CurrentChampionBuild)?.spell;

@@ -105,7 +105,7 @@
 
                     <StackPanel Margin="10, 5">
 
-                        <Button Grid.Column="1" x:Name="setDefaultBtn" Height="23" Command="{Binding Path=SetAsDefaultCommand}">
+                        <Button Grid.Column="1" x:Name="SetDefaultBtn" Height="23" Command="{Binding Path=SetAsDefaultCommand}">
                             <Button.Template>
                                 <ControlTemplate>
                                     <ControlTemplate.Triggers>
@@ -167,7 +167,7 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Margin="0,10,0,10" Grid.Column="0" x:Name="SaveBtn" Height="23" Command="{Binding Path=SaveCommand}">
+                        <Button Margin="0,10,0,0" Grid.Column="0" x:Name="SaveBtn" Height="23" Command="{Binding Path=SaveCommand}">
                             <Button.Template>
                                 <ControlTemplate>
                                     <ControlTemplate.Triggers>
@@ -229,8 +229,8 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                            
-                        <Button Grid.Column="1" x:Name="DeleteBtn" Height="23" Click="DeleteBtn_Click">
+
+                        <Button Grid.Column="1" Margin="0,10,0,10" x:Name="DeleteBtn" Height="23" Click="DeleteBtn_Click">
                             <Button.Template>
                                 <ControlTemplate>
                                     <ControlTemplate.Triggers>
@@ -287,6 +287,69 @@
                                             </Border.Background>
                                         </Border>
                                         <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Delete Config"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Grid.Column="1" x:Name="ClearDefaultSourceBtn" Height="23" Command="{Binding Path=ClearDefaultSourceCommand}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <ControlTemplate.Triggers>
+                                        <EventTrigger RoutedEvent="MouseEnter">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="clearDefaultSourceBtnColor"
+            Storyboard.TargetProperty="Color"
+            To="#E74856" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseDown">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="clearDefaultSourceBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="PreviewMouseUp">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="clearDefaultSourceBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                        <EventTrigger RoutedEvent="MouseLeave">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation
+            Storyboard.TargetName="clearDefaultSourceBtnColor" 
+            Storyboard.TargetProperty="Color"
+            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
+            AutoReverse="False"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </ControlTemplate.Triggers>
+
+                                    <Grid>
+                                        <Border CornerRadius="0,5,0,5">
+                                            <Border.Background>
+                                                <SolidColorBrush x:Name="clearDefaultSourceBtnColor" Color="{DynamicResource aSecondary}"/>
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Clear Current Default Source"
                                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Grid>
                                 </ControlTemplate>

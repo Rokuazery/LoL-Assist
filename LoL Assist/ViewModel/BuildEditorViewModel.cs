@@ -25,6 +25,7 @@ namespace LoL_Assist_WAPP.ViewModel
         #region Commands
         public ICommand SaveCommand { get; set; }
         public ICommand SetAsDefaultCommand { get; set; }
+        public ICommand ClearDefaultSourceCommand { get; set; }
 
         private GameMode gm()
         {
@@ -48,8 +49,7 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public void DeleteConfigExecute()
         {
-            if(SelectedBuildName != null 
-            && !SelectedBuildName.Equals(CreateNewKey))
+            if(SelectedBuildName != null && !SelectedBuildName.Equals(CreateNewKey))
             {
                 var buildName = SelectedBuildName;
                 SelectedBuildName = null;
@@ -70,6 +70,18 @@ namespace LoL_Assist_WAPP.ViewModel
                 if (!File.Exists(fullPath))
                     defaultBuildConfig.resetDefaultConfig(gameMode);
 
+                writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
+                slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+            }
+        }
+
+        private void ClearDefaultSourceExecute()
+        {
+            if (SelectedChampion != null && SelectedGameMode != null)
+            {
+                var gameMode = gm();
+                defaultBuildConfig.resetDefaultConfig(gameMode);
+                writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
                 slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
             }
         }
@@ -99,6 +111,12 @@ namespace LoL_Assist_WAPP.ViewModel
 
                 BuildsName = _buildsName;
                 SelectedBuildName = Path.GetFileName(filePath);
+            }
+            else if(string.IsNullOrEmpty(FileName))
+            {
+                WarningTxt = "'file name:' field cannot be empty!";
+                await Task.Delay(2500);
+                WarningTxt = null;
             }
             await saved();
         }
@@ -732,6 +750,7 @@ namespace LoL_Assist_WAPP.ViewModel
             SaveCommand = new RelayCommand(action => { SaveConfigExecute(); }, o => true);
             //DeleteCommand = new RelayCommand(action => { DeleteConfigExecute(); }, o => true);
             SetAsDefaultCommand = new RelayCommand(action => { SetAsDefaultExecute(); }, o => true);
+            ClearDefaultSourceCommand = new RelayCommand(action => { ClearDefaultSourceExecute(); }, o => true);
         }
 
         public async void Init()
@@ -1031,7 +1050,7 @@ namespace LoL_Assist_WAPP.ViewModel
             FlexList.Add(ItemImage("6 bonus armor", ImageSrc("shield", format)));
             FlexList.Add(ItemImage("8 bonus magic resistance", ImageSrc("circle", format)));
 
-            DefenseList.Add(ItemImage("5.4 bonus Attack Damage or 9 Ability Power (Adaptive)", ImageSrc("heart", format)));
+            DefenseList.Add(ItemImage("15 − 90 (based on level) bonus health", ImageSrc("heart", format)));
             DefenseList.Add(ItemImage("6 bonus armor", ImageSrc("shield", format)));
             DefenseList.Add(ItemImage("8 bonus magic resistance", ImageSrc("circle", format)));
         }
@@ -1092,17 +1111,9 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private async Task saved()
         {
-            if (string.IsNullOrEmpty(FileName))
-            {
-                WarningTxt = "'file name:' field cannot be empty!";
-                await Task.Delay(2500);
-                WarningTxt = null;
-            }
-            else
-            {
-                saveInfo = "Saved!";
-                saveInfo = null;
-            }
+            saveInfo = "Saved!";
+            await Task.Delay(2500);
+            saveInfo = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

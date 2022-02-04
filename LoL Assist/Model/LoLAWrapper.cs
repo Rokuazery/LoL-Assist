@@ -35,6 +35,15 @@ namespace LoL_Assist_WAPP.Model
                         spell.Spell1 = flash;
                     }
                 }
+                else
+                {
+                    if (spell.Spell1 == "SummonerFlash")
+                    {
+                        var flash = spell.Spell1;
+                        spell.Spell1 = spell.Spell0;
+                        spell.Spell0 = flash;
+                    }
+                }
                 spell.Spell0 = Dictionaries.SpellIdToSpellKey[spell.Spell0].ToString();
                 spell.Spell1 = Dictionaries.SpellIdToSpellKey[spell.Spell1].ToString();
                 LCUWrapper.SetSummonerSpells(spell, gameMode).Wait();
