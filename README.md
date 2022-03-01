@@ -7,7 +7,7 @@ Builds are scraped from [Metasrc](http://metasrc.com). Adding more options soon!
 - Auto Import Spells
 - Auto Accept Matchmaking
 - Runes & Spells Editor
-- Built in Updater
+- External Updater
 
 **To Do:**
 - More Runes & Spells Source
