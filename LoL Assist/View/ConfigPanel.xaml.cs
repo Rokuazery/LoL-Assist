@@ -20,19 +20,21 @@ namespace LoL_Assist_WAPP.View
     public partial class ConfigPanel : UserControl
     {
         private readonly Border backDrop = new Border();
+        ConfigViewModel ConfigViewModel = new ConfigViewModel();
         public ConfigPanel(Border border)
         {
             InitializeComponent();
             backDrop = border;
-            DataContext = new ConfigViewModel();
+            DataContext = ConfigViewModel;
         }
 
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e)
+        void Close()
         {
-            ConfigModel.LoadConfig(false);
             Utils.Animation.FadeOut(backDrop);
             Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose);
         }
+
+        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Close();
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -69,6 +71,27 @@ namespace LoL_Assist_WAPP.View
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.Margin(element, from, to, time);
+        }
+
+        private void resetConfigBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MsgBox exitMsg = new MsgBox("By clicking 'Yes' LoL Assist config will be reset to the default value. Do you want to continue this action?", 230, 130);
+            exitMsg.Margin = new Thickness(0, Height, 0, 0);
+            MainGrid.Children.Add(exitMsg);
+            Grid.SetRowSpan(exitMsg, 2);
+            exitMsg.Decided += delegate (bool result)
+            {
+                if (result)
+                {
+                    ConfigModel.config = new ConfigModel.Config();
+                    ConfigModel.SaveConfig();
+                    ConfigViewModel.Update();
+                }
+
+                Utils.Animation.FadeOut(BackDrop, 0.13);
+                Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+            };
+            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
         }
     }
 }

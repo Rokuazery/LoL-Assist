@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media.Animation;
 using System.Runtime.InteropServices;
 using LoL_Assist_WAPP.Model;
+using System.Windows.Media;
 using Newtonsoft.Json;
 using LoLA.Utils.Log;
 using System.Windows;
@@ -56,6 +57,40 @@ namespace LoL_Assist_WAPP
         #endregion
 
         #region misc
+        //public static void SwitchTheme(string theme = "Default")
+        //{
+        //    switch(theme)
+        //    {
+        //        case "League of Legends":
+        //            Application.Current.Resources["aPrimary"] = ColorConverter.ConvertFromString("#C99D3E");
+        //            Application.Current.Resources["aSecondary"] = ColorConverter.ConvertFromString("#785A28");
+        //            Application.Current.Resources["aTritary"] = ColorConverter.ConvertFromString("#EEE3D2");
+        //            Application.Current.Resources["bPrimary"] = ColorConverter.ConvertFromString("#1A2832");
+        //            Application.Current.Resources["bSecondary"] = ColorConverter.ConvertFromString("#010A13");
+        //            Application.Current.Resources["CheckMark"] = Colors.White;
+        //            Application.Current.Resources["title"] = Colors.White;
+
+        //            Application.Current.Resources["FontPrimaryColor"] = Colors.Silver;
+        //            Application.Current.Resources["FontSecondaryColor"] = Colors.Gray;
+        //            Application.Current.Resources["FontTritaryColor"] = ColorConverter.ConvertFromString("#969284");
+        //            break;
+        //        default:
+        //            Application.Current.Resources["aPrimary"] = ColorConverter.ConvertFromString("#7160E8");
+        //            Application.Current.Resources["aSecondary"] = ColorConverter.ConvertFromString("#403582");
+        //            Application.Current.Resources["aTritary"] = ColorConverter.ConvertFromString("#A093EF");
+        //            Application.Current.Resources["bPrimary"] = ColorConverter.ConvertFromString("#303030");
+        //            Application.Current.Resources["bSecondary"] = ColorConverter.ConvertFromString("#18191C");
+        //            Application.Current.Resources["CheckMark"] = Colors.White;
+        //            Application.Current.Resources["title"] = Colors.White;
+
+        //            Application.Current.Resources["FontPrimaryColor"] = Colors.Silver;
+        //            Application.Current.Resources["FontSecondaryColor"] = Colors.Gray;
+        //            Application.Current.Resources["FontTritaryColor"] = ColorConverter.ConvertFromString("#969284");
+        //            break;
+        //    }
+        //    //System.Windows.Forms.Application.Restart();
+        //}
+
         public static string FixedName(string name)
         {
             if (!string.IsNullOrEmpty(name))

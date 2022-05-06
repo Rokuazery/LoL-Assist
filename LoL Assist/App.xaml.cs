@@ -1,5 +1,6 @@
 ﻿using System.Windows.Controls;
 using LoL_Assist_WAPP.Model;
+using System.Diagnostics;
 using System.Windows;
 using System;
 using LoLA;
@@ -15,13 +16,22 @@ namespace LoL_Assist_WAPP
         {
             Global.Config.debug = false;
             Console.Title = "LoL Assist - Debug Console";
-            ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
+             ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
 
             if (!Global.Config.debug)
             {
                 var handle = Utils.GetConsoleWindow();
                 Utils.ShowWindow(handle, Utils.SW_HIDE);
             }
+
+            var proccName = Process.GetCurrentProcess().ProcessName;
+            if (Process.GetProcessesByName(proccName).Length > 1)
+            {
+                MessageBox.Show("LoL Assist is already running!", "LoL Assist",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+                Environment.Exit(0);
+            }
+
             base.OnStartup(e);
         }
     }

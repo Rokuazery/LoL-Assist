@@ -3,7 +3,7 @@ using System;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
-    public class RelayCommand : ICommand
+    public class Command : ICommand
     {
         private readonly Action<object> execute;
         private readonly Func<object, bool> canExecute;
@@ -14,7 +14,7 @@ namespace LoL_Assist_WAPP.ViewModel
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+        public Command(Action<object> execute, Func<object, bool> canExecute = null)
         {
             this.execute = execute;
             this.canExecute = canExecute;

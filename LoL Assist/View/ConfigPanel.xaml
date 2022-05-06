@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
+             xmlns:viewModel="clr-namespace:LoL_Assist_WAPP.ViewModel" xmlns:sys="http://schemas.microsoft.com/winfx/2009/xaml"
              mc:Ignorable="d" 
-             Width="340" Height="240">
+             Width="350" Height="245">
     <Grid x:Name="MainGrid">
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
-
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
@@ -17,111 +17,130 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
-                <TextBlock Text="Settings" Foreground="White" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBlock Text="Settings" Foreground="{DynamicResource BrushTitle}" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
                 <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" Clicked="CloseBtn_Clicked" VerticalAlignment="Center" ToolTip="Back"
                 HorizontalAlignment="Right" Margin="0,0,6,0" IconGeometry="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" IconStretch="Uniform"/>
             </Grid>
 
             <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="5,5,5,5">
-                    <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Runes" HorizontalAlignment="Left"
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <ScrollViewer  Grid.Column="0" Margin="5,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Runes" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoRunes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            Automatically import Runes
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Spells"  HorizontalAlignment="Left"
+                                <CheckBox.ToolTip>
+                                    Automatically import Runes
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Spells"  HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            Automatically import Spells
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Accept"  HorizontalAlignment="Left"
+                                <CheckBox.ToolTip>
+                                    Automatically import Spells
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Accept"  HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoAccept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock MaxWidth="250" TextWrapping="Wrap">
+                                <CheckBox.ToolTip>
+                                    <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Automatically accept matchmaking in 5 seconds
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
 
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Use The Latest Patch" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Use The Latest Patch" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=UseLatestPatch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock TextWrapping="Wrap" MaxWidth="250">
+                                <CheckBox.ToolTip>
+                                    <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Use the latest champion builds for the current patch,
                                 this feature is <Bold>disabled by default</Bold> for stability.
                                 If LoL Assist <Bold>crashes while importing builds</Bold>, you
                                 can try <Bold>disabling</Bold> this feature.
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                    
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Custom Runes &amp; Spells" HorizontalAlignment="Left"
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Custom Runes &amp; Spells" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=CustomRunesSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock TextWrapping="Wrap" MaxWidth="250">
+                                <CheckBox.ToolTip>
+                                    <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Import custom made Runes &amp; Spells profile <Bold>(required 'Auto Spells' &amp; 'Auto Runes' enabled)</Bold>
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
 
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash Placement to Right" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash Placement to Right" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=FlashPlacementToRight, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock TextWrapping="Wrap" MaxWidth="250">
+                                <CheckBox.ToolTip>
+                                    <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Put Flash to the secondary slot <Bold>(required 'Auto Spells' enabled)</Bold>
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                </StackPanel>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+                        </StackPanel>
+                    </ScrollViewer>
 
-                <StackPanel Grid.Column="2" Margin="5,5,5,5">
-                    <TextBlock Text="Miscellaneous" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Logging" HorizontalAlignment="Left"
+                    <ScrollViewer Grid.Column="2" Margin="5,0,1.5,0">
+                        <StackPanel>
+                            <TextBlock Text="Miscellaneous" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Logging" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=Logging, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock MaxWidth="250" TextWrapping="Wrap">
+                                <CheckBox.ToolTip>
+                                    <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Logs error &amp; events to a .log file
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
 
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Potato Mode" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Potato Mode" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=LowSpecMode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock MaxWidth="250" TextWrapping="Wrap">
+                                <CheckBox.ToolTip>
+                                    <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Turns off animations &amp; increase update interval
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
 
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Builds Caching" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Builds Caching" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=BuildCache, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock MaxWidth="250" TextWrapping="Wrap">
+                                <CheckBox.ToolTip>
+                                    <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Saves champion's runes &amp; spells config to a json format file 
                                 
                                 <Bold>(required 'Auto Spells' or 'Auto Runes' enabled)</Bold>
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
 
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update On Startup" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
-                        <CheckBox.ToolTip>
-                            <TextBlock MaxWidth="250" TextWrapping="Wrap">
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update On Startup" HorizontalAlignment="Left"
+                    IsChecked="{Binding Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10">
+                                <CheckBox.ToolTip>
+                                    <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                Update LoL Assist on startup if available
-                            </TextBlock>
-                        </CheckBox.ToolTip>
-                    </CheckBox>
-                </StackPanel>
+                                    </TextBlock>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+
+                            <!--<StackPanel Margin="0,0,0,5">
+                                <TextBlock Text="Theme:" HorizontalAlignment="Left" Foreground="{DynamicResource FontSecondaryBrush}"/>
+                                <ComboBox Style="{DynamicResource FlatComboboxStyle}" ItemsSource="{Binding Path=ThemeList}" SelectedItem="{Binding Path=SelectedTheme}"/>
+                            </StackPanel>-->
+                            
+                            <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="clearCacheBtn"
+                            Click="clearCacheBtn_Click" Height="24"  Content="Clear Cache" Margin="0,0,0,5"/>
+
+                            <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="ShowFolderButton"
+                            Command="{Binding Path=ShowFolderInExCommand}" Height="24"  Content="Open LoLA Folder" Margin="0,0,0,5"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+                <Border Background="{DynamicResource bBrushPrimary}" Width="1"/>
             </Grid>
 
             <Grid Grid.Row="2">
@@ -140,68 +159,11 @@
                 </TextBlock>
                 </StackPanel>
 
-                <Button Margin="0,0,7,0" Grid.Column="0" x:Name="clearCacheBtn" Click="clearCacheBtn_Click"
-                Width="90" Height="23" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <ControlTemplate.Triggers>
-                                <EventTrigger RoutedEvent="MouseEnter">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-            Storyboard.TargetName="clearCacheBtnColor"
-            Storyboard.TargetProperty="Color"
-            To="#E74856" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="PreviewMouseDown">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-            Storyboard.TargetName="clearCacheBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="PreviewMouseUp">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-            Storyboard.TargetName="clearCacheBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseLeave">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-            Storyboard.TargetName="clearCacheBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </ControlTemplate.Triggers>
 
-                            <Grid>
-                                <Border CornerRadius="0,5,0,5">
-                                    <Border.Background>
-                                        <SolidColorBrush x:Name="clearCacheBtnColor" Color="{DynamicResource aSecondary}"/>
-                                    </Border.Background>
-                                </Border>
-                                <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Clear Cache" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                <DockPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,7,0">
+                    <Button Template="{DynamicResource FlatStyleButton}" Margin="5,0,0,0" Grid.Column="0" x:Name="resetConfigBtn"
+                Click="resetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset Config"/>
+                </DockPanel>
             </Grid>
         </Grid>
 

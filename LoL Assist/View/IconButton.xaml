@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="IcButton"
-             d:DesignHeight="12" d:DesignWidth="10" Width="11" Height="11" SizeChanged="UserControl_SizeChanged">
+             d:DesignHeight="12" d:DesignWidth="12" Width="11" Height="11" SizeChanged="UserControl_SizeChanged">
     <Grid x:Name="ButtonGrid" Background="Transparent" MouseLeftButtonDown="ButtonGrid_MouseLeftButtonDown" Cursor="Hand"
      MouseLeftButtonUp="ButtonGrid_MouseLeftButtonUp" MouseEnter="ButtonGrid_MouseEnter" VerticalAlignment="Center" HorizontalAlignment="Center">
         <Grid.Triggers>

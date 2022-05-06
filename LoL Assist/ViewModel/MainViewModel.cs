@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Diagnostics;
 using System.Threading;
 using LoLA.LCU.Objects;
@@ -25,122 +26,139 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private const string disconnected = "Disconnected";
         #region Miscellaneous
-        public ICommand DebugCommand { get; set; }
-        public ICommand ManualImportCommand { get; set; }
+        public ICommand DebugCommand { get; }
+        public ICommand ManualImportCommand { get; }
 
-        private Visibility _ManualImportVisibility = Visibility.Hidden;
+        private Visibility manualImportVisibility = Visibility.Collapsed;
         public Visibility ManualImportVisibility
         {
-            get { return _ManualImportVisibility; }
+            get => manualImportVisibility;
             set
             {
-                if (_ManualImportVisibility != value)
+                if (manualImportVisibility != value)
                 {
-                    _ManualImportVisibility = value;
-                    OnPropertyChanged("ManualImportVisibility");
+                    manualImportVisibility = value;
+                    OnPropertyChanged(nameof(ManualImportVisibility));
                 }
             }
         }
+
+        private SolidColorBrush connectionStatusForeground;
+
+        public SolidColorBrush ConnectionStatusForeground
+        {
+            get => connectionStatusForeground;
+            set
+            {
+                if (connectionStatusForeground != value)
+                {
+                    connectionStatusForeground = value;
+                    OnPropertyChanged(nameof(ConnectionStatusForeground));
+                }
+            }
+        }
+
         #endregion
 
         #region Champion data
-        private string _ChampionImage;
+        private string championImage;
         public string ChampionImage
         {
-            get { return _ChampionImage; }
+            get => championImage;
             set
             {
-                if (_ChampionImage != value)
+                if (championImage != value)
                 {
-                    _ChampionImage = value;
-                    OnPropertyChanged("ChampionImage");
+                    championImage = value;
+                    OnPropertyChanged(nameof(ChampionImage));
                 }
             }
         }
 
-        private string _ChampionName;
+        private string championName;
         public string ChampionName
         {
-            get { return _ChampionName; }
+            get => championName;
             set
             {
-                if (_ChampionName != value)
+                if (championName != value)
                 {
-                    _ChampionName = value;
-                    OnPropertyChanged("ChampionName");
+                    championName = value;
+                    OnPropertyChanged(nameof(ChampionName));
                 }
             }
         }
         #endregion
 
         #region Status
-        private string _GMode;
+        private string gMode;
         public string GMode
         {
-            get { return _GMode; }
+            get => gMode;
             set
             {
-                if (_GMode != value)
+                if (gMode != value)
                 {
-                    _GMode = value;
-                    OnPropertyChanged("GMode");
+                    gMode = value;
+                    OnPropertyChanged(nameof(GMode));
                 }
             }
         }
 
-        private string _WorkingStatus;
+        private string workingStatus;
         public string WorkingStatus
         {
-            get { return _WorkingStatus; }
+            get => workingStatus;
             set
             {
-                if (_WorkingStatus != value)
+                if (workingStatus != value)
                 {
-                    _WorkingStatus = value;
-                    OnPropertyChanged("WorkingStatus");
+                    workingStatus = value;
+                    OnPropertyChanged(nameof(WorkingStatus));
                 }
             }
         }
 
-        private string _ConnectionStatus = "Disconnected.";
+        private string connectionStatus = disconnected;
         public string ConnectionStatus
         {
-            get { return _ConnectionStatus; }
+            get => connectionStatus;
             set
             {
-                if (_ConnectionStatus != value)
+                if (connectionStatus != value)
                 {
-                    _ConnectionStatus = value;
-                    OnPropertyChanged("ConnectionStatus");
+                    connectionStatus = value;
+                    OnPropertyChanged(nameof(ConnectionStatus));
                 }
             }
         }
 
-        private string _ImportStatus;
+        private string importStatus;
         public string ImportStatus
         {
-            get { return _ImportStatus; }
+            get => importStatus;
             set
             {
-                if (_ImportStatus != value)
+                if (importStatus != value)
                 {
-                    _ImportStatus = value;
-                    OnPropertyChanged("ImportStatus");
+                    importStatus = value;
+                    OnPropertyChanged(nameof(ImportStatus));
                 }
             }
         }
 
-        private string _WarningStatus;
+        private string warningStatus;
         public string WarningStatus
         {
-            get { return _WarningStatus; }
+            get => warningStatus;
             set
             {
-                if (_WarningStatus != value)
+                if (warningStatus != value)
                 {
-                    _WarningStatus = value;
-                    OnPropertyChanged("WarningStatus");
+                    warningStatus = value;
+                    OnPropertyChanged(nameof(WarningStatus));
                     if (string.IsNullOrEmpty(value))
                         WarningGridVisibility = Visibility.Collapsed;
                     else
@@ -152,31 +170,31 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private Visibility _WarningGridVisibility = Visibility.Collapsed;
+        private Visibility warningGridVisibility = Visibility.Collapsed;
         public Visibility WarningGridVisibility
         {
-            get { return _WarningGridVisibility; }
+            get => warningGridVisibility;
             set
             {
-                if (_WarningGridVisibility != value)
+                if (warningGridVisibility != value)
                 {
-                    _WarningGridVisibility = value;
-                    OnPropertyChanged("WarningGridVisibility");
+                    warningGridVisibility = value;
+                    OnPropertyChanged(nameof(WarningGridVisibility));
                 }
             }
         }
 
 
-        private string _WarningCount;
+        private string warningCount;
         public string WarningCount
         {
-            get { return _WarningCount; }
+            get => warningCount;
             set
             {
-                if (_WarningCount != value)
+                if (warningCount != value)
                 {
-                    _WarningCount = value;
-                    OnPropertyChanged("WarningCount");
+                    warningCount = value;
+                    OnPropertyChanged(nameof(WarningCount));
                     if (string.IsNullOrEmpty(value))
                         WarningGridVisibility = Visibility.Collapsed;
                     else WarningGridVisibility = Visibility.Visible;
@@ -191,7 +209,7 @@ namespace LoL_Assist_WAPP.ViewModel
         private GameMode CurrentGameMode = GameMode.NONE;
         private Task<ChampionBD> CurrentChampionBuild = null; 
         private StringBuilder Warnings = new StringBuilder();
-        private string cTime
+        private string CurrentTime
         {
             get { return $"[{DateTime.Now:hh:mm:ss}]"; }
         }
@@ -199,15 +217,15 @@ namespace LoL_Assist_WAPP.ViewModel
         public MainViewModel()
         {
             GMode = $"Game Mode: {CurrentGameMode}";
-            DebugCommand = new RelayCommand(async action => { await DebugExecute(); }, o => true);
-            ManualImportCommand = new RelayCommand(ManualImportExecute, o => true);
+            DebugCommand = new Command(async action => { await DebugExecute(); });
+            ManualImportCommand = new Command(ManualImportExecute);
             InitLoLA();
         }
 
         private async void InitLoLA()
         {
-            Global.Config.debug = true;
             LogService.Clear();
+
             WorkingStatus = "Loading in configuration...";
             ConfigModel.LoadConfig();
 
@@ -237,6 +255,8 @@ namespace LoL_Assist_WAPP.ViewModel
 
             phaseMonitor.PhaseChanged += Phase_Changed;
             ResetStatus();
+
+            await LCUWrapper.GetRunePagesAsync();
         }
 
         private async void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e)
@@ -259,19 +279,17 @@ namespace LoL_Assist_WAPP.ViewModel
                     break;
                 case Phase.EndOfGame:
                     ResetStatus();
-                    var summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
-                    ConnectionStatus = $"{summonerInfo.displayName} | Lvl {summonerInfo.summonerLevel}";
+                    ConnectionStatus = await GetSummonerInfo();
                     break;
                 case Phase.InProgress:
                     ImportStatus = "Game in progress...";
-                    ManualImportVisibility = Visibility.Hidden;
+                    ManualImportVisibility = Visibility.Collapsed;
                     break;
                 case Phase.Matchmaking:
                     ClearChamp();
                     ImportStatus = "Queueing...";
                     break;
             }
-
             //var page = await LCUWrapper.GetCurrentRunePageAsync();
             //Console.WriteLine($"Name: {page.name}");
             //foreach (var pIds in page.selectedPerkIds)
@@ -291,7 +309,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     if (Process.GetProcessesByName(ProccName).Length == 0)
                     {
-                        ConnectionStatus = "Disconnected.";
+                        ConnectionStatus = disconnected;
                         IsLoLMonitoringPuased = true;
                         CheckLoL();
                     }
@@ -302,16 +320,16 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public async void CheckLoL()
         {
-            Summoner summonerInfo;
+            string summonerInfo;
             WorkingStatus = "Waiting for League to start...";
             do
             {
-                summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
+                summonerInfo = await GetSummonerInfo();
                 Thread.Sleep(ConfigModel.config.MonitoringDelay * 2);
-            } while (string.IsNullOrEmpty(summonerInfo?.displayName));
+            } while (string.IsNullOrEmpty(summonerInfo));
 
             WorkingStatus = string.Empty;
-            ConnectionStatus = $"Name: {summonerInfo.displayName} | Level: {summonerInfo.summonerLevel}";
+            ConnectionStatus = summonerInfo;
 
             IsLoLMonitoringPuased = false;
         }
@@ -326,9 +344,10 @@ namespace LoL_Assist_WAPP.ViewModel
                     Thread.Sleep(ConfigModel.config.MonitoringDelay);
 
                 IsBusy = true;
+                bool[] IsErr = { false, false };
+                Stopwatch sw = Stopwatch.StartNew();
                 try
                 {
-                    bool RB_IsSuccessFull = false, SC_IsSuccessFull = false;
                     if (ConfigModel.config.AutoRunes || ConfigModel.config.AutoSpells)
                     {
                         List<Task> tasks = new List<Task>();
@@ -336,28 +355,15 @@ namespace LoL_Assist_WAPP.ViewModel
                         ChampionName = championName;
                         var CurrentChampionId = DataConverter.ChampionNameToId(ChampionName);
 
-                        ImportStatus = $"Fetching Runes & Spells...";
+                        SetImportStatus("Fetching Runes & Spells...");
 
-                        Stopwatch sw = Stopwatch.StartNew();
                         sw.Start();
 
                         if(!ConfigModel.config.CustomRunesSpells)
                             tasks.Add(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, BuildsProvider.Metasrc));
                         else
                         {
-                            var defaultBuildConfig = new DefaultBuildConfig();
-                            if (File.Exists(defConfigPath(CurrentChampionId))) 
-                                defaultBuildConfig = getDefaultBuildConfig(CurrentChampionId);
-
-                            var buildName = defaultBuildConfig.getDefaultConfig(CurrentGameMode);
-
-                            var customBuildPath = Main.localBuild.BuildsFolder(CurrentChampionId, CurrentGameMode);
-                            var fullPath = $"{customBuildPath}\\{defaultBuildConfig.getDefaultConfig(CurrentGameMode)}";
-
-                            if (!File.Exists(fullPath))
-                                defaultBuildConfig.resetDefaultConfig(CurrentGameMode);
-
-                            writeDefaultBuildConfig(CurrentChampionId, defaultBuildConfig);
+                            var buildName = GetLocalBuildName(CurrentChampionId, CurrentGameMode);
 
                             if (buildName == ConfigModel.DefaultSource)
                                 tasks.Add(CurrentChampionBuild = Main.RequestBuildsData(CurrentChampionId, CurrentGameMode, BuildsProvider.Metasrc));
@@ -369,7 +375,7 @@ namespace LoL_Assist_WAPP.ViewModel
                         tasks.Add(Task.Run(() => ChampionImage = DataDragonWrapper.GetChampionImage(CurrentChampionId, Global.Config.dDragonPatch).Result));
                         Parallel.ForEach(tasks, task => { Task.Run(() => task).Wait(); });
 
-                        SetImportStatus($"Importing {FixedName(ChampionName)} Runes & Spells...", LogType.INFO);
+                        SetImportStatus($"Importing {FixedName(ChampionName)} Runes & Spells...");
 
                         RuneObj RB = (await CurrentChampionBuild)?.rune;
                         SpellObj SC = (await CurrentChampionBuild)?.spell;
@@ -378,50 +384,44 @@ namespace LoL_Assist_WAPP.ViewModel
                         {
                             var currentPerks = await LCUWrapper.GetCurrentRunePageAsync();
                             List<Task> ImportTasks = new List<Task>();
-                            if (ConfigModel.config.AutoRunes && RB != null)
-                            {
+                            if (ConfigModel.config.AutoRunes)
                                 ImportTasks.Add(SetRuneAsync(RB, currentPerks));
-                                RB_IsSuccessFull = true;
-                            }
 
-                            if (ConfigModel.config.AutoSpells && SC != null)
-                            {
+                            if (ConfigModel.config.AutoSpells)
                                 ImportTasks.Add(ImportSpellsAsync(SC, CurrentGameMode));
-                                SC_IsSuccessFull = true;
-                            }
 
-                            Parallel.ForEach(ImportTasks, async task => { await task; });
+                            int i = 0;
+                            Parallel.ForEach(ImportTasks, async task => { 
+                                try  {  await task; IsErr[i] = false; } 
+                                catch { IsErr[i] = true; }  i++; 
+                            });
                             currentPerks = null;
                         }
-
-                        //RB_IsSuccessFull = false;
-                        //SC_IsSuccessFull = false;
-
-                        if (!RB_IsSuccessFull)
-                            Warnings.AppendLine($"{cTime} Failed to import {Utils.FixedName(ChampionName)} Runes.");
-                        if (!SC_IsSuccessFull)
-                            Warnings.AppendLine($"{cTime} Failed to import {Utils.FixedName(ChampionName)} Spells.");
-
-                        sw.Stop();
-
-                        if (!RB_IsSuccessFull && !SC_IsSuccessFull)
-                            SetImportStatus($"Uh Oh, something went wrong.\ntry deleting {Utils.FixedName(ChampionName)} data might fix the issue", LogType.EROR);
-                        else
-                            SetImportStatus($"Runes & Spells has been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]");
-
-                        WarningStatus = Warnings.ToString().TrimEnd(Environment.NewLine.ToCharArray());
                     }
                 }
                 catch 
                 {
-                    WarningStatus = $"{cTime} Failed to import Runes & Spells.";
-                    Warnings.AppendLine($"{cTime} Failed to import {Utils.FixedName(ChampionName)} Runes & Spells.");
+                    WarningStatus = $"{CurrentTime} Failed to import Runes & Spells.";
+                    Warnings.AppendLine($"{CurrentTime} Failed to import {FixedName(ChampionName)} Runes & Spells.");
                     SetImportStatus("Uh oh, LoL Assist failed to import Runes & Spells", LogType.EROR); 
+                }
+                finally
+                {
+                    sw.Stop();
+                    if (IsErr[0])
+                        Warnings.AppendLine($"{CurrentTime} Failed to import {FixedName(ChampionName)} Runes.");
+                    else if (IsErr[1])
+                        Warnings.AppendLine($"{CurrentTime} Failed to import {FixedName(ChampionName)} Spells.");
+                    else if (IsErr[0] && IsErr[1])
+                        SetImportStatus($"Uh Oh, something went wrong.\ntry deleting {FixedName(ChampionName)} data might fix the issue", LogType.EROR);
+                    else
+                        SetImportStatus($"Runes & Spells has been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]");
+
+                    WarningStatus = Warnings.ToString().TrimEnd(Environment.NewLine.ToCharArray());
                 }
                 IsBusy = false;
             }
         }
-
 
         public async Task DebugExecute()
         {
@@ -430,17 +430,28 @@ namespace LoL_Assist_WAPP.ViewModel
         }
 
         #region Space junk
+        private async Task<string> GetSummonerInfo()
+        {
+            var summonerInfo = await LCUWrapper.GetCurrentSummonerAsync();
+            if (summonerInfo == null)
+                return null;
+            else if (summonerInfo.displayName == null
+            || summonerInfo.summonerLevel == 0)
+                return null;
+
+            return $"Name: {summonerInfo?.displayName} | Lvl {summonerInfo?.summonerLevel}";
+        }
+
         private void SetImportStatus(string msg, LogType logType = LogType.INFO)
         {
             ImportStatus = msg;
-            Utils.Log(msg, logType);
+            Log(msg, logType);
         }
 
         private void ClearChamp(bool hideManualImport = true)
         {
             ChampionImage = null;
             ChampionName = string.Empty;
-            //WarningStatus = string.Empty;
 
             if (hideManualImport)
                 ManualImportVisibility = Visibility.Hidden;
@@ -449,15 +460,13 @@ namespace LoL_Assist_WAPP.ViewModel
         private void ResetStatus()
         {
             ClearChamp();
-            ManualImportVisibility = Visibility.Hidden;
+            ManualImportVisibility = Visibility.Collapsed;
             ImportStatus = "Waiting for a game queue...";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
+        protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         #endregion
     }
 }

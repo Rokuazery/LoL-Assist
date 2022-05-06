@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
 using System.Diagnostics;
+using System.Threading;
 using LoLA.Utils.Log;
 using System.Net;
 using System;
 using LoLA;
-using System.Threading;
 
 namespace LoL_Assist_WAPP
 {

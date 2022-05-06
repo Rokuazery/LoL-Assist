@@ -97,8 +97,11 @@
     <Compile Include="BuildEditorWindow.xaml.cs">
       <DependentUpon>BuildEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\StringToImageConverter .cs" />
     <Compile Include="Model\ConfigModel.cs" />
     <Compile Include="Model\DefaultBuildConfig.cs" />
+    <Compile Include="Converters\IndexToBoolConverter.cs" />
+    <Compile Include="Converters\ItemToBoolConverter.cs" />
     <Compile Include="Model\ItemImageModel.cs" />
     <Compile Include="Model\LoLAWrapper.cs" />
     <Compile Include="Model\PathModel.cs" />
@@ -107,7 +110,8 @@
     <Compile Include="ViewModel\BuildEditorViewModel.cs" />
     <Compile Include="ViewModel\ConfigViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\Command.cs" />
+    <Compile Include="ViewModel\PatchViewModel.cs" />
     <Compile Include="View\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
     </Compile>
@@ -122,6 +126,9 @@
     </Compile>
     <Compile Include="View\MatchFoundPanel.xaml.cs">
       <DependentUpon>MatchFoundPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PatchNotesPanel.xaml.cs">
+      <DependentUpon>PatchNotesPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="BuildEditorWindow.xaml">
       <SubType>Designer</SubType>
@@ -156,6 +163,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MatchFoundPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PatchNotesPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

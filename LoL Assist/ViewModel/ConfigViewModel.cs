@@ -1,178 +1,227 @@
-﻿using LoL_Assist_WAPP.Model;
+﻿using System.Collections.Generic;
+using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
-using LoLA;
 using System.Windows.Input;
-using System.Threading.Tasks;
-using System;
+using System.Diagnostics;
+using System.IO;
+using LoLA;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
     public class ConfigViewModel : INotifyPropertyChanged
     {
         #region General
-        private bool _AutoRunes;
+        private bool autoRunes;
         public bool AutoRunes
         {
-            get { return _AutoRunes; }
+            get { return autoRunes; }
             set
             {
-                if (_AutoRunes != value)
+                if (autoRunes != value)
                 {
-                    _AutoRunes = value;
+                    autoRunes = value;
                     ConfigModel.config.AutoRunes = value;
-                    OnPropertyChanged("AutoRune");
+                    OnPropertyChanged(nameof(AutoRunes));
                 }
             }
         }
 
-        private bool _AutoSpells;
+        private bool autoSpells;
         public bool AutoSpells
         {
-            get { return _AutoSpells; }
+            get => autoSpells;
             set
             {
-                if (_AutoSpells != value)
+                if (autoSpells != value)
                 {
-                    _AutoSpells = value;
+                    autoSpells = value;
                     ConfigModel.config.AutoSpells = value;
-                    OnPropertyChanged("AutoSpells");
+                    OnPropertyChanged(nameof(AutoSpells));
                 }
             }
         }
 
-        private bool _AutoAccept;
+        private bool autoAccept;
         public bool AutoAccept
         {
-            get { return _AutoAccept; }
+            get => autoAccept;
             set
             {
-                if (_AutoAccept != value)
+                if (autoAccept != value)
                 {
-                    _AutoAccept = value;
+                    autoAccept = value;
                     ConfigModel.config.AutoAccept = value;
-                    OnPropertyChanged("AutoAccept");
+                    OnPropertyChanged(nameof(AutoAccept));
                 }
             }
         }
 
-        private bool _FlashPlacementToRight;
+        private bool flashPlaceMentToRight;
         public bool FlashPlacementToRight
         {
-            get { return _FlashPlacementToRight; }
+            get => flashPlaceMentToRight;
             set
             {
-                if (_FlashPlacementToRight != value)
+                if (flashPlaceMentToRight != value)
                 {
-                    _FlashPlacementToRight = value;
+                    flashPlaceMentToRight = value;
                     ConfigModel.config.FlashPlacementToRight = value;
-                    OnPropertyChanged("FlashPlacementToRight");
+                    OnPropertyChanged(nameof(FlashPlacementToRight));
                 }
             }
         }
 
-        private bool _UseLatestPatch;
+        private bool useLatestPatch;
         public bool UseLatestPatch
         {
-            get { return _UseLatestPatch; }
+            get => useLatestPatch;
             set
             {
-                if (_UseLatestPatch != value)
+                if (useLatestPatch != value)
                 {
-                    _UseLatestPatch = value;
+                    useLatestPatch = value;
                     ConfigModel.config.UseLatestPatch = value;
                     Global.Config.useLatestPatch = value;
-                    OnPropertyChanged("UseLatestPatch");
+                    OnPropertyChanged(nameof(UseLatestPatch));
                 }
             }
         }
 
-        private bool _CustomRunesSpells;
+        private bool customRunesSpells;
         public bool CustomRunesSpells
         {
-            get { return _CustomRunesSpells; }
+            get => customRunesSpells;
             set
             {
-                if (_CustomRunesSpells != value)
+                if (customRunesSpells != value)
                 {
-                    _CustomRunesSpells = value;
+                    customRunesSpells = value;
                     ConfigModel.config.CustomRunesSpells = value;
-                    OnPropertyChanged("CustomRunesSpells");
+                    OnPropertyChanged(nameof(CustomRunesSpells));
                 }
             }
         }
         #endregion
 
         #region Miscellaneous
-        private bool _LowSpecMode;
+        private bool lowSpecMode;
         public bool LowSpecMode
         {
-            get { return _LowSpecMode; }
+            get => lowSpecMode;
             set
             {
-                if (_LowSpecMode != value)
+                if (lowSpecMode != value)
                 {
-                    _LowSpecMode = value;
+                    lowSpecMode = value;
                     ConfigModel.config.LowSpecMode = value;
 
                     if (ConfigModel.config.LowSpecMode)
                         ConfigModel.config.MonitoringDelay = 550;
                     else ConfigModel.config.MonitoringDelay = 300;
 
-                    OnPropertyChanged("LowSpecMode");
+                    OnPropertyChanged(nameof(LowSpecMode));
                 }
             }
         }
 
-        private bool _Logging;
+        private bool logging;
         public bool Logging
         {
-            get { return _Logging; }
+            get => logging;
             set
             {
-                if (_Logging != value)
+                if (logging != value)
                 {
-                    _Logging = value;
+                    logging = value;
                     ConfigModel.config.Logging = value;
                     Global.Config.logging = value;
-                    OnPropertyChanged("Logging");
+                    OnPropertyChanged(nameof(Logging));
                 }
             }
         }
 
-        private bool _BuildCache;
+        private bool buildCache;
         public bool BuildCache
         {
-            get { return _BuildCache; }
+            get => buildCache;
             set
             {
-                if (_BuildCache != value)
+                if (buildCache != value)
                 {
-                    _BuildCache = value;
+                    buildCache = value;
                     ConfigModel.config.BuildCache = value;
                     Global.Config.caching = value;
-                    OnPropertyChanged("BuildCache");
+                    OnPropertyChanged(nameof(BuildCache));
                 }
             }
         }
 
-        private bool _UpdateOnStartup;
+        private bool updateOnStartup;
         public bool UpdateOnStartup
         {
-            get { return _UpdateOnStartup; }
+            get => updateOnStartup;
             set
             {
-                if (_UpdateOnStartup != value)
+                if (updateOnStartup != value)
                 {
-                    _UpdateOnStartup = value;
+                    updateOnStartup = value;
                     ConfigModel.config.UpdateOnStartup = value;
                     Global.Config.caching = value;
-                    OnPropertyChanged("UpdateOnStartup");
+                    OnPropertyChanged(nameof(UpdateOnStartup));
                 }
             }
         }
+
+        //private List<string> themeList = new List<string>();
+        //public List<string> ThemeList
+        //{
+        //    get => themeList;
+        //    set
+        //    {
+        //        if (themeList != value)
+        //        {
+        //            themeList = value;
+        //            OnPropertyChanged(nameof(SelectedTheme));
+        //        }
+        //    }
+        //}
+
+        //private string selectedTheme;
+        //public string SelectedTheme
+        //{
+        //    get => selectedTheme;
+        //    set
+        //    {
+        //        if (selectedTheme != value)
+        //        {
+        //            selectedTheme = value;
+        //            ConfigModel.config.Theme = value;
+        //            Utils.SwitchTheme(ConfigModel.config.Theme);
+        //            OnPropertyChanged(nameof(SelectedTheme));
+        //        }
+        //    }
+        //}
+
+        public ICommand ShowFolderInExCommand { get; }
         #endregion
 
         public ConfigViewModel()
+        {
+            //themeList.Add("Default");
+            //themeList.Add("League of Legends");
+            Update();
+
+            ShowFolderInExCommand = new Command(action => ShowFolderExecute());
+        }
+
+        private void ShowFolderExecute()
+        {
+            var path = Global.libraryFolder;
+            if(Directory.Exists(path))
+                Process.Start(path);
+        }
+
+        public void Update()
         {
             AutoRunes = ConfigModel.config.AutoRunes;
             AutoSpells = ConfigModel.config.AutoSpells;
@@ -188,8 +237,22 @@ namespace LoL_Assist_WAPP.ViewModel
             BuildCache = ConfigModel.config.BuildCache;
             Global.Config.caching = BuildCache;
             UpdateOnStartup = ConfigModel.config.UpdateOnStartup;
-        }
 
+            //bool isThemeFound = false;
+            //foreach (var item in themeList)
+            //{
+            //    if (ConfigModel.config.Theme.Equals(item))
+            //    {
+            //        isThemeFound = true;
+            //        break;
+            //    }
+            //}
+
+            //if(isThemeFound)
+            //    SelectedTheme = ConfigModel.config.Theme;
+
+            //Utils.SwitchTheme(ConfigModel.config.Theme);
+        }
         #region Space junk
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

@@ -10,6 +10,7 @@ namespace LoL_Assist_WAPP.Model
     public static class ConfigModel
     {
         public static Config config = new Config();
+        public static string PatchNotes { get; set; }
         public const string DefaultSource = "Metasrc.com";
         public static Thickness marginOpen = new Thickness(0, 0, 0, 0);
         public static Thickness marginClose = new Thickness(465, 0, 0, 0);
@@ -32,6 +33,8 @@ namespace LoL_Assist_WAPP.Model
             public bool LowSpecMode { get; set; } = false;
             public bool BuildCache { get; set; } = true;
             public bool UpdateOnStartup { get; set; } = true;
+            //public string Theme { get; set; } = "Default";
+            public bool DoNotShowPatch { get; set; } = false;
             #endregion
         }
 

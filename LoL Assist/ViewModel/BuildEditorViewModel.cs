@@ -23,9 +23,9 @@ namespace LoL_Assist_WAPP.ViewModel
     {
 
         #region Commands
-        public ICommand SaveCommand { get; set; }
-        public ICommand SetAsDefaultCommand { get; set; }
-        public ICommand ClearDefaultSourceCommand { get; set; }
+        public ICommand SaveCommand { get; }
+        public ICommand SetAsDefaultCommand { get; }
+        public ICommand ClearDefaultSourceCommand { get; }
 
         private GameMode gm()
         {
@@ -41,7 +41,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     var gameMode = gm();
                     defaultBuildConfig.setDefaultConfig(gameMode, SelectedBuildName);
                     writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                    slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                    SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
                 }
             }
             catch { /*ex*/ }
@@ -71,7 +71,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     defaultBuildConfig.resetDefaultConfig(gameMode);
 
                 writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
             }
         }
 
@@ -82,7 +82,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 var gameMode = gm();
                 defaultBuildConfig.resetDefaultConfig(gameMode);
                 writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
             }
         }
 
@@ -91,7 +91,6 @@ namespace LoL_Assist_WAPP.ViewModel
             if(!string.IsNullOrEmpty(FileName) && SelectedChampion != null && SelectedGameMode != null)
             {
                 var sGM = gm();
-
                 var filePath = Main.localBuild.DataPath(SelectedChampionId, FileName, sGM);
 
                 if (File.Exists(filePath))
@@ -123,164 +122,165 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region Needed
-        private ObservableCollection<string> _ChampionList = new ObservableCollection<string>();
+        private ObservableCollection<string> championList = new ObservableCollection<string>();
         public ObservableCollection<string> ChampionList
         {
-            get { return _ChampionList; }
+            get => championList;
             set
             {
-                if (_ChampionList != value)
+                if (championList != value)
                 {
-                    _ChampionList = value;
-                    OnPropertyChanged("ChampionList");
+                    championList = value;
+                    OnPropertyChanged(nameof(ChampionList));
                 }
             }
         }
 
-        private ObservableCollection<string> _GameModes = new ObservableCollection<string>();
+        private ObservableCollection<string> gameModes = new ObservableCollection<string>();
         public ObservableCollection<string> GameModes
         {
-            get { return _GameModes; }
+            get => gameModes;
             set
             {
-                if (_GameModes != value)
+                if (gameModes != value)
                 {
-                    _GameModes = value;
-                    OnPropertyChanged("GameModes");
+                    gameModes = value;
+                    OnPropertyChanged(nameof(GameModes));
                 }
             }
         }
 
-        private string _SelectedChampion;
+        private string selectedChampion;
         public string SelectedChampion
         {
-            get { return _SelectedChampion; }
+            get => selectedChampion;
             set
             {
-                if (_SelectedChampion != value)
+                if (selectedChampion != value)
                 {
-                    slChampion = value;
-                    if (value == null || value == string.Empty)
-                        slChampion = "None";
+                    SlChampion = value;
+                    selectedChampion = value;
 
-                    _SelectedChampion = value;
-                    OnPropertyChanged("SelectedChampion");
+                    if (value == null || value == string.Empty)
+                        SlChampion = "None";
+
+
+                    OnPropertyChanged(nameof(SelectedChampion));
                     Data_Changed();
                 }
             }
         }
 
-        private string _SelectedGameMode;
+        private string selectedGameMode;
         public string SelectedGameMode
         {
-            get { return _SelectedGameMode; }
+            get => selectedGameMode;
             set
             {
-                if (_SelectedGameMode != value)
+                if (selectedGameMode != value)
                 {
-                    slGameMode = value;
-                    _SelectedGameMode = value;
-                    OnPropertyChanged("SelectedGameMode");
+                    SlGameMode = value;
+                    selectedGameMode = value;
+                    OnPropertyChanged(nameof(SelectedGameMode));
                     Data_Changed();
                 }
             }
         }
 
-        private List<string> _BuildsName = new List<string>();
+        private List<string> buildsName = new List<string>();
         public List<string> BuildsName
         {
-            get { return _BuildsName; }
+            get => buildsName;
             set
             {
-                if (_BuildsName != value)
+                if (buildsName != value)
                 {
-                    _BuildsName = value;
-                    OnPropertyChanged("BuildsName");
+                    buildsName = value;
+                    OnPropertyChanged(nameof(BuildsName));
                 }
             }
         }
 
-        private string _SelectedBuildName;
+        private string selectedBuildName;
         public string SelectedBuildName
         {
-            get { return _SelectedBuildName; }
+            get => selectedBuildName;
             set
             {
-                if (_SelectedBuildName != value)
+                if (selectedBuildName != value)
                 {
-                    _SelectedBuildName = value;
-                    OnPropertyChanged("SelectedBuildName");
-                    LoadBuild();
+                    selectedBuildName = value;
+                    OnPropertyChanged(nameof(SelectedBuildName));
+                    FetchBuild();
                 }
             }
         }
         #endregion
 
         #region Editable
-        private string _FileName;
+        private string fileName;
         public string FileName
         {
-            get { return _FileName; }
+            get => fileName;
             set
             {
-                if (_FileName != value)
+                if (fileName != value)
                 {
-                    _FileName = value;
-                    OnPropertyChanged("FileName");
-
+                    fileName = value;
+                    OnPropertyChanged(nameof(FileName));
                     IsChanged();
                 }
             }
         }
 
         #region Spells
-        public List<ItemImageModel> _SpellList = new List<ItemImageModel>();
+        public List<ItemImageModel> spellList = new List<ItemImageModel>();
         public List<ItemImageModel> SpellList
         {
-            get { return _SpellList; }
+            get => spellList;
             set
             {
-                if (_SpellList != value)
+                if (spellList != value)
                 {
-                    _SpellList = value;
-                    OnPropertyChanged("SpellList");
+                    spellList = value;
+                    OnPropertyChanged(nameof(SpellList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedSpell1;
+        private ItemImageModel selectedSpell1;
         public ItemImageModel SelectedSpell1
         {
-            get { return _SelectedSpell1; }
+            get => selectedSpell1;
             set    
             {
-                if (_SelectedSpell1 != value)
+                if (selectedSpell1 != value)
                 {
-                    _SelectedSpell1 = value;
+                    selectedSpell1 = value;
                     SelectedSpell2 = RemoveDup(SelectedSpell1, SelectedSpell2);
                     if(value != null)
                         SelectedBuild.spell.Spell0 = Dictionaries.SpellNameToSpellID[value.Text];
-                    OnPropertyChanged("SelectedSpell1");
 
+                    OnPropertyChanged(nameof(SelectedSpell1));
                     IsChanged();
                 }
             }
         }
 
-        private ItemImageModel _SelectedSpell2;
+        private ItemImageModel selectedSpell2;
         public ItemImageModel SelectedSpell2
         {
-            get { return _SelectedSpell2; }
+            get => selectedSpell2;
             set
             {
-                if (_SelectedSpell2 != value)
+                if (selectedSpell2 != value)
                 {
-                    _SelectedSpell2 = value;
+                    selectedSpell2 = value;
                     SelectedSpell1 = RemoveDup(SelectedSpell2, SelectedSpell1);
                     if(value != null)
                         SelectedBuild.spell.Spell1 = Dictionaries.SpellNameToSpellID[value.Text];
-                    OnPropertyChanged("SelectedSpell2");
 
+                    OnPropertyChanged(nameof(SelectedSpell2));
                     IsChanged();
                 }
             }
@@ -288,369 +288,368 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region Perks
-        private string _RuneName;
+        private string runeName;
         public string RuneName
         {
-            get { return _RuneName; }
+            get => runeName;
             set
             {
-                if (_RuneName != value)
+                if (runeName != value)
                 {
-                    _RuneName = value;
+                    runeName = value;
 
                     if(value != null)
                         SelectedBuild.rune.Name = value;
 
-                    OnPropertyChanged("RuneName");
-
+                    OnPropertyChanged(nameof(RuneName));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _PathList = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> pathList = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> PathList
         {
-            get { return _PathList; }
+            get => pathList;
             set
             {
-                if (_PathList != value)
+                if (pathList != value)
                 {
-                    _PathList = value;
-                    OnPropertyChanged("PathList");
+                    pathList = value;
+                    OnPropertyChanged(nameof(PathList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPath1;
+        private ItemImageModel selectedPath1;
         public ItemImageModel SelectedPath1
         {
-            get { return _SelectedPath1; }
+            get => selectedPath1;
             set
             {
-                if (_SelectedPath1 != value)
+                if (selectedPath1 != value)
                 {
-                    _SelectedPath1 = value;
+                    selectedPath1 = value;
                     SelectedPath2 = RemoveDup(SelectedPath1, SelectedPath2);
                     if(value != null)
                         SelectedBuild.rune.Path0 = DataConverter.PathNameToId(value.Text);
-                    OnPropertyChanged("SelectedPath1");
-                    Path1_Changed();
 
+                    OnPropertyChanged(nameof(SelectedPath1));
+                    Path1_Changed();
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _KeystoneList = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> keystoneList = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> KeystoneList
         {
-            get { return _KeystoneList; }
+            get => keystoneList;
             set
             {
-                if (_KeystoneList != value)
+                if (keystoneList != value)
                 {
-                    _KeystoneList = value;
-                    OnPropertyChanged("KeystoneList");
+                    keystoneList = value;
+                    OnPropertyChanged(nameof(KeystoneList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedKeystone;
+        private ItemImageModel selectedKeystone;
         public ItemImageModel SelectedKeystone
         {
-            get { return _SelectedKeystone; }
+            get => selectedKeystone;
             set
             {
-                if (_SelectedKeystone != value)
+                if (selectedKeystone != value)
                 {
-                    _SelectedKeystone = value;
+                    selectedKeystone = value;
                     if(value != null)
                         SelectedBuild.rune.Keystone = DataConverter.PerkNameToId(value.Text);
-                    OnPropertyChanged("SelectedKeystone");
 
+                    OnPropertyChanged(nameof(SelectedKeystone));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _Perk1List = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> perk1List = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Perk1List
         {
-            get { return _Perk1List; }
+            get => perk1List;
             set
             {
-                if (_Perk1List != value)
+                if (perk1List != value)
                 {
-                    _Perk1List = value;
-                    OnPropertyChanged("Perk1List");
+                    perk1List = value;
+                    OnPropertyChanged(nameof(Perk1List));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPerk1;
+        private ItemImageModel selectedPerk1;
         public ItemImageModel SelectedPerk1
         {
-            get { return _SelectedPerk1; }
+            get => selectedPerk1;
             set
             {
-                if (_SelectedPerk1 != value)
+                if (selectedPerk1 != value)
                 {
-                    _SelectedPerk1 = value;
+                    selectedPerk1 = value;
                     if(value!=null)
                         SelectedBuild.rune.Slot1 = DataConverter.PerkNameToId(value.Text);
-                    OnPropertyChanged("SelectedPerk1");
 
+                    OnPropertyChanged(nameof(SelectedPerk1));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _Perk2List = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> perk2List = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Perk2List
         {
-            get { return _Perk2List; }
+            get => perk2List;
             set
             {
-                if (_Perk2List != value)
+                if (perk2List != value)
                 {
-                    _Perk2List = value;
-                    OnPropertyChanged("Perk2List");
+                    perk2List = value;
+                    OnPropertyChanged(nameof(Perk2List));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPerk2;
+        private ItemImageModel selectedPerk2;
         public ItemImageModel SelectedPerk2
         {
-            get { return _SelectedPerk2; }
+            get => selectedPerk2;
             set
             {
-                if (_SelectedPerk2 != value)
+                if (selectedPerk2 != value)
                 {
-                    _SelectedPerk2 = value;
+                    selectedPerk2 = value;
                     if(value != null)
                         SelectedBuild.rune.Slot2 = DataConverter.PerkNameToId(value.Text);
-                    OnPropertyChanged("SelectedPerk2");
 
+                    OnPropertyChanged(nameof(SelectedPerk2));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _Perk3List = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> perk3List = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Perk3List
         {
-            get { return _Perk3List; }
+            get => perk3List;
             set
             {
-                if (_Perk3List != value)
+                if (perk3List != value)
                 {
-                    _Perk3List = value;
-                    OnPropertyChanged("Perk3List");
+                    perk3List = value;
+                    OnPropertyChanged(nameof(Perk3List));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPerk3;
+        private ItemImageModel selectedPerk3;
         public ItemImageModel SelectedPerk3
         {
-            get { return _SelectedPerk3; }
+            get => selectedPerk3;
             set
             {
-                if (_SelectedPerk3 != value)
+                if (selectedPerk3 != value)
                 {
-                    _SelectedPerk3 = value;
+                    selectedPerk3 = value;
                     if(value!=null)
                         SelectedBuild.rune.Slot3 = DataConverter.PerkNameToId(value.Text);
-                    OnPropertyChanged("SelectedPerk3");
 
+                    OnPropertyChanged(nameof(SelectedPerk3));
                     IsChanged();
                 }
             }
         }
 
-        private ItemImageModel _SelectedPath2;
+        private ItemImageModel selectedPath2;
         public ItemImageModel SelectedPath2
         {
-            get { return _SelectedPath2; }
+            get => selectedPath2;
             set
             {
-                if (_SelectedPath2 != value)
+                if (selectedPath2 != value)
                 {
-                    _SelectedPath2 = value;
+                    selectedPath2 = value;
                     if(value != null)
                         SelectedBuild.rune.Path1 = DataConverter.PathNameToId(value.Text);
                     SelectedPath1 = RemoveDup(SelectedPath2, SelectedPath1);
-                    OnPropertyChanged("SelectedPath2");
-                    Path2_Changed();
 
+                    OnPropertyChanged(nameof(SelectedPath2));
+                    Path2_Changed();
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _Perk4List = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> perk4List = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Perk4List
         {
-            get { return _Perk4List; }
+            get => perk4List;
             set
             {
-                if (_Perk4List != value)
+                if (perk4List != value)
                 {
-                    _Perk4List = value;
-                    OnPropertyChanged("Perk4List");
+                    perk4List = value;
+                    OnPropertyChanged(nameof(Perk4List));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPerk4;
+        private ItemImageModel selectedPerk4;
         public ItemImageModel SelectedPerk4
         {
-            get { return _SelectedPerk4; }
+            get => selectedPerk4;
             set
             {
-                if (_SelectedPerk4 != value)
+                if (selectedPerk4 != value)
                 {
-                    _SelectedPerk4 = value;
+                    selectedPerk4 = value;
                     if(value!=null)
                         SelectedBuild.rune.Slot4 = DataConverter.PerkNameToId(value.Text);
                     SelectedPerk5 = RemoveDup(value, SelectedPerk5);
-                    OnPropertyChanged("SelectedPerk4");
-                    Perk4_Changed();
 
+                    OnPropertyChanged(nameof(SelectedPerk4));
+                    Perk4_Changed();
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _Perk5List = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> perk5List = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Perk5List
         {
-            get { return _Perk5List; }
+            get => perk5List;
             set
             {
-                if (_Perk5List != value)
+                if (perk5List != value)
                 {
-                    _Perk5List = value;
-                    OnPropertyChanged("Perk5List");
+                    perk5List = value;
+                    OnPropertyChanged(nameof(Perk5List));
                 }
             }
         }
 
-        private ItemImageModel _SelectedPerk5;
+        private ItemImageModel selectedPerk5;
         public ItemImageModel SelectedPerk5
         {
-            get { return _SelectedPerk5; }
+            get => selectedPerk5;
             set
             {
-                if (_SelectedPerk5 != value)
+                if (selectedPerk5 != value)
                 {
-                    _SelectedPerk5 = value;
+                    selectedPerk5 = value;
                     if(value != null)
                         SelectedBuild.rune.Slot5 = DataConverter.PerkNameToId(value.Text);
                     SelectedPerk4 = RemoveDup(value, SelectedPerk4);
-                    OnPropertyChanged("SelectedPerk5");
 
+                    OnPropertyChanged(nameof(SelectedPerk5));
                     IsChanged();
                 }
             }
         }
         #region Shards
-        public ObservableCollection<ItemImageModel> _OffenseList = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> offenseList = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> OffenseList
         {
-            get { return _OffenseList; }
+            get => offenseList;
             set
             {
-                if (_OffenseList != value)
+                if (offenseList != value)
                 {
-                    _OffenseList = value;
-                    OnPropertyChanged("OffenseList");
+                    offenseList = value;
+                    OnPropertyChanged(nameof(OffenseList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedOffense;
+        private ItemImageModel selectedOffense;
         public ItemImageModel SelectedOffense
         {
-            get { return _SelectedOffense; }
+            get => selectedOffense;
             set
             {
-                if (_SelectedOffense != value)
+                if (selectedOffense != value)
                 {
-                    _SelectedOffense = value;
+                    selectedOffense = value;
                     if (value != null)
                         SelectedBuild.rune.Shard0 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedOffense, SelectedPerk4);
-                    OnPropertyChanged("SelectedOffense");
 
+                    OnPropertyChanged(nameof(SelectedOffense));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _FlexList = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> flexList = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> FlexList
         {
-            get { return _FlexList; }
+            get => flexList;
             set
             {
-                if (_FlexList != value)
+                if (flexList != value)
                 {
-                    _FlexList = value;
-                    OnPropertyChanged("FlexList");
+                    flexList = value;
+                    OnPropertyChanged(nameof(FlexList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedFlex;
+        private ItemImageModel selectedFlex;
         public ItemImageModel SelectedFlex
         {
-            get { return _SelectedFlex; }
+            get => selectedFlex;
             set
             {
-                if (_SelectedFlex != value)
+                if (selectedFlex != value)
                 {
-                    _SelectedFlex = value;
+                    selectedFlex = value;
                     if (value != null)
                         SelectedBuild.rune.Shard1 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedFlex, SelectedPerk4);
-                    OnPropertyChanged("SelectedFlex");
 
+                    OnPropertyChanged(nameof(SelectedFlex));
                     IsChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> _DefenseList = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> defenseList = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> DefenseList
         {
-            get { return _DefenseList; }
+            get => defenseList;
             set
             {
-                if (_DefenseList != value)
+                if (defenseList != value)
                 {
-                    _DefenseList = value;
-                    OnPropertyChanged("DefenseList");
+                    defenseList = value;
+                    OnPropertyChanged(nameof(DefenseList));
                 }
             }
         }
 
-        private ItemImageModel _SelectedDefense;
+        private ItemImageModel selectedDefense;
         public ItemImageModel SelectedDefense
         {
-            get { return _SelectedDefense; }
+            get => selectedDefense;
             set
             {
-                if (_SelectedDefense != value)
+                if (selectedDefense != value)
                 {
-                    _SelectedDefense = value;
+                    selectedDefense = value;
                     if (value != null)
                         SelectedBuild.rune.Shard2 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedDefense, SelectedPerk4);
-                    OnPropertyChanged("SelectedDefense");
 
+                    OnPropertyChanged(nameof(SelectedDefense));
                     IsChanged();
                 }
             }
@@ -662,74 +661,83 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region SmallInfo
-        private string _WarningTxt;
+        private string warningTxt;
         public string WarningTxt
         {
-            get { return _WarningTxt; }
+            get => warningTxt;
             set
             {
-                if (_WarningTxt != value)
+                if (warningTxt != value)
                 {
-                    _WarningTxt = value;
-                    OnPropertyChanged("WarningTxt");
+                    warningTxt = value;
+                    OnPropertyChanged(nameof(WarningTxt));
                 }
             }
         }
 
-        private string _slChampion = "None";
-        public string slChampion
+        private string slChampion = "None";
+        public string SlChampion
         {
-            get { return _slChampion; }
+            get => slChampion;
             set
             {
-                if (_slChampion != value)
+                if (slChampion != value)
                 {
-                    _slChampion = value;
-                    OnPropertyChanged("slChampion");
+                    if (string.IsNullOrEmpty(value))
+                        slChampion = "None";
+                    else
+                        slChampion = value;
+                    OnPropertyChanged(nameof(SlChampion));
                 }
             }
         }
 
-        private string _slGameMode = "None";
-        public string slGameMode
+        private string slGameMode = "None";
+        public string SlGameMode
         {
-            get { return _slGameMode; }
+            get => slGameMode;
             set
             {
-                if (_slGameMode != value)
+                if (slGameMode != value)
                 {
-                    _slGameMode = value;
-                    OnPropertyChanged("slGameMode");
+                    if (string.IsNullOrEmpty(value))
+                        slGameMode = "None";
+                    else
+                        slGameMode = value;
+                    OnPropertyChanged(nameof(SlGameMode));
                 }
             }
         }
 
 
-        private string _slDefaultConfig = "None";
-        public string slDefaultConfig
+        private string slDefaultConfig = "None";
+        public string SlDefaultConfig
         {
-            get { return _slDefaultConfig; }
+            get => slDefaultConfig;
             set
             {
-                if (_slDefaultConfig != value)
+                if (slDefaultConfig != value)
                 {
-                    _slDefaultConfig = value;
-                    OnPropertyChanged("slDefaultConfig");
+                    if (string.IsNullOrEmpty(value))
+                        slDefaultConfig = "None";
+                    else
+                        slDefaultConfig = value;
+                    OnPropertyChanged(nameof(SlDefaultConfig));
                 }
             }
         }
 
-        private string _saveInfo;
+        private string saveInfo;
 
-        public string saveInfo
+        public string SaveInfo
         {
-            get { return _saveInfo; }
+            get => saveInfo;
             set
             {
-                if (_saveInfo != value)
+                if (saveInfo != value)
                 {
-                    _saveInfo = value;
-                    OnPropertyChanged("saveInfo");
+                    saveInfo = value;
+                    OnPropertyChanged(nameof(SaveInfo));
                 }
             }
         }
@@ -747,10 +755,9 @@ namespace LoL_Assist_WAPP.ViewModel
             Init();
             PathModel.Init();
 
-            SaveCommand = new RelayCommand(action => { SaveConfigExecute(); }, o => true);
-            //DeleteCommand = new RelayCommand(action => { DeleteConfigExecute(); }, o => true);
-            SetAsDefaultCommand = new RelayCommand(action => { SetAsDefaultExecute(); }, o => true);
-            ClearDefaultSourceCommand = new RelayCommand(action => { ClearDefaultSourceExecute(); }, o => true);
+            SaveCommand = new Command(action => { SaveConfigExecute(); });
+            SetAsDefaultCommand = new Command(action => { SetAsDefaultExecute(); });
+            ClearDefaultSourceCommand = new Command(action => { ClearDefaultSourceExecute(); });
         }
 
         public async void Init()
@@ -792,7 +799,6 @@ namespace LoL_Assist_WAPP.ViewModel
             && !string.IsNullOrEmpty(SelectedGameMode))
             {
                 saveInfo = null;
-
                 var gameMode = gm();
 
                 _buildsName.Add(CreateNewKey);
@@ -809,7 +815,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 if(!File.Exists(fullPath))
                     defaultBuildConfig.resetDefaultConfig(gameMode);
 
-                slDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
 
                 await Task.Run(() => {
                     foreach (var path in Main.localBuild.GetBuildFiles(SelectedChampionId, gameMode))
@@ -829,9 +835,17 @@ namespace LoL_Assist_WAPP.ViewModel
                     BuildsName = _buildsName;
                 });
             }
+            else
+            {
+                SelectedGameMode = null;
+                SelectedBuild = null;
+                BuildsName = null;
+                saveInfo = null;
+                ClearSmallInfo();
+            }
         }
 
-        private async void LoadBuild()
+        public async void FetchBuild()
         {
             if(!string.IsNullOrEmpty(SelectedBuildName) 
             && !SelectedBuildName.Equals(CreateNewKey))
@@ -865,7 +879,6 @@ namespace LoL_Assist_WAPP.ViewModel
                 saveInfo = "New* Unsaved";
             }
             else ClearProfile();
-
         }
 
         private void Path1_Changed() 
@@ -1085,6 +1098,13 @@ namespace LoL_Assist_WAPP.ViewModel
                 else return s2;
             }
             else return s2;
+        }
+
+        public void ClearSmallInfo()
+        {
+            SlDefaultConfig = null;
+            SlGameMode = null;
+            SlChampion = null;
         }
 
         public void ClearProfile()

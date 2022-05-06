@@ -16,7 +16,7 @@
 
         <Grid Grid.Row="0">
             <StackPanel Margin="0,5,0,0">
-                <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="White" Margin="0,0,0,5"/>
+                <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="{DynamicResource BrushTitle}" Margin="0,0,0,5"/>
                 <TextBlock x:Name="aaStatus" Text="Auto Accept In 5s" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top"
                 Foreground="{DynamicResource FontSecondaryBrush}" FontSize="11" />
                 <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" x:Name="pBar"/>
@@ -31,129 +31,11 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Margin="10" Grid.Column="0" x:Name="AcceptBtn" Click="AcceptBtn_Click">
-                <Button.Template>
-                    <ControlTemplate>
-                        <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="MouseEnter">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor"
-            Storyboard.TargetProperty="Color"
-            To="#29AB87" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="PreviewMouseDown">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="PreviewMouseUp">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="MouseLeave">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="acceptBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </ControlTemplate.Triggers>
+            <Button Template="{DynamicResource FlatStyleButton}" Content="Accept"
+            Margin="10" Grid.Column="0" x:Name="AcceptBtn" Click="AcceptBtn_Click"/>
 
-                        <Grid>
-                            <Border CornerRadius="0,5,0,5">
-                                <Border.Background>
-                                    <SolidColorBrush x:Name="acceptBtnColor" Color="{DynamicResource aSecondary}"/>
-                                </Border.Background>
-                            </Border>
-                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Accept" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-            <Button Margin="10" Grid.Column="1" x:Name="DeclineBtn" Click="DeclineBtn_Click">
-                <Button.Template>
-                    <ControlTemplate>
-                        <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="MouseEnter">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="declineBtnColor"
-            Storyboard.TargetProperty="Color"
-            To="#E74856" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="PreviewMouseDown">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aPrimary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="PreviewMouseUp">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.1" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="MouseLeave">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-            Storyboard.TargetName="declineBtnColor" 
-            Storyboard.TargetProperty="Color"
-            To="{StaticResource aSecondary}" Duration="0:0:0.2" 
-            AutoReverse="False"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </ControlTemplate.Triggers>
-
-                        <Grid>
-                            <Border CornerRadius="0,5,0,5">
-                                <Border.Background>
-                                    <SolidColorBrush x:Name="declineBtnColor" Color="{DynamicResource aSecondary}"/>
-                                </Border.Background>
-                            </Border>
-                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Decline" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <Button Template="{DynamicResource FlatStyleButton}" Content="Decline"
+            Margin="10" Grid.Column="1" x:Name="DeclineBtn" Click="DeclineBtn_Click"/>
         </Grid>
     </Grid>
 </UserControl>

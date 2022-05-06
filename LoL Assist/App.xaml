@@ -1,29 +1,38 @@
 ﻿<Application x:Class="LoL_Assist_WAPP.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:LoL_Assist_WAPP" xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
+             xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
+             xmlns:converters="clr-namespace:LoL_Assist_WAPP.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <BitmapImage x:Key="LoLAIcon" UriSource="Resources/Untitled.png"/>
         <BitmapImage x:Key="GithubIcon" UriSource="Resources/GitHub-Mark-Light-32px.png"/>
+        <converters:ItemToBoolConverter x:Key="ItemToBoolConverter"/>
+        <converters:IndexToBoolConverter x:Key="IndexToBoolConverter"/>
+        <converters:StringToImageConverter x:Key="StringToImageConverter"/>
 
         <Color x:Key="aPrimary">#7160E8</Color>
         <Color x:Key="aSecondary">#403582</Color>
+        <Color x:Key="aTritary">#A093EF</Color>
         <Color x:Key="bPrimary">#303030</Color>
         <Color x:Key="bSecondary">#18191C</Color>
-
-        <SolidColorBrush x:Key="aBrushPrimary" Color="{DynamicResource aPrimary}"/>
-        <SolidColorBrush x:Key="aBrushSecondary" Color="{DynamicResource aSecondary}"/>
-        <SolidColorBrush x:Key="bBrushPrimary" Color="{DynamicResource bPrimary}"/>
-        <SolidColorBrush x:Key="bBrushSecondary" Color="{DynamicResource bSecondary}"/>
+        <Color x:Key="CheckMark">White</Color>
+        <Color x:Key="title">white</Color>
 
         <Color x:Key="FontPrimaryColor">Silver</Color>
-        <SolidColorBrush x:Key="FontPrimaryBrush" Color="{DynamicResource FontPrimaryColor}"/>
-
         <Color x:Key="FontSecondaryColor">Gray</Color>
-        <SolidColorBrush x:Key="FontSecondaryBrush" Color="{DynamicResource FontSecondaryColor}"/>
-
         <Color x:Key="FontTritaryColor">#969284</Color>
+
+        <SolidColorBrush x:Key="BrushTitle" Color="{DynamicResource title}"/>
+        <SolidColorBrush x:Key="aBrushPrimary" Color="{DynamicResource aPrimary}"/>
+        <SolidColorBrush x:Key="aBrushSecondary" Color="{DynamicResource aSecondary}"/>
+        <SolidColorBrush x:Key="aBrushTritary" Color="{DynamicResource aTritary}"/>
+        <SolidColorBrush x:Key="bBrushPrimary" Color="{DynamicResource bPrimary}"/>
+        <SolidColorBrush x:Key="bBrushSecondary" Color="{DynamicResource bSecondary}"/>
+        <SolidColorBrush x:Key="BrushCheckMark" Color="{DynamicResource CheckMark}"/>
+
+        <SolidColorBrush x:Key="FontPrimaryBrush" Color="{DynamicResource FontPrimaryColor}"/>
+        <SolidColorBrush x:Key="FontSecondaryBrush" Color="{DynamicResource FontSecondaryColor}"/>
         <SolidColorBrush x:Key="FontTritaryBrush" Color="{DynamicResource FontTritaryColor}"/>
 
         <LinearGradientBrush x:Key="BorderGradientBrush" StartPoint="0,0" EndPoint="0,1">
@@ -33,7 +42,7 @@
 
         <LinearGradientBrush x:Key="SelectedBorderBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientStop x:Name="BorderBrushTop" Color="{DynamicResource aPrimary}" Offset="0"/>
-            <GradientStop x:Name="BorderBrushBot" Color="#A093EF" Offset="1"/>
+            <GradientStop x:Name="BorderBrushBot" Color="{DynamicResource aTritary}" Offset="1"/>
         </LinearGradientBrush>
 
         <Style x:Key="FocusVisual">
@@ -45,11 +54,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <LinearGradientBrush x:Key="CheckboxSelectedBorder" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="{DynamicResource aPrimary}" Offset="0"/>
-            <GradientStop Color="#A093EF" Offset="1"/>
-        </LinearGradientBrush>
 
         <!--#region Styles-->
         <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
@@ -65,7 +69,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="Tag" Value="Horizontal">
-                                <Setter TargetName="Rectangle1" Property="Width" Value="15"/>
+                                <Setter TargetName="Rectangle1" Property="Width" Value="10"/>
                                 <Setter TargetName="Rectangle1" Property="Height" Value="7"/>
                             </Trigger>
                             <Trigger Property="IsMouseCaptured" Value="true">
@@ -82,11 +86,11 @@
             <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
             <Setter Property="Foreground" Value="Transparent"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Width" Value="15"/>
+            <Setter Property="Width" Value="10"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollBar}">
-                        <Grid x:Name="GridRoot" Width="15" HorizontalAlignment="Right" Background="{DynamicResource bBrushSecondary}">
+                        <Grid x:Name="GridRoot" Width="10" HorizontalAlignment="Right" Background="{DynamicResource bBrushSecondary}">
                             <Track x:Name="PART_Track" IsDirectionReversed="true" Focusable="False">
                                 <Track.Thumb>
                                     <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" 
@@ -124,7 +128,7 @@
                                         <RotateTransform Angle="-90"/>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Width" Value="Auto"/>
+                                <Setter Property="Width" Value="auto"/>
                                 <Setter Property="Height" Value="12"/>
                                 <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
                                 <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand"/>
@@ -211,6 +215,57 @@
             </Setter>
         </Style>
 
+        <Style x:Key="FlatBtnColorStyle0">
+            <Setter Property="Control.Foreground" Value="{DynamicResource FontPrimaryBrush}"/>
+            <Setter Property="Control.FontWeight" Value="DemiBold"/>
+        </Style>
+
+        <Style x:Key="FlatBtnColorStyle1">
+            <Setter Property="Control.Foreground" Value="{DynamicResource bBrushSecondary}"/>
+            <Setter Property="Control.FontWeight" Value="DemiBold"/>
+        </Style>
+
+        <ControlTemplate TargetType="{x:Type Button}" x:Key="FlatStyleButton">
+            <Grid>
+                <Border CornerRadius="0,5,0,5" x:Name="btnBorder">
+                    <Border.Background>
+                        <SolidColorBrush x:Name="setBtnColor" Color="{DynamicResource aSecondary}"/>
+                    </Border.Background>
+                    <ContentPresenter x:Name="BtnContent" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource FlatBtnColorStyle0}"/>
+                </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" TargetName="btnBorder" Value="0.56"/>
+                </Trigger>
+
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="BtnContent" Property="Style" Value="{DynamicResource FlatBtnColorStyle1}"/>
+                </Trigger>
+                <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation AutoReverse="False" Duration="0:0:0.2" Storyboard.TargetName="setBtnColor" To="{StaticResource aPrimary}" Storyboard.TargetProperty="Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.PreviewMouseDown">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation AutoReverse="False" Duration="0:0:0.1" Storyboard.TargetName="setBtnColor" To="{StaticResource aSecondary}" Storyboard.TargetProperty="Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation AutoReverse="False" Duration="0:0:0.2" Storyboard.TargetName="setBtnColor" To="{StaticResource aSecondary}" Storyboard.TargetProperty="Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
         <Style x:Key="FlatStyleProgressbar" TargetType="{x:Type ProgressBar}">
             <Setter Property="Foreground" Value="{DynamicResource aBrushPrimary}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderGradientBrush}"/>
@@ -271,13 +326,14 @@
             </Setter>
         </Style>
 
-        <SolidColorBrush x:Key="OptionMark.Static.Glyph" Color="White"/>
         <Style x:Key="FlatStyleCheckbox" TargetType="{x:Type CheckBox}">
             <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource aBrushPrimary}"/>
             <Setter Property="Foreground" Value="{DynamicResource FontSecondaryBrush}"/>
             <Setter Property="FontWeight" Value="DemiBold"/>
             <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -289,18 +345,18 @@
                             <Border x:Name="checkBoxBorder" CornerRadius="0,3,0,3" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{DynamicResource bBrushPrimary}"
                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <Grid x:Name="markGrid">
-                                    <Path x:Name="optionMark" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Fill="{DynamicResource OptionMark.Static.Glyph}" Margin="1.5" Opacity="0" Stretch="None"/>
-                                    <Rectangle x:Name="indeterminateMark" Fill="{DynamicResource OptionMark.Static.Glyph}" Margin="1.5" Opacity="0"/>
+                                    <Path x:Name="optionMark" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Fill="{DynamicResource BrushCheckMark}" Margin="1.5" Opacity="0" Stretch="None"/>
+                                    <Rectangle x:Name="indeterminateMark" Fill="{DynamicResource BrushCheckMark}" Margin="1.5" Opacity="0"/>
                                 </Grid>
                             </Border>
-                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="Padding" Value="4,-1,0,0"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{DynamicResource CheckboxSelectedBorder}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{DynamicResource SelectedBorderBrush}"/>
                                 <Setter Property="Foreground" Value="{DynamicResource FontPrimaryBrush}"/>
                                 <Setter Property="Fill" TargetName="optionMark" Value="{DynamicResource FontPrimaryBrush}"/>
                                 <Setter Property="Fill" TargetName="indeterminateMark" Value="{DynamicResource FontPrimaryBrush}"/>
@@ -364,8 +420,11 @@
                                     <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="true"/>
                                 </MultiDataTrigger.Conditions>
                             </MultiDataTrigger>
-                            <Trigger Property="IsMouseOver" Value="true">
+                            <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource ComboBox.MouseOver.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="templateRoot" Value="0.56"/>
                             </Trigger>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
@@ -530,7 +589,7 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="FlatTextboxStyle" TargetType="{x:Type TextBox}">
+        <Style x:Key="FlatTextboxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="BorderBrush" Value="{DynamicResource BorderGradientBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource FontPrimaryBrush}"/>
             <Setter Property="BorderThickness" Value="1.5"/>
@@ -545,7 +604,34 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TextBox}">
                         <Border x:Name="border" Background="{DynamicResource bBrushPrimary}" CornerRadius="0,5,0,5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
-                            <ScrollViewer Margin="1" x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                            <!--<ScrollViewer Margin="1" x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>-->
+
+                            <Grid>
+                                <TextBox Text="{Binding Path=Text,
+                                                RelativeSource={RelativeSource TemplatedParent}, 
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}"
+                                 x:Name="textSource" 
+                                 Background="Transparent"
+                                 Foreground="{DynamicResource FontPrimaryBrush}"
+                                     CaretBrush="{DynamicResource aBrushPrimary}"
+                                     SelectionBrush="{DynamicResource aBrushPrimary}"
+                                 BorderThickness="0"
+                                 Panel.ZIndex="2" />
+                                <TextBox Text="{TemplateBinding Tag}" Background="Transparent" Panel.ZIndex="1" BorderThickness="0">
+                                    <TextBox.Style>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="Foreground" Value="Transparent"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
+                                                    <Setter Property="Foreground" Value="{DynamicResource FontTritaryBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsEnabled" Value="false">

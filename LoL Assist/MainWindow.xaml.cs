@@ -1,11 +1,9 @@
-﻿using LoL_Assist_WAPP.ViewModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using LoL_Assist_WAPP.Model;
-using System.Windows.Media;
 using System.Windows.Input;
-using System.Windows.Data;
 using System.Windows;
 using System;
+using System.Windows.Media;
 
 namespace LoL_Assist_WAPP
 {
@@ -16,18 +14,17 @@ namespace LoL_Assist_WAPP
     {
         private readonly View.InfoPanel InfoPanel;
         private readonly View.ConfigPanel ConfigPanel;
-        //private readonly View.BuildEditorPanel BuildEditorPanel;
+        private readonly View.PatchNotesPanel PatchNotesPanel;
 
         private BuildEditorWindow buildEditorWindow;
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
 
             var MatchFoundPanel = new View.MatchFoundPanel(Me);
             ConfigPanel = new View.ConfigPanel(BackDrop);
             InfoPanel = new View.InfoPanel(BackDrop);
-            //BuildEditorPanel = new View.BuildEditorPanel();
+            PatchNotesPanel = new View.PatchNotesPanel(BackDrop);
 
             ConfigPanel.Margin = ConfigModel.marginClose;
             InfoPanel.Margin = ConfigModel.marginClose;
@@ -35,30 +32,12 @@ namespace LoL_Assist_WAPP
             Grid.SetRowSpan(InfoPanel, 2);
             Grid.SetRowSpan(ConfigPanel, 2);
             Grid.SetRowSpan(MatchFoundPanel, 2);
-            //Grid.SetRowSpan(BuildEditorPanel, 2);
+            Grid.SetRowSpan(PatchNotesPanel, 2);
 
             MainGrid.Children.Add(InfoPanel);
             MainGrid.Children.Add(ConfigPanel);
             MainGrid.Children.Add(MatchFoundPanel);
-            //MainGrid.Children.Add(BuildEditorPanel);
-        }
-
-        private void CStatus_TargetUpdated(object sender, DataTransferEventArgs e)
-        {
-            if (cStatus.Text == "Disconnected.")
-            {
-                GMode.Visibility = Visibility.Collapsed;
-                wStatus.Visibility = Visibility.Visible;
-                ChampionContainer.Visibility = Visibility.Collapsed;
-                cStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
-            }
-            else
-            {
-                GMode.Visibility = Visibility.Visible;
-                wStatus.Visibility = Visibility.Collapsed;
-                ChampionContainer.Visibility = Visibility.Visible;
-                cStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
-            }
+            MainGrid.Children.Add(PatchNotesPanel);
         }
 
         private void MinimzieBtn_Clicked(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
@@ -96,6 +75,24 @@ namespace LoL_Assist_WAPP
             buildEditorWindow = new BuildEditorWindow();
             buildEditorWindow.Owner = this;
             buildEditorWindow.ShowDialog();
+        }
+
+        private void ConnectionStatus_TargetUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            if (ConnectionStatus.Text == "Disconnected")
+            {
+                GMode.Visibility = Visibility.Hidden;
+                wStatus.Visibility = Visibility.Visible;
+                ChampionContainer.Visibility = Visibility.Hidden;
+                ConnectionStatus.Foreground = new SolidColorBrush(Color.FromRgb(231, 72, 86));
+            }
+            else
+            {
+                GMode.Visibility = Visibility.Visible;
+                wStatus.Visibility = Visibility.Hidden;
+                ChampionContainer.Visibility = Visibility.Visible;
+                ConnectionStatus.Foreground = (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
+            }
         }
     }
 }
