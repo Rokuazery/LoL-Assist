@@ -1,29 +1,68 @@
-# LoL Assist
-LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking GUI.<br />
-Builds are scraped from [Metasrc](http://metasrc.com). Adding more options soon!
-
-# Features
-- Auto Import Runes
-- Auto Import Spells
-- Auto Accept Matchmaking
-- Runes & Spells Editor
-- External Updater
-
-**To Do:**
-- More Runes & Spells Source
-
-**Screenshots:**
-
-<p align="center"> 
-  <img src="https://sn3302files.storage.live.com/y4mZDpHWpftOat5S7n7s2UZ2ybqFUlCecXwoKFfamnYo83W2quptZd-IHL7C3pDeYvkdQmnrzUO7G4-eRNAzIzwMcMx29R6Mp_BDUT5vkxJiXwmT1N0w0KoHdVb_0j-Vm-GYDy9CvxMEA7KRLxG5tpRANibSuFgHXOi-KBibbkRjuxLSyp97SnFvNUY1qM1hu9h?width=465&height=330&cropmode=none" width="350"/>
-  <img src="https://snz04pap002files.storage.live.com/y4mzjAW7wMvhmkkuNW0zUUNXwWQ9AiTgWLPeqpLfIt4Fh8WY0fXH-v_MaGriDxctHSe4j8ERMmif72UAKGlyvLmqMZz_fA6-5zdz0GXaX7ao3ICWfTq8ZqhT5IFxIQiPjEZPTI6BqImPOb1h0prHfEEqzqxja51misAu236TVWg3dR3D-INjMgxqO56kD0MiC_X?width=465&height=330&cropmode=none" width="350"/>
+<p align="center" style="margin-bottom: 0px !important;">
+  <img width="200" src="https://user-images.githubusercontent.com/48817307/172007805-112e094e-006f-4048-8027-bd96e1e4b6e2.png" alt="LoL Assist logo" align="center">
 </p>
+<h1 align="center" style="margin-top: 0px; font-weight: 500;">LoL Assist</h1>
 
-<p align="center"> 
-  <img src="https://snz04pap002files.storage.live.com/y4m8R-hBriTnSqcqnGnF613pxt-SzyBj8wIiCszYceaZLhQ1WUFQkSPBF3esYI5iqDcbBY1ZzDps3Ep0TTOsgIy_035JKE89G1nT2JUDsKbctQhLCt9CYAKny0uS7KkYF7o-nP-K4rHCJCyjxUL42Ti_PlLM3TqcgDxCZ73LINwrKoDKzrId6PMED3vSmwjg2Of?width=650&height=463&cropmode=none"/>
-</p>
+<div align="center">
+<a href="https://github.com/Rokuazery/LoL-Assist/stargazers">
+  <img src="https://img.shields.io/github/stars/rokuazery/lol-assist?color=blue&label=Stars&logo=github&style=for-the-badge">
+</a>
 
-<p align="center"> 
-  <img src="https://sn3302files.storage.live.com/y4mj_M3chY8RGMsr6cs8LeIcaJrBQILUnexDE8oeAnNwI1FTfde08vrIjvmtrH2O10AsFtmRx1X_M10IdJMnXej-GiHO6yBIocSDh5Qjaxd-Q0BKGQud8WC2e2MSSRXEpGEQ-fcYghI-PG8nzKWqKoV_Q2ArWq2ljwNsAH3WCBSk-5lzvgDD65bCiYmhKNZQsVE?width=465&height=330&cropmode=none" width="350"/>
-  <img src="https://sn3302files.storage.live.com/y4mCh593wokTFRjGv4XCRqk8rfZeH4v_7lCr0PAi2uVI6IEEBO8PDvBmgXGjk_AqeYt1pENwU8DR8ZNR8GWFIynpUyfWj3YWGe98shWT7-O7kYJ05Uq_wJpUdlsRcPfDroEGAQ-sSrY3BreTjmb5eyeqvYIeLFM2nCOTGDnLvlL2UIojlfzvN0-IicSSvZTKQnH?width=465&height=330&cropmode=none" width="350"/>
+<a href="https://github.com/Rokuazery/LoL-Assist/network/members">
+  <img src="https://img.shields.io/github/forks/rokuazery/lol-assist?color=yellow&logo=github&style=for-the-badge">
+</a>
+
+<a href="https://github.com/Rokuazery/LoL-Assist/blob/master/LICENSE.md">
+  <img src="https://img.shields.io/badge/license-GPL--3.0-red?style=for-the-badge&logo=appveyor">
+</a>
+</div>
+
+<p align="center">LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking UI.<br />
+Builds are scraped from <a href="https://www.metasrc.com">Metasrc</a>. Adding more options soon!</p>
+
+<div align="center">
+<h3>Features</h3>
+<p>
+• Auto Import Runes<br>
+• Auto Import Spells<br>
+• Auto Accept Matchmaking<br>
+• Runes & Spells Editor<br>
+• Auto Updater<br>
 </p>
+</div>
+
+<div align="center">
+<h3>Roadmap</h3>
+<p>
+Publish LoLA Lib repository to github ❌<br>
+More Runes & Spells Source ❌<br>
+Auto role chat (Automatically send your selected role to lobby chat) ❌
+</p>
+</div>
+
+<div align="center">
+  <br/>
+  <details>
+      <summary>LoL Assist Preview</summary>
+      <br/>
+      <p>
+      <h5>Main Window<h5/>
+      <image src="https://user-images.githubusercontent.com/48817307/172015955-05926a4d-73cd-4714-b425-bf19ec52a8a5.png"/>
+      <image src="https://user-images.githubusercontent.com/48817307/172016132-e24cd3ce-fe6d-4d5a-8e87-1747101e156f.png"/><br/><br/>
+      <h5>Runes & Spells Editor Window<h5/>
+      <image src="https://user-images.githubusercontent.com/48817307/172016693-1d5ff61a-5478-45aa-b4e6-38a615e40c2f.png"/>
+      </p>
+  </details>
+</div>
+
+
+## Acknowledgements
+
+ - [Rift Explorer](https://github.com/Pupix/rift-explorer)
+ - [LCU Explorer](https://github.com/HextechDocs/lcu-explorer)
+ - [lcu-event-viewer](https://github.com/pipe01/lcu-event-viewer)
+
+## Authors
+
+- [@Rokuazery](https://github.com/Rokuazery)
+- [@ClaraaXD](https://github.com/ClaraaXD)
