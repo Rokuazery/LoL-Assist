@@ -36,7 +36,7 @@ Builds are scraped from <a href="https://www.metasrc.com">Metasrc</a>. Adding mo
 <p>
 Publish LoLA Lib repository to github ❌<br>
 More Runes & Spells Source ❌<br>
-Auto role chat (Automatically send your selected role to lobby chat) ❌
+Auto chat role (Automatically send your selected role to lobby chat) ❌
 </p>
 </div>
 
