@@ -1,7 +1,5 @@
-﻿using LoL_Assist_WAPP.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +16,15 @@ using System.Windows.Shapes;
 namespace LoL_Assist_WAPP.View
 {
     /// <summary>
-    /// Interaction logic for PatchNotesPanel.xaml
+    /// Interaction logic for RoleSelectPanel.xaml
     /// </summary>
-    public partial class PatchNotesPanel : UserControl
+    public partial class RoleSelectPanel : UserControl
     {
-        public PatchNotesPanel() => InitializeComponent();
+        public RoleSelectPanel()
+        {
+            InitializeComponent();
+        }
+
+        private void Role_Click(object sender, RoutedEventArgs e) => Utils.Animation.FadeOut(this);
     }
 }

@@ -1,7 +1,5 @@
-﻿using LoL_Assist_WAPP.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LoL_Assist_WAPP.View
+namespace LoL_Assist_WAPP
 {
     /// <summary>
-    /// Interaction logic for PatchNotesPanel.xaml
+    /// Interaction logic for MainWnd.xaml
     /// </summary>
-    public partial class PatchNotesPanel : UserControl
+    public partial class MainWnd : Window
     {
-        public PatchNotesPanel() => InitializeComponent();
+        public MainWnd()
+        {
+            InitializeComponent();
+        }
     }
 }

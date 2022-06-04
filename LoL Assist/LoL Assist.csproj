@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>LoL_Assist_WAPP</RootNamespace>
     <AssemblyName>LoL Assist</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,6 +75,7 @@
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -97,7 +99,13 @@
     <Compile Include="BuildEditorWindow.xaml.cs">
       <DependentUpon>BuildEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\NullToCollapseConverter.cs" />
     <Compile Include="Converters\StringToImageConverter .cs" />
+    <Compile Include="Converters\TextToForegroundConverter.cs" />
+    <Compile Include="Extensions\ProgressBarSmoother.cs" />
+    <Compile Include="MainWnd.xaml.cs">
+      <DependentUpon>MainWnd.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\ConfigModel.cs" />
     <Compile Include="Model\DefaultBuildConfig.cs" />
     <Compile Include="Converters\IndexToBoolConverter.cs" />
@@ -105,21 +113,29 @@
     <Compile Include="Model\ItemImageModel.cs" />
     <Compile Include="Model\LoLAWrapper.cs" />
     <Compile Include="Model\PathModel.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Update.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\BuildEditorViewModel.cs" />
     <Compile Include="ViewModel\ConfigViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Command.cs" />
+    <Compile Include="ViewModel\MatchFoundViewModel.cs" />
+    <Compile Include="ViewModel\MessageBoxViewModel.cs" />
     <Compile Include="ViewModel\PatchViewModel.cs" />
+    <Compile Include="ViewModel\RoleSelectViewModel.cs" />
     <Compile Include="View\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\MessageBox.xaml.cs">
+      <DependentUpon>MessageBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\IconButton.xaml.cs">
-      <DependentUpon>IconButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\InfoPanel.xaml.cs">
       <DependentUpon>InfoPanel.xaml</DependentUpon>
@@ -130,7 +146,18 @@
     <Compile Include="View\PatchNotesPanel.xaml.cs">
       <DependentUpon>PatchNotesPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\RoleSelectPanel.xaml.cs">
+      <DependentUpon>RoleSelectPanel.xaml</DependentUpon>
+    </Compile>
     <Page Include="BuildEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Colours.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -146,15 +173,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MainWnd.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ConfigPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MsgBox.xaml">
+    <Page Include="View\MessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\IconButton.xaml">
+    <Page Include="View\MsgBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -170,15 +205,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\RoleSelectPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -210,9 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\NoIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Untitled.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Triumph.png" />
@@ -323,13 +354,7 @@
     <Resource Include="Resources\Inspiration.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Jungle.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Last Stand.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\LeagueBuilder.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Legend Alacrity.png" />
@@ -462,6 +487,30 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\First Strike.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Treasure Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Jungle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Mid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Support.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Top.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ADC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

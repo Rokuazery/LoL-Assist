@@ -121,6 +121,9 @@
   <data name="Absolute_Focus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Absolute Focus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ADC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ADC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Aftershock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aftershock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -181,6 +184,9 @@
   <data name="Eyeball_Collection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Eyeball Collection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Fill" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Fill.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="First_Strike" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\First Strike.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -232,9 +238,6 @@
   <data name="Last_Stand" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Last Stand.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="LeagueBuilder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LeagueBuilder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Legend_Alacrity" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Legend Alacrity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -247,11 +250,17 @@
   <data name="Lethal_Tempo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Lethal Tempo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Magical_Footwear" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Magical Footwear.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Manaflow_Band" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Manaflow Band.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Minion_Dematerializer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Minion Dematerializer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -361,6 +370,9 @@
   <data name="Summon_Aery" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Summon Aery.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Support" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Support.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Taste_of_Blood" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Taste of Blood.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -370,8 +382,14 @@
   <data name="Time_Warp_Tonic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Time Warp Tonic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Top.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Transcendence" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Transcendence.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Treasure_Hunter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Treasure Hunter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Triumph" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Triumph.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -384,9 +402,6 @@
   </data>
   <data name="Unsealed_Spellbook" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Unsealed Spellbook.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Untitled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Untitled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Waterwalking" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Waterwalking.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

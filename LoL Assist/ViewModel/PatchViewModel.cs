@@ -1,11 +1,30 @@
 ﻿using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Text;
+using System;
+using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
     internal class PatchViewModel : INotifyPropertyChanged
     {
+        public ICommand RunUrlCommand { get; }
+
+        private ICommand hideUserControlCommand;
+        public ICommand HideUserControlCommand
+        {
+            get
+            {
+                if (hideUserControlCommand == null)
+                {
+                    hideUserControlCommand = new Command(o => HideUserControl(o));
+                }
+                return hideUserControlCommand;
+            }
+        }
+
         private bool doNotShowPatchNote;
         public bool DoNotShowPatchNote
         {
@@ -54,23 +73,26 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public PatchViewModel()
         {
+            RunUrlCommand = new Command(o => { Process.Start("https://www.youtube.com/watch?v=dQw4w9WgXcQ"); });
             DoNotShowPatchNote = ConfigModel.config.DoNotShowPatch;
-            SetPatchNotes();
             Title = $"What's New in v{ConfigModel.version}";
+            SetPatchNotes();
         }
 
         void SetPatchNotes()
         {
             StringBuilder patchNotes = new StringBuilder();
-            patchNotes.AppendLine("• Added a What's New panel");
-            patchNotes.AppendLine("• Minor improvement for R&P(Runes & Spells) Editor Window UI"); 
-            patchNotes.AppendLine("• Added a reset config button on the settings");
-            patchNotes.AppendLine("• Moved the clear cache button to miscellaneous section");
-            patchNotes.AppendLine("• Fixed an issue where LoLA failed to fetch rune data");
-            patchNotes.AppendLine("• Fixed an issue where LoL Assist shows an error when Auto Spells/Auto Runes are disabled");
+            patchNotes.AppendLine("• Added an option for role select (available for a certain game mode only)");
+            patchNotes.AppendLine("• Added a system tray menu [Exit, Show, Patch Notes, Minimize to Tray]");
+            patchNotes.AppendLine("• Fixed an issue where LoL Assist UI being unresponsive");
+            patchNotes.AppendLine("• Minor UI improvements");
+            patchNotes.AppendLine("• Better MVVM Bindings");
+            patchNotes.AppendLine("• Code clean up"); 
 
             PatchNotes = patchNotes.ToString();
         }
+
+        private void HideUserControl(object p) => Utils.Animation.FadeOut(p as UserControl);
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => 

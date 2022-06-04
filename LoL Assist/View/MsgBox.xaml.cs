@@ -23,12 +23,6 @@ namespace LoL_Assist_WAPP.View
 
         private void NoBtn_Click(object sender, RoutedEventArgs e) => Decided?.Invoke(false);
         private void YesBtn_Click(object sender, RoutedEventArgs e) => Decided?.Invoke(true);
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Decided?.Invoke(false);
-
-        //private void Close()
-        //{
-        //    Utils.Animation.FadeOut(backDrop, 0.13);
-        //    Utils.Animation.Margin(this, ConfigModel.marginOpen, new Thickness(0, 330, 0, 0), 0.13);
-        //}
+        private void CancelBtn_Click(object sender, RoutedEventArgs e) => Decided?.Invoke(false);
     }
 }

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
              xmlns:viewModel="clr-namespace:LoL_Assist_WAPP.ViewModel" xmlns:sys="http://schemas.microsoft.com/winfx/2009/xaml"
              mc:Ignorable="d" 
-             Width="350" Height="245">
+             Width="350" Height="250">
     <Grid x:Name="MainGrid">
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
         <Grid>
@@ -19,8 +19,8 @@
             <Grid Grid.Row="0">
                 <TextBlock Text="Settings" Foreground="{DynamicResource BrushTitle}" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
-                <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" Clicked="CloseBtn_Clicked" VerticalAlignment="Center" ToolTip="Back"
-                HorizontalAlignment="Right" Margin="0,0,6,0" IconGeometry="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" IconStretch="Uniform"/>
+                <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="BackBtn"  Click="BackBtn_Click" VerticalAlignment="Center" ToolTip="Back"
+                HorizontalAlignment="Right" Margin="0,0,6,0" Tag="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -32,7 +32,8 @@
                     
                     <ScrollViewer  Grid.Column="0" Margin="5,0,0,0">
                         <StackPanel>
-                            <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
+                            <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,2,0,0"/>
+                            <Border Background="{DynamicResource aBrushPrimary}" Height="1" Margin="0,2,0,8"/>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Runes" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoRunes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
@@ -88,7 +89,8 @@
 
                     <ScrollViewer Grid.Column="2" Margin="5,0,1.5,0">
                         <StackPanel>
-                            <TextBlock Text="Miscellaneous" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,0,0,8"/>
+                            <TextBlock Text="Miscellaneous" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,2,0,0"/>
+                            <Border Background="{DynamicResource aBrushPrimary}" Height="1" Margin="0,2,0,8"/>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Logging" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=Logging, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>

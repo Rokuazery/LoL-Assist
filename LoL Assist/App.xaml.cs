@@ -14,9 +14,9 @@ namespace LoL_Assist_WAPP
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Global.Config.debug = false;
-            Console.Title = "LoL Assist - Debug Console";
-             ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
+            Global.Config.debug = true;
+            //Console.Title = "LoL Assist - Debug Console";
+            ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
 
             if (!Global.Config.debug)
             {

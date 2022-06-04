@@ -116,8 +116,8 @@ namespace LoL_Assist_WAPP.ViewModel
                     ConfigModel.config.LowSpecMode = value;
 
                     if (ConfigModel.config.LowSpecMode)
-                        ConfigModel.config.MonitoringDelay = 550;
-                    else ConfigModel.config.MonitoringDelay = 300;
+                        ConfigModel.config.MonitoringDelay = 300;
+                    else ConfigModel.config.MonitoringDelay = 250;
 
                     OnPropertyChanged(nameof(LowSpecMode));
                 }
@@ -207,18 +207,14 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public ConfigViewModel()
         {
-            //themeList.Add("Default");
-            //themeList.Add("League of Legends");
             Update();
-
             ShowFolderInExCommand = new Command(action => ShowFolderExecute());
         }
 
         private void ShowFolderExecute()
         {
             var path = Global.libraryFolder;
-            if(Directory.Exists(path))
-                Process.Start(path);
+            if(Directory.Exists(path)) Process.Start(path);
         }
 
         public void Update()
@@ -237,21 +233,6 @@ namespace LoL_Assist_WAPP.ViewModel
             BuildCache = ConfigModel.config.BuildCache;
             Global.Config.caching = BuildCache;
             UpdateOnStartup = ConfigModel.config.UpdateOnStartup;
-
-            //bool isThemeFound = false;
-            //foreach (var item in themeList)
-            //{
-            //    if (ConfigModel.config.Theme.Equals(item))
-            //    {
-            //        isThemeFound = true;
-            //        break;
-            //    }
-            //}
-
-            //if(isThemeFound)
-            //    SelectedTheme = ConfigModel.config.Theme;
-
-            //Utils.SwitchTheme(ConfigModel.config.Theme);
         }
         #region Space junk
         public event PropertyChangedEventHandler PropertyChanged;

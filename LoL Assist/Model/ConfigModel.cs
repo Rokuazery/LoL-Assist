@@ -13,13 +13,13 @@ namespace LoL_Assist_WAPP.Model
         public static string PatchNotes { get; set; }
         public const string DefaultSource = "Metasrc.com";
         public static Thickness marginOpen = new Thickness(0, 0, 0, 0);
-        public static Thickness marginClose = new Thickness(465, 0, 0, 0);
+        public static Thickness marginClose = new Thickness(485, 0, 0, 0); // Main window width
         public static readonly string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public class Config
         {
             #region General
-            public int MonitoringDelay { get; set; } = 300;
+            public int MonitoringDelay { get; set; } = 250;
             public bool AutoRunes { get; set; } = true;
             public bool AutoAccept { get; set; } = true;
             public bool AutoSpells { get; set; } = true;

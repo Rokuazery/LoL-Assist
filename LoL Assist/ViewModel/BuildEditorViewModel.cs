@@ -36,12 +36,12 @@ namespace LoL_Assist_WAPP.ViewModel
         {
             try
             {
-                if (!SelectedBuildName.Equals(CreateNewKey))
+                if (!SelectedBuildName.Equals(_CreateNewKey))
                 {
                     var gameMode = gm();
-                    defaultBuildConfig.setDefaultConfig(gameMode, SelectedBuildName);
-                    writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                    SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                    _DefaultBuildConfig.setDefaultConfig(gameMode, SelectedBuildName);
+                    writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
+                    SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
                 }
             }
             catch { /*ex*/ }
@@ -49,29 +49,29 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public void DeleteConfigExecute()
         {
-            if(SelectedBuildName != null && !SelectedBuildName.Equals(CreateNewKey))
+            if(SelectedBuildName != null && !SelectedBuildName.Equals(_CreateNewKey))
             {
                 var buildName = SelectedBuildName;
                 SelectedBuildName = null;
                 
                 var gameMode = gm();
                 var _buildsName = new List<string>();
-                _buildsName.Add(CreateNewKey);
+                _buildsName.Add(_CreateNewKey);
 
-                Main.localBuild.DeleteData(SelectedChampionId, Path.GetFileNameWithoutExtension(buildName), gameMode);
-                foreach (var path in Main.localBuild.GetBuildFiles(SelectedChampionId, gameMode))
+                Main.localBuild.DeleteData(_SelectedChampionId, Path.GetFileNameWithoutExtension(buildName), gameMode);
+                foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gameMode))
                     _buildsName.Add(Path.GetFileName(path));
 
                 BuildsName = _buildsName;
 
-                var customBuildPath = Main.localBuild.BuildsFolder(SelectedChampionId, gameMode);
-                var fullPath = $"{customBuildPath}\\{defaultBuildConfig.getDefaultConfig(gameMode)}";
+                var customBuildPath = Main.localBuild.BuildsFolder(_SelectedChampionId, gameMode);
+                var fullPath = $"{customBuildPath}\\{_DefaultBuildConfig.getDefaultConfig(gameMode)}";
 
                 if (!File.Exists(fullPath))
-                    defaultBuildConfig.resetDefaultConfig(gameMode);
+                    _DefaultBuildConfig.resetDefaultConfig(gameMode);
 
-                writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
+                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
             }
         }
 
@@ -80,9 +80,9 @@ namespace LoL_Assist_WAPP.ViewModel
             if (SelectedChampion != null && SelectedGameMode != null)
             {
                 var gameMode = gm();
-                defaultBuildConfig.resetDefaultConfig(gameMode);
-                writeDefaultBuildConfig(SelectedChampionId, defaultBuildConfig);
-                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                _DefaultBuildConfig.resetDefaultConfig(gameMode);
+                writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
+                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
             }
         }
 
@@ -91,21 +91,21 @@ namespace LoL_Assist_WAPP.ViewModel
             if(!string.IsNullOrEmpty(FileName) && SelectedChampion != null && SelectedGameMode != null)
             {
                 var sGM = gm();
-                var filePath = Main.localBuild.DataPath(SelectedChampionId, FileName, sGM);
+                var filePath = Main.localBuild.DataPath(_SelectedChampionId, FileName, sGM);
 
                 if (File.Exists(filePath))
                     File.Create(filePath).Dispose();
 
                 using(var streaWriter = new StreamWriter(filePath))
                 {
-                    var json = JsonConvert.SerializeObject(SelectedBuild, Formatting.Indented);
+                    var json = JsonConvert.SerializeObject(_SelectedBuild, Formatting.Indented);
                     streaWriter.Write(json);
-                    ReferenceBuild = json;
+                    _ReferenceBuild = json;
                 }
 
                 var _buildsName = new List<string>();
-                _buildsName.Add(CreateNewKey);
-                foreach (var path in Main.localBuild.GetBuildFiles(SelectedChampionId, sGM))
+                _buildsName.Add(_CreateNewKey);
+                foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, sGM))
                     _buildsName.Add(Path.GetFileName(path));
 
                 BuildsName = _buildsName;
@@ -259,7 +259,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     selectedSpell1 = value;
                     SelectedSpell2 = RemoveDup(SelectedSpell1, SelectedSpell2);
                     if(value != null)
-                        SelectedBuild.spell.Spell0 = Dictionaries.SpellNameToSpellID[value.Text];
+                        _SelectedBuild.spell.Spell0 = Dictionaries.SpellNameToSpellID[value.Text];
 
                     OnPropertyChanged(nameof(SelectedSpell1));
                     IsChanged();
@@ -278,7 +278,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     selectedSpell2 = value;
                     SelectedSpell1 = RemoveDup(SelectedSpell2, SelectedSpell1);
                     if(value != null)
-                        SelectedBuild.spell.Spell1 = Dictionaries.SpellNameToSpellID[value.Text];
+                        _SelectedBuild.spell.Spell1 = Dictionaries.SpellNameToSpellID[value.Text];
 
                     OnPropertyChanged(nameof(SelectedSpell2));
                     IsChanged();
@@ -299,7 +299,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     runeName = value;
 
                     if(value != null)
-                        SelectedBuild.rune.Name = value;
+                        _SelectedBuild.rune.Name = value;
 
                     OnPropertyChanged(nameof(RuneName));
                     IsChanged();
@@ -332,7 +332,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     selectedPath1 = value;
                     SelectedPath2 = RemoveDup(SelectedPath1, SelectedPath2);
                     if(value != null)
-                        SelectedBuild.rune.Path0 = DataConverter.PathNameToId(value.Text);
+                        _SelectedBuild.rune.Path0 = DataConverter.PathNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPath1));
                     Path1_Changed();
@@ -341,16 +341,16 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        public ObservableCollection<ItemImageModel> keystoneList = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> KeystoneList
+        public ObservableCollection<ItemImageModel> keystones = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Keystones
         {
-            get => keystoneList;
+            get => keystones;
             set
             {
-                if (keystoneList != value)
+                if (keystones != value)
                 {
-                    keystoneList = value;
-                    OnPropertyChanged(nameof(KeystoneList));
+                    keystones = value;
+                    OnPropertyChanged(nameof(Keystones));
                 }
             }
         }
@@ -365,7 +365,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedKeystone = value;
                     if(value != null)
-                        SelectedBuild.rune.Keystone = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Keystone = DataConverter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedKeystone));
                     IsChanged();
@@ -397,7 +397,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPerk1 = value;
                     if(value!=null)
-                        SelectedBuild.rune.Slot1 = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Slot1 = DataConverter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk1));
                     IsChanged();
@@ -429,7 +429,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPerk2 = value;
                     if(value != null)
-                        SelectedBuild.rune.Slot2 = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Slot2 = DataConverter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk2));
                     IsChanged();
@@ -461,7 +461,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPerk3 = value;
                     if(value!=null)
-                        SelectedBuild.rune.Slot3 = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Slot3 = DataConverter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk3));
                     IsChanged();
@@ -479,7 +479,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPath2 = value;
                     if(value != null)
-                        SelectedBuild.rune.Path1 = DataConverter.PathNameToId(value.Text);
+                        _SelectedBuild.rune.Path1 = DataConverter.PathNameToId(value.Text);
                     SelectedPath1 = RemoveDup(SelectedPath2, SelectedPath1);
 
                     OnPropertyChanged(nameof(SelectedPath2));
@@ -513,7 +513,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPerk4 = value;
                     if(value!=null)
-                        SelectedBuild.rune.Slot4 = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Slot4 = DataConverter.PerkNameToId(value.Text);
                     SelectedPerk5 = RemoveDup(value, SelectedPerk5);
 
                     OnPropertyChanged(nameof(SelectedPerk4));
@@ -547,7 +547,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedPerk5 = value;
                     if(value != null)
-                        SelectedBuild.rune.Slot5 = DataConverter.PerkNameToId(value.Text);
+                        _SelectedBuild.rune.Slot5 = DataConverter.PerkNameToId(value.Text);
                     SelectedPerk4 = RemoveDup(value, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedPerk5));
@@ -580,7 +580,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedOffense = value;
                     if (value != null)
-                        SelectedBuild.rune.Shard0 = Dictionaries.ShardDescToShardId[value.Text];
+                        _SelectedBuild.rune.Shard0 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedOffense, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedOffense));
@@ -613,7 +613,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedFlex = value;
                     if (value != null)
-                        SelectedBuild.rune.Shard1 = Dictionaries.ShardDescToShardId[value.Text];
+                        _SelectedBuild.rune.Shard1 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedFlex, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedFlex));
@@ -646,7 +646,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 {
                     selectedDefense = value;
                     if (value != null)
-                        SelectedBuild.rune.Shard2 = Dictionaries.ShardDescToShardId[value.Text];
+                        _SelectedBuild.rune.Shard2 = Dictionaries.ShardDescToShardId[value.Text];
                     SelectedPerk4 = RemoveDup(SelectedDefense, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedDefense));
@@ -744,20 +744,20 @@ namespace LoL_Assist_WAPP.ViewModel
 
         #endregion
 
-        private string ReferenceBuild;
-        private string SelectedChampionId;
-        public DefaultBuildConfig defaultBuildConfig;
-        private const string CreateNewKey = "Create New*";
-        private ChampionBD SelectedBuild = new ChampionBD();
-        private Dictionary<string, string[,]> SecondPath = new Dictionary<string, string[,]>();
+        private string _ReferenceBuild;
+        private string _SelectedChampionId;
+        public DefaultBuildConfig _DefaultBuildConfig;
+        private const string _CreateNewKey = "Create New*";
+        private ChampionBD _SelectedBuild = new ChampionBD();
+        private Dictionary<string, string[,]> _SecondPath = new Dictionary<string, string[,]>();
         public BuildEditorViewModel()
         {
             Init();
             PathModel.Init();
 
-            SaveCommand = new Command(action => { SaveConfigExecute(); });
-            SetAsDefaultCommand = new Command(action => { SetAsDefaultExecute(); });
-            ClearDefaultSourceCommand = new Command(action => { ClearDefaultSourceExecute(); });
+            SaveCommand = new Command(o => { SaveConfigExecute(); });
+            SetAsDefaultCommand = new Command(o => { SetAsDefaultExecute(); });
+            ClearDefaultSourceCommand = new Command(o => { ClearDefaultSourceExecute(); });
         }
 
         public async void Init()
@@ -801,24 +801,24 @@ namespace LoL_Assist_WAPP.ViewModel
                 saveInfo = null;
                 var gameMode = gm();
 
-                _buildsName.Add(CreateNewKey);
-                SelectedChampionId = DataConverter.ChampionNameToId(SelectedChampion);
+                _buildsName.Add(_CreateNewKey);
+                _SelectedChampionId = DataConverter.ChampionNameToId(SelectedChampion);
 
                 // Load in default build config
-                defaultBuildConfig = new DefaultBuildConfig();
+                _DefaultBuildConfig = new DefaultBuildConfig();
 
-                if (File.Exists(defConfigPath(SelectedChampionId))) defaultBuildConfig = getDefaultBuildConfig(SelectedChampionId);
+                if (File.Exists(defConfigPath(_SelectedChampionId))) _DefaultBuildConfig = getDefaultBuildConfig(_SelectedChampionId);
 
-                var customBuildPath = Main.localBuild.BuildsFolder(SelectedChampionId, gameMode);
-                var fullPath = $"{customBuildPath}\\{defaultBuildConfig.getDefaultConfig(gameMode)}";
+                var customBuildPath = Main.localBuild.BuildsFolder(_SelectedChampionId, gameMode);
+                var fullPath = $"{customBuildPath}\\{_DefaultBuildConfig.getDefaultConfig(gameMode)}";
                 
                 if(!File.Exists(fullPath))
-                    defaultBuildConfig.resetDefaultConfig(gameMode);
+                    _DefaultBuildConfig.resetDefaultConfig(gameMode);
 
-                SlDefaultConfig = defaultBuildConfig.getDefaultConfig(gameMode);
+                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
 
                 await Task.Run(() => {
-                    foreach (var path in Main.localBuild.GetBuildFiles(SelectedChampionId, gameMode))
+                    foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gameMode))
                         _buildsName.Add(Path.GetFileName(path));
 
                     foreach (var spell in Dictionaries.SpellNameToSpellKey)
@@ -838,7 +838,7 @@ namespace LoL_Assist_WAPP.ViewModel
             else
             {
                 SelectedGameMode = null;
-                SelectedBuild = null;
+                _SelectedBuild = null;
                 BuildsName = null;
                 saveInfo = null;
                 ClearSmallInfo();
@@ -848,11 +848,11 @@ namespace LoL_Assist_WAPP.ViewModel
         public async void FetchBuild()
         {
             if(!string.IsNullOrEmpty(SelectedBuildName) 
-            && !SelectedBuildName.Equals(CreateNewKey))
+            && !SelectedBuildName.Equals(_CreateNewKey))
             {
                 saveInfo = null;
                 await Task.Run(() => {
-                    foreach (var path in Main.localBuild.GetBuildFiles(SelectedChampionId, gm()))
+                    foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gm()))
                     {
                         if (Path.GetFileName(path) == SelectedBuildName)
                         {
@@ -862,9 +862,9 @@ namespace LoL_Assist_WAPP.ViewModel
                                 {
                                     var jsonContent = sr.ReadToEnd();
                                     FileName = Path.GetFileNameWithoutExtension(path);
-                                    SelectedBuild = JsonConvert.DeserializeObject<ChampionBD>(jsonContent);
-                                    ReferenceBuild = jsonContent;
-                                    LoadBuild(SelectedBuild);
+                                    _SelectedBuild = JsonConvert.DeserializeObject<ChampionBD>(jsonContent);
+                                    _ReferenceBuild = jsonContent;
+                                    LoadBuild(_SelectedBuild);
                                 }
                             }
                             catch { }
@@ -874,7 +874,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 });
             }
             else if(!string.IsNullOrEmpty(SelectedBuildName)
-            && SelectedBuildName.Equals(CreateNewKey)) {
+            && SelectedBuildName.Equals(_CreateNewKey)) {
                 ClearProfile();
                 saveInfo = "New* Unsaved";
             }
@@ -886,7 +886,7 @@ namespace LoL_Assist_WAPP.ViewModel
             Perk1List = new ObservableCollection<ItemImageModel>();
             Perk2List = new ObservableCollection<ItemImageModel>();
             Perk3List = new ObservableCollection<ItemImageModel>();
-            KeystoneList = new ObservableCollection<ItemImageModel>();
+            Keystones = new ObservableCollection<ItemImageModel>();
 
             if (SelectedPath1 != null)
             {
@@ -908,7 +908,7 @@ namespace LoL_Assist_WAPP.ViewModel
                                 switch (i)
                                 {
                                     case 0:
-                                        KeystoneList.Add(model);
+                                        Keystones.Add(model);
                                         break;
                                     case 1:
                                         Perk1List.Add(model);
@@ -932,11 +932,12 @@ namespace LoL_Assist_WAPP.ViewModel
         private void Path2_Changed()
         {
             Perk5List = new ObservableCollection<ItemImageModel>();
+            Perk4List = new ObservableCollection<ItemImageModel>();
             var _perk4list = new ObservableCollection<ItemImageModel>();
 
             if (SelectedPath2 != null)
             {
-                secondSlot = SecondPath[SelectedPath2.Text];
+                secondSlot = _SecondPath[SelectedPath2.Text];
                 foreach (var perk in secondSlot)
                 {
                     if(!string.IsNullOrEmpty(perk))
@@ -1005,7 +1006,7 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 RuneName = championBuild.rune.Name;
                 SelectedPath1 = PathList.SingleOrDefault(p => p.Text == DataConverter.PathIdToName(championBuild.rune.Path0));
-                SelectedKeystone = KeystoneList.SingleOrDefault(k => k.Text == DataConverter.PerkIdToName(championBuild.rune.Keystone));
+                SelectedKeystone = Keystones.SingleOrDefault(k => k.Text == DataConverter.PerkIdToName(championBuild.rune.Keystone));
                 SelectedPerk1 = Perk1List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot1));
                 SelectedPerk2 = Perk2List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot2));
                 SelectedPerk3 = Perk3List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot3));
@@ -1029,15 +1030,15 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private void IsChanged()
         {
-            var sBuild = JsonConvert.SerializeObject(SelectedBuild, Formatting.Indented);
+            var sBuild = JsonConvert.SerializeObject(_SelectedBuild, Formatting.Indented);
 
             if(SelectedGameMode != null && SelectedBuildName != null)
             {
-                if ((!sBuild.Equals(ReferenceBuild) ||
+                if ((!sBuild.Equals(_ReferenceBuild) ||
                 !Path.GetFileNameWithoutExtension(SelectedBuildName).Equals(FileName))
-                && !SelectedBuildName.Equals(CreateNewKey))
+                && !SelectedBuildName.Equals(_CreateNewKey))
                     saveInfo = "*Unsaved";
-                else if (SelectedBuildName.Equals(CreateNewKey))
+                else if (SelectedBuildName.Equals(_CreateNewKey))
                     saveInfo = "New* Unsaved";
                 else saveInfo = null;
             }
@@ -1045,11 +1046,11 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private void InitSecondPath()
         {
-            SecondPath.Add("Domination", PathModel.Domination);
-            SecondPath.Add("Sorcery", PathModel.Sorcery);
-            SecondPath.Add("Precision", PathModel.Precision);
-            SecondPath.Add("Inspiration", PathModel.Inspiration);
-            SecondPath.Add("Resolve", PathModel.Resolve);
+            _SecondPath.Add("Domination", PathModel.Domination);
+            _SecondPath.Add("Sorcery", PathModel.Sorcery);
+            _SecondPath.Add("Precision", PathModel.Precision);
+            _SecondPath.Add("Inspiration", PathModel.Inspiration);
+            _SecondPath.Add("Resolve", PathModel.Resolve);
         }
 
         private void InitShards()
@@ -1084,7 +1085,7 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 if (s1 == s2)
                     return null;
-                else return s2;
+                return s2;
             }
             else return s2;
         }
@@ -1095,7 +1096,7 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 if (s1.Text == s2.Text)
                     return null;
-                else return s2;
+                return s2;
             }
             else return s2;
         }
@@ -1110,8 +1111,8 @@ namespace LoL_Assist_WAPP.ViewModel
         public void ClearProfile()
         {
             SelectedBuildName = null;
-            ReferenceBuild = null;
-            SelectedBuild = new ChampionBD();
+            _ReferenceBuild = null;
+            _SelectedBuild = new ChampionBD();
             FileName = null;
             RuneName = null;
             SelectedSpell1 = null;

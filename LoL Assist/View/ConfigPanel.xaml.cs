@@ -34,8 +34,6 @@ namespace LoL_Assist_WAPP.View
             Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose);
         }
 
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Close();
-
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
@@ -93,5 +91,7 @@ namespace LoL_Assist_WAPP.View
             };
             Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
         }
+
+        private void BackBtn_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

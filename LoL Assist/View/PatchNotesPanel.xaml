@@ -5,67 +5,80 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LoL_Assist_WAPP.View"
              xmlns:viewModel="clr-namespace:LoL_Assist_WAPP.ViewModel"
-             mc:Ignorable="d" 
-             d:DesignHeight="230" d:DesignWidth="260" MaxHeight="230" MaxWidth="260">
-    <UserControl.DataContext>
-        <viewModel:PatchViewModel/>
-    </UserControl.DataContext>
+             mc:Ignorable="d" x:Name="patchNotes">
+    <UserControl.Style>
+        <Style>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="UserControl.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.0"
+                                             To="1.0"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
     <Grid>
-        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="55"/>
-            </Grid.RowDefinitions>
-
-            
-            <Grid Grid.Row="0">
+        <Border Background="Black" Opacity="0.6"/>
+        <Grid Width="260" Height="230">
+            <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="55"/>
                 </Grid.RowDefinitions>
 
-                <Grid Margin="5,0,5,0">
-                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Text="{Binding Path=Title}" VerticalAlignment="Center"/>
-                    <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" ToolTip="Close" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Clicked="CloseBtn_Clicked"/>
+
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="5,0,5,0">
+                        <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Text="{Binding Path=Title}" VerticalAlignment="Center"/>
+                        <Button Template="{DynamicResource IconStyleButtonRed}" ToolTip="Close" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Center" Tag="{DynamicResource XmarkIcon}" Command="{Binding HideUserControlCommand}" CommandParameter="{Binding ElementName=patchNotes}"/>
+                    </Grid>
+
+                    <Border Background="{DynamicResource bBrushPrimary}" Height="1" VerticalAlignment="Bottom" Margin="1.5,0"/>
+
+                    <ScrollViewer Grid.Row="1" Margin="5,0,5,0" VerticalScrollBarVisibility="Visible">
+                        <TextBlock Text="{Binding Path=PatchNotes}" Foreground="{DynamicResource FontTritaryBrush}" TextWrapping="WrapWithOverflow"
+                    LineStackingStrategy="BlockLineHeight" LineHeight="21"/>
+                    </ScrollViewer>
                 </Grid>
 
-                <Border Background="{DynamicResource bBrushPrimary}" Height="1" VerticalAlignment="Bottom" Margin="1.5,0"/>
+                <Grid Grid.Row="1">
+                    <Border Background="{DynamicResource bBrushPrimary}" Height="1" VerticalAlignment="Top" Margin="1.5,0"/>
+                    <StackPanel VerticalAlignment="Center" Margin="5" >
+                        <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Do not show this again" Height="15" VerticalAlignment="Top" IsChecked="{Binding Path=DoNotShowPatchNote}"/>
 
-                <ScrollViewer Grid.Row="1" Margin="5,0,5,0" VerticalScrollBarVisibility="Visible">
-                    <TextBlock Text="{Binding Path=PatchNotes}" Foreground="{DynamicResource FontTritaryBrush}" TextWrapping="Wrap"
-                    LineStackingStrategy="BlockLineHeight" LineHeight="21"/>
-                </ScrollViewer>
-            </Grid>
-
-            <Grid Grid.Row="1">
-                <Border Background="{DynamicResource bBrushPrimary}" Height="1" VerticalAlignment="Top" Margin="1.5,0"/>
-                <StackPanel VerticalAlignment="Center" Margin="5" >
-                    <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Do not show this again" Height="15" VerticalAlignment="Top" IsChecked="{Binding Path=DoNotShowPatchNote}"/>
-
-                    <Grid>
-                        <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" FontWeight="DemiBold" VerticalAlignment="Center">
-                            <Hyperlink x:Name="GithubLink" NavigateUri="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                            RequestNavigate="GithubLink_RequestNavigate" Foreground="DodgerBlue">
+                        <Grid>
+                            <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" FontWeight="DemiBold" VerticalAlignment="Center">
+                            <Hyperlink x:Name="GithubLink" Command="{Binding RunUrlCommand}" Foreground="DodgerBlue">
                                 Full Change Log
                             </Hyperlink>
-                            </TextBlock>
-                            <Grid Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5,0,0,0">
-                                <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16" RenderOptions.BitmapScalingMode="HighQuality"/>
-                                <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality">
-                                    <Image.Effect>
-                                        <DropShadowEffect Opacity="0.5"/>
-                                    </Image.Effect>
-                                </Image>
-                            </Grid>
-                        </DockPanel>
+                                </TextBlock>
+                                <Grid Width="20" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5,0,0,0">
+                                    <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality">
+                                        <Image.Effect>
+                                            <DropShadowEffect Opacity="0.5" ShadowDepth="2"/>
+                                        </Image.Effect>
+                                    </Image>
+                                </Grid>
+                            </DockPanel>
 
-                        <Button Template="{DynamicResource FlatStyleButton}" Height="22" Width="80" Content="Close" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="11"
-                    Margin="0,5,0,0" x:Name="CloseButton" Click="CloseButton_Click"/>
-                    </Grid>
-                </StackPanel>
+                            <Button Template="{DynamicResource FlatStyleButton}" Height="22" Width="80" Content="Close" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="11"
+                    Margin="0,5,0,0" Command="{Binding HideUserControlCommand}" CommandParameter="{Binding ElementName=patchNotes}"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

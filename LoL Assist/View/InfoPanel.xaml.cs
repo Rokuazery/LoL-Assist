@@ -20,14 +20,14 @@ namespace LoL_Assist_WAPP.View
             Version.Text = $"App Verion {ConfigModel.version} | Lib Version {Global.version}";
         }
 
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) 
+        private void CreatorLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
+        private void TesterLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
+        private void Github_Click(object sender, System.Windows.RoutedEventArgs e) => Process.Start("https://github.com/Rokuazery/LoL-Assist");
+
+        private void BackBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Utils.Animation.FadeOut(backDrop);
             Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose, 0.2);
         }
-
-        private void CreatorLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
-        private void TesterLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
-        private void Github_Click(object sender, System.Windows.RoutedEventArgs e) => Process.Start("https://github.com/Rokuazery/LoL-Assist");
     }
 }

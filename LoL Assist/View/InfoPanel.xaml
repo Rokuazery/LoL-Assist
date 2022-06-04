@@ -40,7 +40,7 @@
                         <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16"/>
                         <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality">
                             <Image.Effect>
-                                <DropShadowEffect Opacity="0.5"/>
+                                <DropShadowEffect Opacity="0.5" ShadowDepth="2"/>
                             </Image.Effect>
                         </Image>
                     </Grid>
@@ -64,7 +64,7 @@
             <TextBlock x:Name="Version" HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <local:IconButton x:Name="CloseBtn" OnHoverColor="#E74856" StaticColor="{DynamicResource FontPrimaryColor}" Clicked="CloseBtn_Clicked" VerticalAlignment="Top"
-         HorizontalAlignment="Right" Margin="0,8,7,0" IconGeometry="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" IconStretch="Uniform" ToolTip="Back"/>
+        <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="BackBtn" Click="BackBtn_Click" VerticalAlignment="Top"
+         HorizontalAlignment="Right" Margin="0,8,7,0" Tag="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" ToolTip="Back"/>
     </Grid>
 </UserControl>

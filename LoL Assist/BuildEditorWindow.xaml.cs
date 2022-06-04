@@ -25,8 +25,6 @@ namespace LoL_Assist_WAPP
             InitializeComponent();
             DataContext = viewModel;
         }
-
-        private void CloseBtn_Clicked(object sender, MouseButtonEventArgs e) => Close();
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -119,5 +117,7 @@ namespace LoL_Assist_WAPP
             Utils.Animation.FadeOut(element, time);
         }
         #endregion
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

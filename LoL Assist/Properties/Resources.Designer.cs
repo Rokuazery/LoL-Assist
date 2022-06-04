@@ -73,6 +73,16 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ADC {
+            get {
+                object obj = ResourceManager.GetObject("ADC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Aftershock {
             get {
                 object obj = ResourceManager.GetObject("Aftershock", resourceCulture);
@@ -273,6 +283,16 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Fill {
+            get {
+                object obj = ResourceManager.GetObject("Fill", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap First_Strike {
             get {
                 object obj = ResourceManager.GetObject("First_Strike", resourceCulture);
@@ -443,16 +463,6 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LeagueBuilder {
-            get {
-                object obj = ResourceManager.GetObject("LeagueBuilder", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap Legend_Alacrity {
             get {
                 object obj = ResourceManager.GetObject("Legend_Alacrity", resourceCulture);
@@ -493,6 +503,16 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Logo {
+            get {
+                object obj = ResourceManager.GetObject("Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Magical_Footwear {
             get {
                 object obj = ResourceManager.GetObject("Magical_Footwear", resourceCulture);
@@ -506,6 +526,16 @@ namespace LoL_Assist_WAPP.Properties {
         internal static System.Drawing.Bitmap Manaflow_Band {
             get {
                 object obj = ResourceManager.GetObject("Manaflow_Band", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Mid {
+            get {
+                object obj = ResourceManager.GetObject("Mid", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -872,6 +902,16 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Support {
+            get {
+                object obj = ResourceManager.GetObject("Support", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Taste_of_Blood {
             get {
                 object obj = ResourceManager.GetObject("Taste_of_Blood", resourceCulture);
@@ -902,9 +942,29 @@ namespace LoL_Assist_WAPP.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Top {
+            get {
+                object obj = ResourceManager.GetObject("Top", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Transcendence {
             get {
                 object obj = ResourceManager.GetObject("Transcendence", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Treasure_Hunter {
+            get {
+                object obj = ResourceManager.GetObject("Treasure_Hunter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -945,16 +1005,6 @@ namespace LoL_Assist_WAPP.Properties {
         internal static System.Drawing.Bitmap Unsealed_Spellbook {
             get {
                 object obj = ResourceManager.GetObject("Unsealed_Spellbook", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Untitled {
-            get {
-                object obj = ResourceManager.GetObject("Untitled", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
