@@ -638,8 +638,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     ShowPatchNotes(false);
                     break;
                 case "Minimize to Tray":
-                    Application.Current.MainWindow.ShowInTaskbar = false;
-                    Application.Current.MainWindow.WindowState = WindowState.Minimized;
+                    Application.Current.MainWindow.Hide();
                     break;
             }
         }
@@ -647,9 +646,7 @@ namespace LoL_Assist_WAPP.ViewModel
         private void ShowMainWindow()
         {
             Application.Current.MainWindow.Show();
-            Application.Current.MainWindow.ShowInTaskbar = true;
             Application.Current.MainWindow.WindowState = WindowState.Normal;
-
             Application.Current.MainWindow.Activate();
         }
         #endregion
