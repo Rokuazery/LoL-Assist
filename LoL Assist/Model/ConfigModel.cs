@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
 using System.Windows;
-using LoLA.Utils.Log;
+using LoLA.Utils.Logger;
 using System.IO;
 using LoLA;
 

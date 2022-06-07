@@ -6,6 +6,7 @@ using System.IO;
 using LoLA.LCU;
 using System;
 using LoLA;
+using System.Collections.Generic;
 
 namespace LoL_Assist_WAPP.Model
 {
@@ -19,7 +20,30 @@ namespace LoL_Assist_WAPP.Model
             if (CurrentRunePage != null)
             {
                 if (CurrentRunePage.name != rune.Name)
-                    return await LCUWrapper.SetRune(DataConverter.RuneBuildToRunePage(rune));
+                {
+                    var runePage = DataConverter.RuneBuildToRunePage(rune);
+                    var currentRunePage = await LCUWrapper.GetCurrentRunePageAsync();
+                    if (currentRunePage != null)
+                    {
+                        ulong selectedId = currentRunePage.id;
+                        if (currentRunePage.isDeletable)
+                            await LCUWrapper.DeleteRunePageAsync(selectedId);
+                    }
+
+                    if (!await LCUWrapper.AddRunePageAsync(runePage))
+                    {
+                        List<RunePage> pages = await LCUWrapper.GetRunePagesAsync();
+                        foreach (RunePage page in pages)
+                        {
+                            if (page.isDeletable && page.isActive)
+                            {
+                                runePage.order = 0;
+                                await LCUWrapper.DeleteRunePageAsync(page.id);
+                                return await LCUWrapper.AddRunePageAsync(runePage);
+                            }
+                        }
+                    }
+                }
             }
             return false;
         }

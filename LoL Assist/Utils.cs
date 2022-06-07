@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using LoL_Assist_WAPP.Model;
 using System.Windows.Media;
 using Newtonsoft.Json;
-using LoLA.Utils.Log;
+using LoLA.Utils.Logger;
 using System.Windows;
 using System.IO;
 using System;

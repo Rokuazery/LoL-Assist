@@ -5,11 +5,11 @@
 
 <div align="center">
 <a href="https://github.com/Rokuazery/LoL-Assist/stargazers">
-  <img src="https://img.shields.io/github/stars/rokuazery/lol-assist?color=blue&label=Stars&logo=github&style=for-the-badge">
+  <img src="https://img.shields.io/github/stars/rokuazery/lol-assist?color=yellow&label=Stars&logo=github&style=for-the-badge">
 </a>
 
 <a href="https://github.com/Rokuazery/LoL-Assist/network/members">
-  <img src="https://img.shields.io/github/forks/rokuazery/lol-assist?color=yellow&logo=github&style=for-the-badge">
+  <img src="https://img.shields.io/github/forks/rokuazery/lol-assist?color=blue&logo=github&style=for-the-badge">
 </a>
 
 <a href="https://github.com/Rokuazery/LoL-Assist/blob/master/LICENSE.md">
@@ -17,8 +17,9 @@
 </a>
 </div>
 
-<p align="center">LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking UI.<br />
-Builds are scraped from <a href="https://www.metasrc.com">Metasrc</a>. Adding more options soon!</p>
+<p align="center" styles="word-wrap: break-word;">LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking UI & GUI.
+Builds are scraped from <a href="https://www.metasrc.com">Metasrc</a>, and I'll be adding more options soon or later on.
+Consider giving my project a star to support me. 😄❤️</p>
 
 <div align="center">
 <h3>Features</h3>
@@ -32,9 +33,8 @@ Builds are scraped from <a href="https://www.metasrc.com">Metasrc</a>. Adding mo
 </div>
 
 <div align="center">
-<h3>Roadmap</h3>
+<h3>To do</h3>
 <p>
-Publish LoLA Lib repository to github ❌<br>
 More Runes & Spells Source ❌<br>
 Auto chat role (Automatically send your selected role to lobby chat) ❌
 </p>
@@ -47,22 +47,23 @@ Auto chat role (Automatically send your selected role to lobby chat) ❌
       <br/>
       <p>
       <h5>Main Window<h5/>
-      <image src="https://user-images.githubusercontent.com/48817307/172015955-05926a4d-73cd-4714-b425-bf19ec52a8a5.png"/>
-      <image src="https://user-images.githubusercontent.com/48817307/172016132-e24cd3ce-fe6d-4d5a-8e87-1747101e156f.png"/><br/><br/>
+      <image width="350" src="https://user-images.githubusercontent.com/48817307/172015955-05926a4d-73cd-4714-b425-bf19ec52a8a5.png"/>
+      <image width="350" src="https://user-images.githubusercontent.com/48817307/172016132-e24cd3ce-fe6d-4d5a-8e87-1747101e156f.png"/><br/><br/>
       <h5>Runes & Spells Editor Window<h5/>
-      <image src="https://user-images.githubusercontent.com/48817307/172016693-1d5ff61a-5478-45aa-b4e6-38a615e40c2f.png"/>
+      <image width="350" src="https://user-images.githubusercontent.com/48817307/172016693-1d5ff61a-5478-45aa-b4e6-38a615e40c2f.png"/>
       </p>
   </details>
 </div>
 
-
 ## Acknowledgements
-
- - [Rift Explorer](https://github.com/Pupix/rift-explorer)
- - [LCU Explorer](https://github.com/HextechDocs/lcu-explorer)
- - [lcu-event-viewer](https://github.com/pipe01/lcu-event-viewer)
+This project wouldn't be possible without their tools...
+ - [@Pupix](https://github.com/Pupix) -> [Rift Explorer](https://github.com/Pupix/rift-explorer)
+ - [@pipe01](https://github.com/pipe01) -> [lcu-event-viewer](https://github.com/pipe01/lcu-event-viewer)
+ - [@Hi-Ray](https://github.com/Hi-Ray), [@MingweiSamuel](https://github.com/MingweiSamuel) -> [LCU Explorer](https://github.com/HextechDocs/lcu-explorer)
 
 ## Authors
+- [@Rokuazery](https://www.youtube.com/watch?v=dQw4w9WgXcQ) <- do not click ( ͡° ͜ʖ ͡°)
 
-- [@Rokuazery](https://github.com/Rokuazery)
+## Contributors
 - [@ClaraaXD](https://github.com/ClaraaXD)
+- [@Besalt1080](https://github.com/BeSalt1080)

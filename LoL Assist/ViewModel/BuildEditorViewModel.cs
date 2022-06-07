@@ -768,13 +768,13 @@ namespace LoL_Assist_WAPP.ViewModel
                 Dictionary<string, Data> data = null;
                 while (data == null)
                 {
-                    data = DataDragonWrapper.champions?.Data;
+                    data = DataDragonWrapper.Champions?.Data;
                     Thread.Sleep(1000);
                 }
                 data = null;
             });
 
-            foreach (var champion in DataDragonWrapper.champions.Data.Values)
+            foreach (var champion in DataDragonWrapper.Champions.Data.Values)
                 ChampionList.Add(champion.name);
 
             GameModes = new ObservableCollection<string>(Enum.GetValues(typeof(GameMode))

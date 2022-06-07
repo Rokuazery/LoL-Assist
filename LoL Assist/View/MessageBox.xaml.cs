@@ -23,16 +23,16 @@ namespace LoL_Assist_WAPP.View
         {
             await Task.Delay(2);
             var data = ((MessageBoxViewModel)DataContext);
-            MsgBox exitMsg = new MsgBox(data.message, data.width, data.height);
-            exitMsg.Opacity = 0;
-            exitMsg.Visibility = Visibility.Collapsed;
-            MsgContainer.Children.Add(exitMsg);
-            exitMsg.Decided += delegate (bool result)
+            MsgBox msgBox = new MsgBox(data.message, data.width, data.height);
+            msgBox.Opacity = 0;
+            msgBox.Visibility = Visibility.Collapsed;
+            MsgContainer.Children.Add(msgBox);
+            msgBox.Decided += delegate (bool result)
             {
                 if (result) data.action.Invoke();
                 Utils.Animation.FadeOut(this);
             };
-            Utils.Animation.FadeIn(exitMsg);
+            Utils.Animation.FadeIn(msgBox);
         }
     }
 }

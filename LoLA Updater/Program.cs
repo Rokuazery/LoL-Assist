@@ -8,10 +8,10 @@ namespace LoLA_Updater
 {
     class Program
     {
-        const string Lib = "LolA.dll";
-        const string Exe = "LoL Assist.exe";
-        const string urlLib = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214953&authkey=AKMvepedMnjGt_c";
-        const string urlExe = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214954&authkey=AJkleVt8SSljXJY";
+        const string LIB = "LolA.dll";
+        const string EXE = "LoL Assist.exe";
+        const string LIB_URL = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214953&authkey=AKMvepedMnjGt_c";
+        const string EXE_URL = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214954&authkey=AJkleVt8SSljXJY";
         static void Main(string[] args)
         {
             Console.Title = "LoLA Updater";
@@ -29,13 +29,13 @@ namespace LoLA_Updater
                 Thread.Sleep(1300); // add a delay to wait for the process to shutdown completely
 
                 if (args[0] == "updateExec")
-                    DownloadFunction(Exe, execVersion, urlExe);
+                    DownloadFunction(EXE, execVersion, EXE_URL);
                 else if (args[0] == "updateLib")
-                    DownloadFunction(Lib, libVersion, urlLib);
+                    DownloadFunction(LIB, libVersion, LIB_URL);
                 else if (args[0] == "updateBoth")
                 {
-                    DownloadFunction(Lib, libVersion, urlLib);
-                    DownloadFunction(Exe, execVersion, urlExe);
+                    DownloadFunction(LIB, libVersion, LIB_URL);
+                    DownloadFunction(EXE, execVersion, EXE_URL);
                 }
                 else Environment.Exit(69);
 
@@ -61,9 +61,7 @@ namespace LoLA_Updater
                 Console.WriteLine("Done.");
             }
             catch (Exception ex)
-            {
-                Console.WriteLine($"failed to update {fileName}. {ex.Message}");
-            }
+            { Console.WriteLine($"failed to update {fileName}. {ex.Message}"); }
         }
 
         public static string GetLine(string text, int lineNo)

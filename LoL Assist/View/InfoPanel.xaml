@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              Width="270" Height="170">
     <Grid x:Name="MainGrid">
+        <!--https://img.shields.io/github/stars/rokuazery/lol-assist?color=blue&label=Stars&logo=github&style=for-the-badge-->
         <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
         
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.Foreground="{DynamicResource FontTritaryBrush}">
@@ -31,18 +32,11 @@
                     </Style>
                 </Button.Style>
                 <Grid x:Name="LogoGrid" Width="76" Height="76" >
-                    <Image Source="{DynamicResource LoLAIcon}" RenderOptions.BitmapScalingMode="HighQuality">
-                        <Image.Effect>
-                            <DropShadowEffect Opacity="0.5"/>
-                        </Image.Effect>
-                    </Image>
+                    <Image Source="{DynamicResource LoLAIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
+
                     <Grid Width="26" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Right" ToolTip="Visit LoL Assist on Github">
                         <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16"/>
-                        <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality">
-                            <Image.Effect>
-                                <DropShadowEffect Opacity="0.5" ShadowDepth="2"/>
-                            </Image.Effect>
-                        </Image>
+                        <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </Grid>
             </Button>

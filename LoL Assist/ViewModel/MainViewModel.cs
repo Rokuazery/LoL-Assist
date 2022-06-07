@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Threading;
 using LoLA.LCU.Objects;
 using LoLA.LCU.Events;
-using LoLA.Utils.Log;
+using LoLA.Utils.Logger;
 using System.Windows;
 using LoLA.Objects;
 using System.Text;
@@ -26,7 +26,7 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private const string _disconnected = "Disconnected";
+        private const string DISCONNECTED = "Disconnected";
         #region Miscellaneous
 
         #region Commands
@@ -202,7 +202,7 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private string connectionStatus = _disconnected;
+        private string connectionStatus = DISCONNECTED;
         public string ConnectionStatus
         {
             get => connectionStatus;
@@ -299,10 +299,14 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private bool _IsBusy = false;
         private bool _IsLoLMonitoringPuased = false;
-        private const string _ProccName = "LeagueClient";
         private GameMode _CurrentGameMode = GameMode.NONE;
-        private Task<ChampionBD> _CurrentChampionBuild = null; 
+        private Task<ChampionBD> _CurrentChampionBuild = null;
         private StringBuilder _Warnings = new StringBuilder();
+
+
+        private const string PROCESS_NAME = "LeagueClient";
+        private const string ICON_PATH = "pack://application:,,,/icon.ico";
+
         private string GetCurrentTime
         {
             get { return $"[{DateTime.Now:hh:mm:ss}]"; }
@@ -344,6 +348,7 @@ namespace LoL_Assist_WAPP.ViewModel
             var window = new BuildEditorWindow();
             window.Owner = Application.Current.MainWindow;
             window.ShowDialog();
+
         }
 
         private async void InitLoLA()
@@ -359,7 +364,7 @@ namespace LoL_Assist_WAPP.ViewModel
                 Thread.Sleep(ConfigModel.config.MonitoringDelay * 2);
 
             WorkingStatus = "Initializing LoLA components...";
-            Global.Config.dDragonPatch = DataDragonWrapper.patchVersions[0];
+            Global.Config.dDragonPatch = DataDragonWrapper.patches[0];
 
             phaseMonitor.InitPhaseMonitor(); 
             phaseMonitor.MonitorDelay = ConfigModel.config.MonitoringDelay;
@@ -541,14 +546,14 @@ namespace LoL_Assist_WAPP.ViewModel
             {
                 if (!_IsLoLMonitoringPuased)
                 {
-                    if (Process.GetProcessesByName(_ProccName).Length == 0)
+                    if (Process.GetProcessesByName(PROCESS_NAME).Length == 0)
                     {
                         DispatcherInvoke(() => {
                             WorkingStatusVisibility = Visibility.Visible;
                             ChampionContainerVisibility = Visibility.Collapsed;
                         });
 
-                        ConnectionStatus = _disconnected;
+                        ConnectionStatus = DISCONNECTED;
                         _IsLoLMonitoringPuased = true;
                         CheckLoL();
                     }
@@ -604,7 +609,7 @@ namespace LoL_Assist_WAPP.ViewModel
 
             menuContainer.MenuItems.AddRange(menuList.ToArray());
 
-            using(var stream = Application.GetResourceStream(new Uri("pack://application:,,,/icon.ico")).Stream)
+            using (var stream = Application.GetResourceStream(new Uri(ICON_PATH)).Stream)
             {
                 trayIcon.Icon = new System.Drawing.Icon(stream);
             }

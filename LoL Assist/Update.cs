@@ -2,7 +2,7 @@
 using LoL_Assist_WAPP.Model;
 using System.Diagnostics;
 using System.Threading;
-using LoLA.Utils.Log;
+using LoLA.Utils.Logger;
 using System.Net;
 using System;
 using LoLA;
