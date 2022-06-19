@@ -15,19 +15,19 @@ namespace LoLA.LCU
 {
     public static class LCUWrapper
     {
-        private static WebRequestExt _webRequestEx;
+        private static WebRequestExt s_webRequestEx;
         public static async Task<bool> InitAsync()
         {
-            if (_webRequestEx != null)
+            if (s_webRequestEx != null)
             {
                 try
                 {
-                    HttpWebRequest request = _webRequestEx.CreateRequest("/riotclient/ux-state");
+                    HttpWebRequest request = s_webRequestEx.CreateRequest("/riotclient/ux-state");
                     HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                     string empty = Misc.ReadStream(response.GetResponseStream()).Trim('"');
                     return true;
                 }
-                catch { _webRequestEx = null; }
+                catch { s_webRequestEx = null; }
             }
 
             try
@@ -35,7 +35,7 @@ namespace LoLA.LCU
                 WebRequestExt webRequest = GetAuth();
                 if (webRequest != null)
                 {
-                    _webRequestEx = webRequest;
+                    s_webRequestEx = webRequest;
                     return true;
                 }
             } catch { }
@@ -265,7 +265,7 @@ namespace LoLA.LCU
         {
             try
             {
-                HttpWebRequest request = _webRequestEx.CreateRequest(url);
+                HttpWebRequest request = s_webRequestEx.CreateRequest(url);
                 request.Method = method.ToUpper();
 
                 Stream newStream = request.GetRequestStream();
@@ -288,7 +288,7 @@ namespace LoLA.LCU
 
             try
             {
-                HttpWebRequest request = _webRequestEx.CreateRequest(url);
+                HttpWebRequest request = s_webRequestEx.CreateRequest(url);
                 request.Method = method.ToUpper();
 
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
@@ -313,7 +313,7 @@ namespace LoLA.LCU
         {
             try
             {
-                HttpWebRequest request = _webRequestEx.CreateRequest(url);
+                HttpWebRequest request = s_webRequestEx.CreateRequest(url);
                 request.Method = method.ToUpper();
 
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();

@@ -10,7 +10,7 @@ namespace LoLA.LCU.Events
 
         public class ChampionChangedArgs : EventArgs
         {
-            public string championName { get; set; }
+            private string championName { get; set; }
 
             public ChampionChangedArgs(string championName)
             {
@@ -29,7 +29,7 @@ namespace LoLA.LCU.Events
 
         public bool IsMonitoring { get; set; } = true;
         public int MonitorDelay { get; set; } = 300;
-        private string LastChampion { get; set; }
+        private string _lastChampion { get; set; }
 
         public async void ChampionMonitorA()
         {
@@ -47,9 +47,9 @@ namespace LoLA.LCU.Events
                     var CurrentChampion = await LCUWrapper.GetCurrentChampionAsyncV2();
 
                     //Console.WriteLine("Champion: " + CurrentChampion);
-                    if (LastChampion != CurrentChampion)
+                    if (_lastChampion != CurrentChampion)
                     {
-                        LastChampion = CurrentChampion;
+                        _lastChampion = CurrentChampion;
                         ChampionChanged?.Invoke(this, new ChampionChangedArgs(CurrentChampion));
                     }
                 }
