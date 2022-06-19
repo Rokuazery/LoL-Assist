@@ -10,16 +10,16 @@ namespace LoLA.LCU.Events
         {
             public Phase CurrentPhase { get; set; }
 
-            public PhaseChangedArgs(Phase CurrentPhase)
+            public PhaseChangedArgs(Phase currentPhase)
             {
-                this.currentPhase = CurrentPhase;
+                this.CurrentPhase = currentPhase;
             }
         }
 
         public event EventHandler<PhaseChangedArgs> PhaseChanged;
         public bool IsMonitoring { get; set; } = true;
         public int MonitorDelay { get; set; } = 300;
-        private Phase lastPhase { get; set; }
+        private Phase _lastPhase { get; set; }
 
         public void InitPhaseMonitor()
         {
@@ -39,9 +39,9 @@ namespace LoLA.LCU.Events
                 }
 
                 var currentPhase = await LCUWrapper.GetGamePhaseAsync();
-                if (lastPhase != currentPhase)
+                if (_lastPhase != currentPhase)
                 {
-                    lastPhase = currentPhase;
+                    _lastPhase = currentPhase;
                     PhaseChanged?.Invoke(this, new PhaseChangedArgs(currentPhase));
                 }
                 await Task.Delay(MonitorDelay);
