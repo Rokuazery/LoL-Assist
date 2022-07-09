@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:view="clr-namespace:LoL_Assist_WAPP.View" x:Name="Me"
         xmlns:viewModel ="clr-namespace:LoL_Assist_WAPP.ViewModel"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen" Background="{DynamicResource bBrushSecondary}" RenderOptions.BitmapScalingMode="HighQuality" Topmost="True"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen" Background="{DynamicResource bBrushSecondary}" RenderOptions.BitmapScalingMode="HighQuality" Topmost="{Binding Path=Topmost, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
         Title="LoL Assist" Height="380" Width="505" MinHeight="380" MinWidth="505" MaxHeight="350" MaxWidth="485" BorderBrush="{DynamicResource BorderGradientBrush}" BorderThickness="1">
     <!--Topmost="{Binding Path=Topmost, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
     <Window.InputBindings>
