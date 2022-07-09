@@ -1,15 +1,11 @@
 ﻿using LoL_Assist_WAPP.ViewModel;
 using System.Windows.Navigation;
 using System.Windows.Controls;
-using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
-using System.Windows.Input;
+using LoL_Assist_WAPP.Utils;
 using System.Diagnostics;
 using System.Windows;
-using System.Net;
-using LoLA.Utils;
 using System.IO;
-using System;
 using LoLA;
 
 namespace LoL_Assist_WAPP.View
@@ -30,8 +26,8 @@ namespace LoL_Assist_WAPP.View
 
         void Close()
         {
-            Utils.Animation.FadeOut(backDrop);
-            Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose);
+            Animation.FadeOut(backDrop);
+            Animation.Margin(this, ConfigModel.r_MarginOpen, ConfigModel.r_MarginClose);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -43,7 +39,7 @@ namespace LoL_Assist_WAPP.View
         private async void CheckForUpdatesLink_Click(object sender, RoutedEventArgs e) 
         {
             CheckForUpdatesContent.Text = "Checking for updates...";
-            await Update.Start();
+            await Updater.Start();
             CheckForUpdatesContent.Text = "Check for updates";
         }
 
@@ -55,20 +51,20 @@ namespace LoL_Assist_WAPP.View
             Grid.SetRowSpan(exitMsg, 2);
             exitMsg.Decided += delegate (bool result)
             {
-                var path = Global.libraryFolder + "\\Champions";
+                var path = LibInfo.r_LibFolderPath + "\\Champions";
                 if (result && Directory.Exists(path))
                     Directory.Delete(path, true);
 
-                Utils.Animation.FadeOut(BackDrop, 0.13);
-                Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+                Animation.FadeOut(BackDrop, 0.13);
+                Animation.Margin(exitMsg, ConfigModel.r_MarginOpen, new Thickness(0, Height, 0, 0), 0.13);
             };
-            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
+            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
         }
 
         private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
-            Utils.Animation.FadeIn(BackDrop, time);
-            Utils.Animation.Margin(element, from, to, time);
+            Animation.FadeIn(BackDrop, time);
+            Animation.Margin(element, from, to, time);
         }
 
         private void resetConfigBtn_Click(object sender, RoutedEventArgs e)
@@ -81,15 +77,15 @@ namespace LoL_Assist_WAPP.View
             {
                 if (result)
                 {
-                    ConfigModel.config = new ConfigModel.Config();
+                    ConfigModel.s_Config = new ConfigModel.Config();
                     ConfigModel.SaveConfig();
                     ConfigViewModel.Update();
                 }
 
-                Utils.Animation.FadeOut(BackDrop, 0.13);
-                Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+                Animation.FadeOut(BackDrop, 0.13);
+                Animation.Margin(exitMsg, ConfigModel.r_MarginOpen, new Thickness(0, Height, 0, 0), 0.13);
             };
-            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
+            Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e) => Close();

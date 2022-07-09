@@ -5,8 +5,8 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class Command : ICommand
     {
-        private readonly Action<object> execute;
-        private readonly Func<object, bool> canExecute;
+        private readonly Action<object> r_execute;
+        private readonly Func<object, bool> r_canExecute;
 
         public event EventHandler CanExecuteChanged
         {
@@ -16,18 +16,18 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public Command(Action<object> execute, Func<object, bool> canExecute = null)
         {
-            this.execute = execute;
-            this.canExecute = canExecute;
+            this.r_execute = execute;
+            this.r_canExecute = canExecute;
         }
 
         public bool CanExecute(object parameter)
         {
-            return canExecute == null || canExecute(parameter);
+            return r_canExecute == null || r_canExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            execute(parameter);
+            r_execute(parameter);
         }
     }
 }

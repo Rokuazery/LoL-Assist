@@ -6,12 +6,7 @@ namespace LoL_Assist_WAPP.Converters
     public class ItemToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value != null)
-                return true;
-            else
-                return false;
-        }
+            => value != null;
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

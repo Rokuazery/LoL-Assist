@@ -5,27 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LoL_Assist_WAPP" xmlns:view="clr-namespace:LoL_Assist_WAPP.View"
         mc:Ignorable="d" MouseLeftButtonDown="Window_MouseLeftButtonDown" SnapsToDevicePixels="True"
-        MinHeight="463" MinWidth="650" Height="463" Width="650" MaxHeight="463" MaxWidth="650" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Title="LoL Assist - Runes &amp; Spells Editor">
+        MinHeight="463" MinWidth="650" Height="463" Width="650" MaxHeight="463" MaxWidth="650" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Title="LoL Assist - Advanced Runes &amp; Spells Editor">
     <!--Height="440" Width="585"-->
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="5"/>
     </WindowChrome.WindowChrome>
-    <Window.Resources>
-        <DataTemplate x:Key="ItemImage">
-            <DockPanel>
-                <Border CornerRadius="5" Width="16" Height="16" Margin="0,0,5,0">
-                    <Border.Background>
-                        <ImageBrush ImageSource="{Binding Image}" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Border.Background>
-                </Border>
-                <TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis"/>
-            </DockPanel>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ItemEllipsis">
-            <TextBlock Text="{Binding }" TextTrimming="CharacterEllipsis" />
-        </DataTemplate>
-    </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -35,7 +19,7 @@
         <Border Background="{DynamicResource bBrushSecondary}" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="3"/>
 
         <Grid Grid.Row="0">
-            <TextBlock Text="LoL Assist - Runes &amp; Spells Editor" Foreground="{DynamicResource BrushTitle}" 
+            <TextBlock Text="LoL Assist - Advanced Runes &amp; Spells Editor" Foreground="{DynamicResource BrushTitle}" 
              Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
             <DockPanel HorizontalAlignment="Right">
@@ -49,13 +33,15 @@
             <DockPanel VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource FontTritaryBrush}" 
             Margin="5" TextBlock.FontWeight="DemiBold" HorizontalAlignment="Left">
                 <DockPanel ToolTip="Selected Champion">
-                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Champion: "/>
-                    <TextBlock x:Name="slChampion" Text="{Binding Path=SlChampion}"/>
+                    <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="Champion: "/>
+                    <TextBlock x:Name="slChampion" Text="{Binding Path=SelectedChampion, Converter={StaticResource EmptyToNoneConverter}}"
+                    Foreground="{Binding ElementName=slChampion, Path=Text, Converter={StaticResource TextToForegroundConverter}}"/>
                 </DockPanel>
                 <Border Background="{DynamicResource aBrushPrimary}" Width="1" Margin="5,0,5,0"/>
                 <DockPanel ToolTip="Selected Game Mode">
-                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Game Mode: "/>
-                    <TextBlock x:Name="slGameMode" Text="{Binding Path=SlGameMode}"/>
+                    <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="Game Mode: "/>
+                    <TextBlock x:Name="slGameMode" Text="{Binding Path=SlGameMode}"
+                    Foreground="{Binding ElementName=slGameMode, Path=Text, Converter={StaticResource TextToForegroundConverter}}"/>
                 </DockPanel>
                 <Border Background="{DynamicResource aBrushPrimary}" Width="1" Margin="5,0,5,0"/>
                 <DockPanel>
@@ -64,12 +50,14 @@
                         Default/Main Runes &amp; Spells Config based on Champion and Game Mode
                         </TextBlock>
                     </DockPanel.ToolTip>
-                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="Default Config Source: "/>
-                    <TextBlock x:Name="slDefaultConfig" Text="{Binding Path=SlDefaultConfig}" MaxWidth="130" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="Default Config Source: "/>
+                    <TextBlock x:Name="slDefaultConfig" Text="{Binding Path=SlDefaultConfig}" MaxWidth="130" TextTrimming="CharacterEllipsis"
+                    Foreground="{Binding ElementName=slDefaultConfig, Path=Text, Converter={StaticResource TextToForegroundConverter}}"/>
                 </DockPanel>
             </DockPanel>
             <TextBlock x:Name="saveStatus" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5"
-            Foreground="{Binding ElementName=saveStatus, Path=Text, Converter={StaticResource TextToForegroundConverter}}" Text="{Binding Path=saveInfo}" FontSize="10" FontWeight="DemiBold"/>
+            Foreground="{Binding ElementName=saveStatus, Path=Text, Converter={StaticResource TextToForegroundConverter}}" 
+            Text="{Binding Path=SaveInfo}" FontSize="10" FontWeight="DemiBold"/>
         </Grid>
 
         <Grid x:Name="ConfigGrid" Grid.Row="2" Margin="5,0,5,0" Background="Transparent"
@@ -87,7 +75,7 @@
 
                         <TextBlock Text="champion (1):" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox x:Name="ChampionList" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" IsEditable="True" Style="{DynamicResource FlatComboboxStyle}"
-                        ItemsSource="{Binding Path=ChampionList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False" Tag="Enter a champion name..."
+                        ItemsSource="{Binding Path=Champions, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False" Tag="Enter a champion name..."
                         SelectedItem="{Binding Path=SelectedChampion, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"/>
                     </StackPanel>
 
@@ -179,13 +167,13 @@
 
                         <TextBlock Text="left (1):" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Spells, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedSpell1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
                         <TextBlock Text="right (2):" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=SpellList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Spells, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedSpell2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
                     </StackPanel>
@@ -200,7 +188,7 @@
 
                         <TextBlock Text="primary path:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox x:Name="PrimaryPathList" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=RunePaths, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPath1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,2"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
@@ -212,19 +200,19 @@
 
                         <TextBlock Text="slot 1:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=Perk1List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Perks1, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPerk1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=PrimaryPathList, Path=SelectedItem, Converter={StaticResource ItemToBoolConverter}}"/>
 
                         <TextBlock Text="slot 2:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=Perk2List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Perks2, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPerk2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=PrimaryPathList, Path=SelectedItem, Converter={StaticResource ItemToBoolConverter}}"/>
 
                         <TextBlock Text="slot 3:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=Perk3List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Perks3, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPerk3, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=PrimaryPathList, Path=SelectedItem, Converter={StaticResource ItemToBoolConverter}}"/>
                     </StackPanel>
@@ -232,38 +220,38 @@
                     <StackPanel Margin="10, 5">
                         <TextBlock Text="secondary path:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox x:Name="SecondaryPathList" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=PathList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=RunePaths, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPath2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
                         <TextBlock Text="slot 4:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=Perk4List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Perks4, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPerk4, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}"
                         IsEnabled="{Binding ElementName=SecondaryPathList, Path=SelectedItem, Converter={StaticResource ItemToBoolConverter}}"/>
 
                         <TextBlock Text="slot 5:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=Perk5List, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        ItemsSource="{Binding Path=Perks5, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
                         SelectedItem="{Binding Path=SelectedPerk5, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=SecondaryPathList, Path=SelectedItem, Converter={StaticResource ItemToBoolConverter}}"/>
 
                         <TextBlock Text="offense:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=OffenseList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
-                        SelectedItem="{Binding Path=SelectedOffense, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
+                        ItemsSource="{Binding Path=Shards1, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedShard1, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
                         <TextBlock Text="flex:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=FlexList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
-                        SelectedItem="{Binding Path=SelectedFlex, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
+                        ItemsSource="{Binding Path=Shards2, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedShard2, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
                         <TextBlock Text="defense:" VerticalAlignment="Center" Margin="0,0,0,3"/>
                         <ComboBox ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Style="{DynamicResource FlatComboboxStyle}" 
-                        ItemsSource="{Binding Path=DefenseList, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
-                        SelectedItem="{Binding Path=SelectedDefense, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
+                        ItemsSource="{Binding Path=Shards3, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.CanContentScroll="False"
+                        SelectedItem="{Binding Path=SelectedShard3, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemImage}" Margin="0,0,0,5"
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
                     </StackPanel>
                 </StackPanel>

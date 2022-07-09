@@ -24,7 +24,7 @@
         </Style>
     </UserControl.Style>
     <Grid>
-        <Border Background="Black" Opacity="0.45"/>
+        <Border Background="Black" Opacity="0.6"/>
         <Grid Width="220" Height="145">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
@@ -38,7 +38,7 @@
                     <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="{DynamicResource BrushTitle}" Margin="0,0,0,5"/>
                     <TextBlock x:Name="aaStatus" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11" Text="{Binding AcceptStatus, UpdateSourceTrigger=PropertyChanged}" 
                     Foreground="{Binding ElementName=aaStatus, Path=Foreground, Converter={StaticResource TextToForegroundConverter}}"/>
-                    <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" extensions:ProgressBarSmoother.SmoothValue="{Binding TimeoutValue, UpdateSourceTrigger=PropertyChanged}" x:Name="pBar"/>
+                    <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" extensions:ProgressBarSmoother.SmoothValue="{Binding TimeoutValue, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" VerticalAlignment="Bottom" Text="{Binding TimeoutTimer, UpdateSourceTrigger=PropertyChanged}"
                 HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="aCount"/>
                 </StackPanel>

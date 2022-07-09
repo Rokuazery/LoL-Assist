@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
-using LoLA.LCU.Objects;
-using LoLA.LCU.Events;
-using LoLA.Objects;
-using System.IO;
-using LoLA.LCU;
-using System;
-using LoLA;
+﻿using LoLA.Networking.WebWrapper.DataDragon.Data;
+using LoLA.Networking.LCU.Objects;
+using LoLA.Networking.LCU.Events;
 using System.Collections.Generic;
+using LoLA.Networking.LCU.Enums;
+using System.Threading.Tasks;
+using LoLA.Networking.LCU;
+using LoLA.Data;
+using LoLA;
+using Converter = LoLA.Networking.WebWrapper.DataDragon.Data.Converter;
 
 namespace LoL_Assist_WAPP.Model
 {
@@ -15,13 +16,13 @@ namespace LoL_Assist_WAPP.Model
         public static PhaseMonitor phaseMonitor = new PhaseMonitor();
         public static ChampionMonitor champMonitor = new ChampionMonitor();
 
-        public static async Task<bool> SetRuneAsync(RuneObj rune, RunePage CurrentRunePage)
+        public static async Task<bool> SetRuneAsync(Rune rune, RunePage CurrentRunePage, bool forceUpdate = false)
         {
             if (CurrentRunePage != null)
             {
-                if (CurrentRunePage.name != rune.Name)
+                if ((CurrentRunePage.name != rune.Name) || forceUpdate)
                 {
-                    var runePage = DataConverter.RuneBuildToRunePage(rune);
+                    var runePage = Converter.RuneToRunePage(rune);
                     var currentRunePage = await LCUWrapper.GetCurrentRunePageAsync();
                     if (currentRunePage != null)
                     {
@@ -48,49 +49,31 @@ namespace LoL_Assist_WAPP.Model
             return false;
         }
 
-        public static string GetLocalBuildName(string championId, GameMode gameMode)
-        {
-            var defaultBuildConfig = new DefaultBuildConfig();
-            if (File.Exists(Utils.defConfigPath(championId)))
-                defaultBuildConfig = Utils.getDefaultBuildConfig(championId);
-
-            var buildName = defaultBuildConfig.getDefaultConfig(gameMode);
-
-            var customBuildPath = Main.localBuild.BuildsFolder(championId, gameMode);
-            var fullPath = $"{customBuildPath}\\{defaultBuildConfig.getDefaultConfig(gameMode)}";
-
-            if (!File.Exists(fullPath))
-                defaultBuildConfig.resetDefaultConfig(gameMode);
-
-            Utils.writeDefaultBuildConfig(championId, defaultBuildConfig);
-            return buildName;
-        }
-
-        public async static Task ImportSpellsAsync(SpellObj spell, GameMode gameMode)
+        public async static Task ImportSpellsAsync(Spell spell, GameMode gameMode)
         {
             await Task.Run(() => {
                 var flashId = "SummonerFlash";
-                if (ConfigModel.config.FlashPlacementToRight)
+                if (ConfigModel.s_Config.FlashPlacementToRight)
                 {
-                    if (spell.Spell0.Equals(flashId))
+                    if (spell.First.Equals(flashId))
                     {
-                        var flash = spell.Spell0;
-                        spell.Spell0 = spell.Spell1;
-                        spell.Spell1 = flash;
+                        var flash = spell.First;
+                        spell.First = spell.Second;
+                        spell.Second = flash;
                     }
                 }
                 else
                 {
-                    if (spell.Spell1.Equals(flashId))
+                    if (spell.Second.Equals(flashId))
                     {
-                        var flash = spell.Spell1;
-                        spell.Spell1 = spell.Spell0;
-                        spell.Spell0 = flash;
+                        var flash = spell.Second;
+                        spell.Second = spell.First;
+                        spell.First = flash;
                     }
                 }
-                spell.Spell0 = Dictionaries.SpellIdToSpellKey[spell.Spell0].ToString();
-                spell.Spell1 = Dictionaries.SpellIdToSpellKey[spell.Spell1].ToString();
-                LCUWrapper.SetSummonerSpells(spell, gameMode).Wait();
+                spell.First = DataConverter.SpellIdToSpellKey(spell.First).ToString();
+                spell.Second = DataConverter.SpellIdToSpellKey(spell.Second).ToString();
+                LCUWrapper.SetSummonerSpellsAsync(spell, gameMode).Wait();
             });
         }
     }

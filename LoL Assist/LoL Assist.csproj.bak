@@ -1,0 +1,516 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LoL_Assist_WAPP</RootNamespace>
+    <AssemblyName>LoL Assist</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LoLA, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\LoLA\LoLA\bin\Debug\LoLA.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="BuildEditorWindow.xaml.cs">
+      <DependentUpon>BuildEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\NullToCollapseConverter.cs" />
+    <Compile Include="Converters\StringToImageConverter .cs" />
+    <Compile Include="Converters\TextToForegroundConverter.cs" />
+    <Compile Include="Extensions\ProgressBarSmoother.cs" />
+    <Compile Include="MainWnd.xaml.cs">
+      <DependentUpon>MainWnd.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\ConfigModel.cs" />
+    <Compile Include="Model\DefaultBuildConfig.cs" />
+    <Compile Include="Converters\IndexToBoolConverter.cs" />
+    <Compile Include="Converters\ItemToBoolConverter.cs" />
+    <Compile Include="Model\ItemImageModel.cs" />
+    <Compile Include="Model\LoLAWrapper.cs" />
+    <Compile Include="Model\PathModel.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Update.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="ViewModel\BuildEditorViewModel.cs" />
+    <Compile Include="ViewModel\ConfigViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\Command.cs" />
+    <Compile Include="ViewModel\MatchFoundViewModel.cs" />
+    <Compile Include="ViewModel\MessageBoxViewModel.cs" />
+    <Compile Include="ViewModel\PatchViewModel.cs" />
+    <Compile Include="ViewModel\RoleSelectViewModel.cs" />
+    <Compile Include="View\ConfigPanel.xaml.cs">
+      <DependentUpon>ConfigPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MessageBox.xaml.cs">
+      <DependentUpon>MessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MsgBox.xaml.cs">
+      <DependentUpon>MsgBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InfoPanel.xaml.cs">
+      <DependentUpon>InfoPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MatchFoundPanel.xaml.cs">
+      <DependentUpon>MatchFoundPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PatchNotesPanel.xaml.cs">
+      <DependentUpon>PatchNotesPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RoleSelectPanel.xaml.cs">
+      <DependentUpon>RoleSelectPanel.xaml</DependentUpon>
+    </Compile>
+    <Page Include="BuildEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Colours.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="MainWnd.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ConfigPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MsgBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\InfoPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MatchFoundPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PatchNotesPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RoleSelectPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Resource Include="Resources\axe.webp" />
+    <Resource Include="Resources\circle.webp" />
+    <Resource Include="Resources\diamond.webp" />
+    <Resource Include="Resources\heart.webp" />
+    <Resource Include="Resources\shield.webp" />
+    <Resource Include="Resources\time.webp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\NoIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Triumph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ultimate Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Unflinching.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Unsealed Spellbook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Waterwalking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Zombie Ward.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Absolute Focus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Aftershock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Approach Velocity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Arcane Comet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Biscuit Delivery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Bone Plating.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Celerity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cheap Shot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Conditioning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Conqueror.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cosmic Insight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Coup de Grace.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Cut Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Dark Harvest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Demolish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Domination.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Electrocute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Eyeball Collection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fleet Footwork.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Font of Life.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Future%27s Market.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Gathering Storm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ghost Poro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Glacial Augment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Grasp of the Undying.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Guardian.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hail of Blades.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Hextech Flashtraption.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ingenious Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Inspiration.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Last Stand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Alacrity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Bloodline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Legend Tenacity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Lethal Tempo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Magical Footwear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Manaflow Band.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Minion Dematerializer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Nimbus Cloak.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Nullifying Orb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Overgrowth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Overheal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Perfect Timing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Phase Rush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Precision.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Predator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Presence of Mind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Press the Attack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Prototype Omnistone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Ravenous Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Relentless Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Resolve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Revitalize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Scorch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Second Wind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Shield Bash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Sorcery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Sudden Impact.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Summon Aery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerBarrier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerBoost.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerDot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerExhaust.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerFlash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerHaste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerHeal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerMana.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerSmite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerTeleport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Taste of Blood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Time Warp Tonic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Transcendence.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummonerSnowball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GitHub-Mark-Light-32px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\First Strike.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Treasure Hunter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Jungle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Mid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Support.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Top.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ADC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Logo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

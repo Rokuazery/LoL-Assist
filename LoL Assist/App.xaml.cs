@@ -1,9 +1,10 @@
 ﻿using System.Windows.Controls;
-using LoL_Assist_WAPP.Model;
+using LoL_Assist_WAPP.Utils;
 using System.Diagnostics;
 using System.Windows;
 using System;
 using LoLA;
+using LoL_Assist_WAPP.Model;
 
 namespace LoL_Assist_WAPP
 {
@@ -14,14 +15,15 @@ namespace LoL_Assist_WAPP
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Global.Config.debug = true;
+            RuneModel.Init();
+            GlobalConfig.s_Debug = true;
             //Console.Title = "LoL Assist - Debug Console";
             ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
 
-            if (!Global.Config.debug)
+            if (!GlobalConfig.s_Debug)
             {
-                var handle = Utils.GetConsoleWindow();
-                Utils.ShowWindow(handle, Utils.SW_HIDE);
+                var handle = Helper.GetConsoleWindow();
+                Helper.ShowWindow(handle, Helper.SW_HIDE);
             }
 
             var proccName = Process.GetCurrentProcess().ProcessName;

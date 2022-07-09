@@ -20,7 +20,7 @@
                 <TextBlock Text="Settings" Foreground="{DynamicResource BrushTitle}" Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
                 <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="BackBtn"  Click="BackBtn_Click" VerticalAlignment="Center" ToolTip="Back"
-                HorizontalAlignment="Right" Margin="0,0,6,0" Tag="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                HorizontalAlignment="Right" Margin="0,0,6,0" Tag="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" Focusable="False"/>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -34,19 +34,19 @@
                         <StackPanel>
                             <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,2,0,0"/>
                             <Border Background="{DynamicResource aBrushPrimary}" Height="1" Margin="0,2,0,8"/>
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Runes" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto runes" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoRunes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     Automatically import Runes
                                 </CheckBox.ToolTip>
                             </CheckBox>
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Spells"  HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto spells"  HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     Automatically import Spells
                                 </CheckBox.ToolTip>
                             </CheckBox>
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto Accept"  HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto accept"  HorizontalAlignment="Left"
                     IsChecked="{Binding Path=AutoAccept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
@@ -55,7 +55,7 @@
                                 </CheckBox.ToolTip>
                             </CheckBox>
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Use The Latest Patch" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Use LoL latest patch" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=UseLatestPatch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock TextWrapping="Wrap" MaxWidth="250">
@@ -67,16 +67,16 @@
                                 </CheckBox.ToolTip>
                             </CheckBox>
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Custom Runes &amp; Spells" HorizontalAlignment="Left"
+                            <!--<CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Custom Runes &amp; Spells" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=CustomRunesSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Import custom made Runes &amp; Spells profile <Bold>(required 'Auto Spells' &amp; 'Auto Runes' enabled)</Bold>
                                     </TextBlock>
                                 </CheckBox.ToolTip>
-                            </CheckBox>
+                            </CheckBox>-->
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash Placement to Right" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash placement to right" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=FlashPlacementToRight, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock TextWrapping="Wrap" MaxWidth="250">
@@ -100,16 +100,16 @@
                                 </CheckBox.ToolTip>
                             </CheckBox>
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Potato Mode" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Potato mode" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=LowSpecMode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
-                                Turns off animations &amp; increase update interval
+                                Remove some animations &amp; increase update interval
                                     </TextBlock>
                                 </CheckBox.ToolTip>
                             </CheckBox>
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Builds Caching" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Builds caching" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=BuildCache, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
@@ -120,7 +120,7 @@
                                 </CheckBox.ToolTip>
                             </CheckBox>
 
-                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update On Startup" HorizontalAlignment="Left"
+                            <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update on startup" HorizontalAlignment="Left"
                     IsChecked="{Binding Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
@@ -135,10 +135,10 @@
                             </StackPanel>-->
                             
                             <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="clearCacheBtn"
-                            Click="clearCacheBtn_Click" Height="24"  Content="Clear Cache" Margin="0,0,0,5"/>
+                            Click="clearCacheBtn_Click" Height="24"  Content="Clear cache" Margin="0,0,0,5"/>
 
                             <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="ShowFolderButton"
-                            Command="{Binding Path=ShowFolderInExCommand}" Height="24"  Content="Open LoLA Folder" Margin="0,0,0,5"/>
+                            Command="{Binding Path=ShowFolderInExCommand}" Height="24" Content="Open cache folder" Margin="0,0,0,5"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
@@ -164,7 +164,7 @@
 
                 <DockPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,7,0">
                     <Button Template="{DynamicResource FlatStyleButton}" Margin="5,0,0,0" Grid.Column="0" x:Name="resetConfigBtn"
-                Click="resetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset Config"/>
+                Click="resetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset config"/>
                 </DockPanel>
             </Grid>
         </Grid>

@@ -1,19 +1,19 @@
-﻿using LoLA.WebAPIs.DataDragon.Objects;
+﻿using LoLA.Networking.WebWrapper.DataDragon.Data;
+using LoLA.Networking.WebWrapper.DataDragon;
+using static LoL_Assist_WAPP.Utils.Helper;
 using System.Collections.ObjectModel;
-using static LoL_Assist_WAPP.Utils;
 using System.Collections.Generic;
-using LoLA.WebAPIs.DataDragon;
+using LoL_Assist_WAPP.Converters;
+using LoLA.Networking.LCU.Enums;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using LoL_Assist_WAPP.Model;
 using System.Windows.Input;
 using System.Threading;
-using LoLA.LCU.Objects;
 using Newtonsoft.Json;
-using LoLA.Objects;
 using System.Linq;
+using LoLA.Data;
 using System.IO;
-using LoLA.LCU;
 using System;
 using LoLA;
 
@@ -21,27 +21,21 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     public class BuildEditorViewModel : INotifyPropertyChanged
     {
-
         #region Commands
         public ICommand SaveCommand { get; }
         public ICommand SetAsDefaultCommand { get; }
         public ICommand ClearDefaultSourceCommand { get; }
 
-        private GameMode gm()
-        {
-            return (GameMode)Enum.Parse(typeof(GameMode), SelectedGameMode);
-        }
-
-        private void SetAsDefaultExecute()
+        private void setAsDefaultExecute()
         {
             try
             {
-                if (!SelectedBuildName.Equals(_CreateNewKey))
+                if (SelectedBuildName != null && !SelectedBuildName.Equals(CREATE_NEW)
+                && !string.IsNullOrEmpty(SelectedBuildName))
                 {
-                    var gameMode = gm();
-                    _DefaultBuildConfig.setDefaultConfig(gameMode, SelectedBuildName);
-                    writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
-                    SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
+                    DefaultBuildConfig.SetDefaultConfig(SelectedGameMode, SelectedBuildName);
+                    LocalBuild.WriteDefaultBuildConfig(selectedChampionId, DefaultBuildConfig);
+                    SlDefaultConfig = DefaultBuildConfig.GetDefaultConfig(SelectedGameMode);
                 }
             }
             catch { /*ex*/ }
@@ -49,63 +43,60 @@ namespace LoL_Assist_WAPP.ViewModel
 
         public void DeleteConfigExecute()
         {
-            if(SelectedBuildName != null && !SelectedBuildName.Equals(_CreateNewKey))
+            if(SelectedBuildName != null && !SelectedBuildName.Equals(CREATE_NEW))
             {
                 var buildName = SelectedBuildName;
                 SelectedBuildName = null;
                 
-                var gameMode = gm();
                 var _buildsName = new List<string>();
-                _buildsName.Add(_CreateNewKey);
+                _buildsName.Add(CREATE_NEW);
 
-                Main.localBuild.DeleteData(_SelectedChampionId, Path.GetFileNameWithoutExtension(buildName), gameMode);
-                foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gameMode))
+                LocalBuild.DeleteData(selectedChampionId, Path.GetFileNameWithoutExtension(buildName), SelectedGameMode);
+                foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
                     _buildsName.Add(Path.GetFileName(path));
 
                 BuildsName = _buildsName;
 
-                var customBuildPath = Main.localBuild.BuildsFolder(_SelectedChampionId, gameMode);
-                var fullPath = $"{customBuildPath}\\{_DefaultBuildConfig.getDefaultConfig(gameMode)}";
+                var customBuildPath = LocalBuild.BuildsFolder(selectedChampionId, SelectedGameMode);
+                var fullPath = $"{customBuildPath}\\{DefaultBuildConfig.GetDefaultConfig(SelectedGameMode)}";
 
                 if (!File.Exists(fullPath))
-                    _DefaultBuildConfig.resetDefaultConfig(gameMode);
+                    DefaultBuildConfig.ResetDefaultConfig(SelectedGameMode);
 
-                writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
-                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
+                LocalBuild.WriteDefaultBuildConfig(selectedChampionId, DefaultBuildConfig);
+                SlDefaultConfig = DefaultBuildConfig.GetDefaultConfig(SelectedGameMode);
             }
         }
 
-        private void ClearDefaultSourceExecute()
+        private void clearDefaultSourceExecute()
         {
-            if (SelectedChampion != null && SelectedGameMode != null)
+            if (SelectedChampion != null && SelectedGameMode != GameMode.NONE)
             {
-                var gameMode = gm();
-                _DefaultBuildConfig.resetDefaultConfig(gameMode);
-                writeDefaultBuildConfig(_SelectedChampionId, _DefaultBuildConfig);
-                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
+                DefaultBuildConfig.ResetDefaultConfig(SelectedGameMode);
+                LocalBuild.WriteDefaultBuildConfig(selectedChampionId, DefaultBuildConfig);
+                SlDefaultConfig = DefaultBuildConfig.GetDefaultConfig(SelectedGameMode);
             }
         }
 
-        private async void SaveConfigExecute()
+        private async void saveConfigExecute()
         {
-            if(!string.IsNullOrEmpty(FileName) && SelectedChampion != null && SelectedGameMode != null)
+            if(!string.IsNullOrEmpty(FileName) && SelectedChampion != null && SelectedGameMode != GameMode.NONE)
             {
-                var sGM = gm();
-                var filePath = Main.localBuild.DataPath(_SelectedChampionId, FileName, sGM);
+                var filePath = LocalBuild.DataPath(selectedChampionId, FileName, SelectedGameMode);
 
                 if (File.Exists(filePath))
                     File.Create(filePath).Dispose();
 
                 using(var streaWriter = new StreamWriter(filePath))
                 {
-                    var json = JsonConvert.SerializeObject(_SelectedBuild, Formatting.Indented);
+                    var json = JsonConvert.SerializeObject(selectedBuild);
                     streaWriter.Write(json);
-                    _ReferenceBuild = json;
+                    referenceBuild = json;
                 }
 
                 var _buildsName = new List<string>();
-                _buildsName.Add(_CreateNewKey);
-                foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, sGM))
+                _buildsName.Add(CREATE_NEW);
+                foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
                     _buildsName.Add(Path.GetFileName(path));
 
                 BuildsName = _buildsName;
@@ -113,103 +104,97 @@ namespace LoL_Assist_WAPP.ViewModel
             }
             else if(string.IsNullOrEmpty(FileName))
             {
-                WarningTxt = "'file name:' field cannot be empty!";
+                WarningText = "'file name:' field cannot be empty!";
                 await Task.Delay(2500);
-                WarningTxt = null;
+                WarningText = null;
             }
             await saved();
         }
         #endregion
 
         #region Needed
-        private ObservableCollection<string> championList = new ObservableCollection<string>();
-        public ObservableCollection<string> ChampionList
+        private ObservableCollection<string> _champions = new ObservableCollection<string>();
+        public ObservableCollection<string> Champions
         {
-            get => championList;
+            get => _champions;
             set
             {
-                if (championList != value)
+                if (_champions != value)
                 {
-                    championList = value;
-                    OnPropertyChanged(nameof(ChampionList));
+                    _champions = value;
+                    OnPropertyChanged(nameof(Champions));
                 }
             }
         }
 
-        private ObservableCollection<string> gameModes = new ObservableCollection<string>();
+        private ObservableCollection<string> _gameModes = new ObservableCollection<string>();
         public ObservableCollection<string> GameModes
         {
-            get => gameModes;
+            get => _gameModes;
             set
             {
-                if (gameModes != value)
+                if (_gameModes != value)
                 {
-                    gameModes = value;
+                    _gameModes = value;
                     OnPropertyChanged(nameof(GameModes));
                 }
             }
         }
 
-        private string selectedChampion;
+        private string _selectedChampion;
         public string SelectedChampion
         {
-            get => selectedChampion;
+            get => _selectedChampion;
             set
             {
-                if (selectedChampion != value)
+                if (_selectedChampion != value)
                 {
-                    SlChampion = value;
-                    selectedChampion = value;
-
-                    if (value == null || value == string.Empty)
-                        SlChampion = "None";
-
-
+                    _selectedChampion = value;
                     OnPropertyChanged(nameof(SelectedChampion));
-                    Data_Changed();
+                    dataChanged();
                 }
             }
         }
 
-        private string selectedGameMode;
-        public string SelectedGameMode
+        private GameMode _selectedGameMode;
+        public GameMode SelectedGameMode
         {
-            get => selectedGameMode;
+            get => _selectedGameMode;
             set
             {
-                if (selectedGameMode != value)
+                if (_selectedGameMode != value)
                 {
                     SlGameMode = value;
-                    selectedGameMode = value;
+                    _selectedGameMode = value;
                     OnPropertyChanged(nameof(SelectedGameMode));
-                    Data_Changed();
+                    dataChanged();
                 }
             }
         }
 
-        private List<string> buildsName = new List<string>();
+        private List<string> _buildsName = new List<string>();
         public List<string> BuildsName
         {
-            get => buildsName;
+            get => _buildsName;
             set
             {
-                if (buildsName != value)
+                if (_buildsName != value)
                 {
-                    buildsName = value;
+                    _buildsName = value;
                     OnPropertyChanged(nameof(BuildsName));
                 }
             }
         }
 
-        private string selectedBuildName;
+        private string _selectedBuildName;
         public string SelectedBuildName
         {
-            get => selectedBuildName;
+            get => _selectedBuildName;
             set
             {
-                if (selectedBuildName != value)
+                if (_selectedBuildName != value)
                 {
-                    selectedBuildName = value;
+                    _selectedBuildName = value;
                     OnPropertyChanged(nameof(SelectedBuildName));
                     FetchBuild();
                 }
@@ -218,439 +203,439 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region Editable
-        private string fileName;
+        private string _fileName;
         public string FileName
         {
-            get => fileName;
+            get => _fileName;
             set
             {
-                if (fileName != value)
+                if (_fileName != value)
                 {
-                    fileName = value;
+                    _fileName = value;
                     OnPropertyChanged(nameof(FileName));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
         #region Spells
-        public List<ItemImageModel> spellList = new List<ItemImageModel>();
-        public List<ItemImageModel> SpellList
+        public List<ItemImageModel> _spells = new List<ItemImageModel>();
+        public List<ItemImageModel> Spells
         {
-            get => spellList;
+            get => _spells;
             set
             {
-                if (spellList != value)
+                if (_spells != value)
                 {
-                    spellList = value;
-                    OnPropertyChanged(nameof(SpellList));
+                    _spells = value;
+                    OnPropertyChanged(nameof(Spells));
                 }
             }
         }
 
-        private ItemImageModel selectedSpell1;
+        private ItemImageModel _selectedSpell1;
         public ItemImageModel SelectedSpell1
         {
-            get => selectedSpell1;
+            get => _selectedSpell1;
             set    
             {
-                if (selectedSpell1 != value)
+                if (_selectedSpell1 != value)
                 {
-                    selectedSpell1 = value;
-                    SelectedSpell2 = RemoveDup(SelectedSpell1, SelectedSpell2);
+                    _selectedSpell1 = value;
+                    SelectedSpell2 = removeDup(SelectedSpell1, SelectedSpell2);
                     if(value != null)
-                        _SelectedBuild.spell.Spell0 = Dictionaries.SpellNameToSpellID[value.Text];
+                        selectedBuild.Spell.First = DataConverter.SpellNameToSpellId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedSpell1));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        private ItemImageModel selectedSpell2;
+        private ItemImageModel _selectedSpell2;
         public ItemImageModel SelectedSpell2
         {
-            get => selectedSpell2;
+            get => _selectedSpell2;
             set
             {
-                if (selectedSpell2 != value)
+                if (_selectedSpell2 != value)
                 {
-                    selectedSpell2 = value;
-                    SelectedSpell1 = RemoveDup(SelectedSpell2, SelectedSpell1);
+                    _selectedSpell2 = value;
+                    SelectedSpell1 = removeDup(SelectedSpell2, SelectedSpell1);
                     if(value != null)
-                        _SelectedBuild.spell.Spell1 = Dictionaries.SpellNameToSpellID[value.Text];
+                        selectedBuild.Spell.Second = DataConverter.SpellNameToSpellId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedSpell2));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
         #endregion
 
         #region Perks
-        private string runeName;
+        private string _runeName;
         public string RuneName
         {
-            get => runeName;
+            get => _runeName;
             set
             {
-                if (runeName != value)
+                if (_runeName != value)
                 {
-                    runeName = value;
+                    _runeName = value;
 
                     if(value != null)
-                        _SelectedBuild.rune.Name = value;
+                        selectedBuild.Rune.Name = value;
 
                     OnPropertyChanged(nameof(RuneName));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> pathList = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> PathList
+        public ObservableCollection<ItemImageModel> _runePaths = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> RunePaths
         {
-            get => pathList;
+            get => _runePaths;
             set
             {
-                if (pathList != value)
+                if (_runePaths != value)
                 {
-                    pathList = value;
-                    OnPropertyChanged(nameof(PathList));
+                    _runePaths = value;
+                    OnPropertyChanged(nameof(RunePaths));
                 }
             }
         }
 
-        private ItemImageModel selectedPath1;
+        private ItemImageModel _selectedPath1;
         public ItemImageModel SelectedPath1
         {
-            get => selectedPath1;
+            get => _selectedPath1;
             set
             {
-                if (selectedPath1 != value)
+                if (_selectedPath1 != value)
                 {
-                    selectedPath1 = value;
-                    SelectedPath2 = RemoveDup(SelectedPath1, SelectedPath2);
+                    _selectedPath1 = value;
+                    SelectedPath2 = removeDup(SelectedPath1, SelectedPath2);
                     if(value != null)
-                        _SelectedBuild.rune.Path0 = DataConverter.PathNameToId(value.Text);
+                        selectedBuild.Rune.PrimaryPath = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PathNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPath1));
-                    Path1_Changed();
-                    IsChanged();
+                    path1Changed();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> keystones = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> _keystones = new ObservableCollection<ItemImageModel>();
         public ObservableCollection<ItemImageModel> Keystones
         {
-            get => keystones;
+            get => _keystones;
             set
             {
-                if (keystones != value)
+                if (_keystones != value)
                 {
-                    keystones = value;
+                    _keystones = value;
                     OnPropertyChanged(nameof(Keystones));
                 }
             }
         }
 
-        private ItemImageModel selectedKeystone;
+        private ItemImageModel _selectedKeystone;
         public ItemImageModel SelectedKeystone
         {
-            get => selectedKeystone;
+            get => _selectedKeystone;
             set
             {
-                if (selectedKeystone != value)
+                if (_selectedKeystone != value)
                 {
-                    selectedKeystone = value;
+                    _selectedKeystone = value;
                     if(value != null)
-                        _SelectedBuild.rune.Keystone = DataConverter.PerkNameToId(value.Text);
+                        selectedBuild.Rune.Keystone = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedKeystone));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> perk1List = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> Perk1List
+        public ObservableCollection<ItemImageModel> _perks1 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Perks1
         {
-            get => perk1List;
+            get => _perks1;
             set
             {
-                if (perk1List != value)
+                if (_perks1 != value)
                 {
-                    perk1List = value;
-                    OnPropertyChanged(nameof(Perk1List));
+                    _perks1 = value;
+                    OnPropertyChanged(nameof(Perks1));
                 }
             }
         }
 
-        private ItemImageModel selectedPerk1;
+        private ItemImageModel _selectedPerk1;
         public ItemImageModel SelectedPerk1
         {
-            get => selectedPerk1;
+            get => _selectedPerk1;
             set
             {
-                if (selectedPerk1 != value)
+                if (_selectedPerk1 != value)
                 {
-                    selectedPerk1 = value;
+                    _selectedPerk1 = value;
                     if(value!=null)
-                        _SelectedBuild.rune.Slot1 = DataConverter.PerkNameToId(value.Text);
+                        selectedBuild.Rune.Slot1 = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk1));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> perk2List = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> Perk2List
+        public ObservableCollection<ItemImageModel> _perks2 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Perks2
         {
-            get => perk2List;
+            get => _perks2;
             set
             {
-                if (perk2List != value)
+                if (_perks2 != value)
                 {
-                    perk2List = value;
-                    OnPropertyChanged(nameof(Perk2List));
+                    _perks2 = value;
+                    OnPropertyChanged(nameof(Perks2));
                 }
             }
         }
 
-        private ItemImageModel selectedPerk2;
+        private ItemImageModel _selectedPerk2;
         public ItemImageModel SelectedPerk2
         {
-            get => selectedPerk2;
+            get => _selectedPerk2;
             set
             {
-                if (selectedPerk2 != value)
+                if (_selectedPerk2 != value)
                 {
-                    selectedPerk2 = value;
+                    _selectedPerk2 = value;
                     if(value != null)
-                        _SelectedBuild.rune.Slot2 = DataConverter.PerkNameToId(value.Text);
+                        selectedBuild.Rune.Slot2 = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk2));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> perk3List = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> Perk3List
+        public ObservableCollection<ItemImageModel> _perks3 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Perks3
         {
-            get => perk3List;
+            get => _perks3;
             set
             {
-                if (perk3List != value)
+                if (_perks3 != value)
                 {
-                    perk3List = value;
-                    OnPropertyChanged(nameof(Perk3List));
+                    _perks3 = value;
+                    OnPropertyChanged(nameof(Perks3));
                 }
             }
         }
 
-        private ItemImageModel selectedPerk3;
+        private ItemImageModel _selectedPerk3;
         public ItemImageModel SelectedPerk3
         {
-            get => selectedPerk3;
+            get => _selectedPerk3;
             set
             {
-                if (selectedPerk3 != value)
+                if (_selectedPerk3 != value)
                 {
-                    selectedPerk3 = value;
+                    _selectedPerk3 = value;
                     if(value!=null)
-                        _SelectedBuild.rune.Slot3 = DataConverter.PerkNameToId(value.Text);
+                        selectedBuild.Rune.Slot3 = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk3));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
 
-        private ItemImageModel selectedPath2;
+        private ItemImageModel _selectedPath2;
         public ItemImageModel SelectedPath2
         {
-            get => selectedPath2;
+            get => _selectedPath2;
             set
             {
-                if (selectedPath2 != value)
+                if (_selectedPath2 != value)
                 {
-                    selectedPath2 = value;
+                    _selectedPath2 = value;
                     if(value != null)
-                        _SelectedBuild.rune.Path1 = DataConverter.PathNameToId(value.Text);
-                    SelectedPath1 = RemoveDup(SelectedPath2, SelectedPath1);
+                        selectedBuild.Rune.SecondaryPath = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PathNameToId(value.Text);
+                    SelectedPath1 = removeDup(SelectedPath2, SelectedPath1);
 
                     OnPropertyChanged(nameof(SelectedPath2));
-                    Path2_Changed();
-                    IsChanged();
+                    path2Changed();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> perk4List = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> Perk4List
+        public ObservableCollection<ItemImageModel> _perks4 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Perks4
         {
-            get => perk4List;
+            get => _perks4;
             set
             {
-                if (perk4List != value)
+                if (_perks4 != value)
                 {
-                    perk4List = value;
-                    OnPropertyChanged(nameof(Perk4List));
+                    _perks4 = value;
+                    OnPropertyChanged(nameof(Perks4));
                 }
             }
         }
 
-        private ItemImageModel selectedPerk4;
+        private ItemImageModel _selectedPerk4;
         public ItemImageModel SelectedPerk4
         {
-            get => selectedPerk4;
+            get => _selectedPerk4;
             set
             {
-                if (selectedPerk4 != value)
+                if (_selectedPerk4 != value)
                 {
-                    selectedPerk4 = value;
+                    _selectedPerk4 = value;
                     if(value!=null)
-                        _SelectedBuild.rune.Slot4 = DataConverter.PerkNameToId(value.Text);
-                    SelectedPerk5 = RemoveDup(value, SelectedPerk5);
+                        selectedBuild.Rune.Slot4 = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
+                    SelectedPerk5 = removeDup(value, SelectedPerk5);
 
                     OnPropertyChanged(nameof(SelectedPerk4));
-                    Perk4_Changed();
-                    IsChanged();
+                    perk4Changed();
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> perk5List = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> Perk5List
+        public ObservableCollection<ItemImageModel> _perks5 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Perks5
         {
-            get => perk5List;
+            get => _perks5;
             set
             {
-                if (perk5List != value)
+                if (_perks5 != value)
                 {
-                    perk5List = value;
-                    OnPropertyChanged(nameof(Perk5List));
+                    _perks5 = value;
+                    OnPropertyChanged(nameof(Perks5));
                 }
             }
         }
 
-        private ItemImageModel selectedPerk5;
+        private ItemImageModel _selectedPerk5;
         public ItemImageModel SelectedPerk5
         {
-            get => selectedPerk5;
+            get => _selectedPerk5;
             set
             {
-                if (selectedPerk5 != value)
+                if (_selectedPerk5 != value)
                 {
-                    selectedPerk5 = value;
+                    _selectedPerk5 = value;
                     if(value != null)
-                        _SelectedBuild.rune.Slot5 = DataConverter.PerkNameToId(value.Text);
-                    SelectedPerk4 = RemoveDup(value, SelectedPerk4);
+                        selectedBuild.Rune.Slot5 = LoLA.Networking.WebWrapper.DataDragon.Data.Converter.PerkNameToId(value.Text);
+                    SelectedPerk4 = removeDup(value, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedPerk5));
-                    IsChanged();
+                    isChanged();
                 }
             }
         }
         #region Shards
-        public ObservableCollection<ItemImageModel> offenseList = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> OffenseList
+        public ObservableCollection<ItemImageModel> _shards1 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Shards1
         {
-            get => offenseList;
+            get => _shards1;
             set
             {
-                if (offenseList != value)
+                if (_shards1 != value)
                 {
-                    offenseList = value;
-                    OnPropertyChanged(nameof(OffenseList));
+                    _shards1 = value;
+                    OnPropertyChanged(nameof(Shards1));
                 }
             }
         }
 
-        private ItemImageModel selectedOffense;
-        public ItemImageModel SelectedOffense
+        private ItemImageModel _selectedShard1;
+        public ItemImageModel SelectedShard1
         {
-            get => selectedOffense;
+            get => _selectedShard1;
             set
             {
-                if (selectedOffense != value)
+                if (_selectedShard1 != value)
                 {
-                    selectedOffense = value;
+                    _selectedShard1 = value;
                     if (value != null)
-                        _SelectedBuild.rune.Shard0 = Dictionaries.ShardDescToShardId[value.Text];
-                    SelectedPerk4 = RemoveDup(SelectedOffense, SelectedPerk4);
+                        selectedBuild.Rune.Shard1 = DataConverter.ShardDescriptionToShardId(value.Text);
+                    SelectedPerk4 = removeDup(SelectedShard1, SelectedPerk4);
 
-                    OnPropertyChanged(nameof(SelectedOffense));
-                    IsChanged();
+                    OnPropertyChanged(nameof(SelectedShard1));
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> flexList = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> FlexList
+        public ObservableCollection<ItemImageModel> _shards2 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Shards2
         {
-            get => flexList;
+            get => _shards2;
             set
             {
-                if (flexList != value)
+                if (_shards2 != value)
                 {
-                    flexList = value;
-                    OnPropertyChanged(nameof(FlexList));
+                    _shards2 = value;
+                    OnPropertyChanged(nameof(Shards2));
                 }
             }
         }
 
-        private ItemImageModel selectedFlex;
-        public ItemImageModel SelectedFlex
+        private ItemImageModel _selectedShard2;
+        public ItemImageModel SelectedShard2
         {
-            get => selectedFlex;
+            get => _selectedShard2;
             set
             {
-                if (selectedFlex != value)
+                if (_selectedShard2 != value)
                 {
-                    selectedFlex = value;
+                    _selectedShard2 = value;
                     if (value != null)
-                        _SelectedBuild.rune.Shard1 = Dictionaries.ShardDescToShardId[value.Text];
-                    SelectedPerk4 = RemoveDup(SelectedFlex, SelectedPerk4);
+                        selectedBuild.Rune.Shard2 = DataConverter.ShardDescriptionToShardId(value.Text);
+                    SelectedPerk4 = removeDup(SelectedShard2, SelectedPerk4);
 
-                    OnPropertyChanged(nameof(SelectedFlex));
-                    IsChanged();
+                    OnPropertyChanged(nameof(SelectedShard2));
+                    isChanged();
                 }
             }
         }
 
-        public ObservableCollection<ItemImageModel> defenseList = new ObservableCollection<ItemImageModel>();
-        public ObservableCollection<ItemImageModel> DefenseList
+        public ObservableCollection<ItemImageModel> _shards3 = new ObservableCollection<ItemImageModel>();
+        public ObservableCollection<ItemImageModel> Shards3
         {
-            get => defenseList;
+            get => _shards3;
             set
             {
-                if (defenseList != value)
+                if (_shards3 != value)
                 {
-                    defenseList = value;
-                    OnPropertyChanged(nameof(DefenseList));
+                    _shards3 = value;
+                    OnPropertyChanged(nameof(Shards3));
                 }
             }
         }
 
-        private ItemImageModel selectedDefense;
-        public ItemImageModel SelectedDefense
+        private ItemImageModel _selectedShard3;
+        public ItemImageModel SelectedShard3
         {
-            get => selectedDefense;
+            get => _selectedShard3;
             set
             {
-                if (selectedDefense != value)
+                if (_selectedShard3 != value)
                 {
-                    selectedDefense = value;
+                    _selectedShard3 = value;
                     if (value != null)
-                        _SelectedBuild.rune.Shard2 = Dictionaries.ShardDescToShardId[value.Text];
-                    SelectedPerk4 = RemoveDup(SelectedDefense, SelectedPerk4);
+                        selectedBuild.Rune.Shard3 = DataConverter.ShardDescriptionToShardId(value.Text);
+                    SelectedPerk4 = removeDup(SelectedShard3, SelectedPerk4);
 
-                    OnPropertyChanged(nameof(SelectedDefense));
-                    IsChanged();
+                    OnPropertyChanged(nameof(SelectedShard3));
+                    isChanged();
                 }
             }
         }
@@ -661,186 +646,161 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region SmallInfo
-        private string warningTxt;
-        public string WarningTxt
+        private string _warningText;
+        public string WarningText
         {
-            get => warningTxt;
+            get => _warningText;
             set
             {
-                if (warningTxt != value)
+                if (_warningText != value)
                 {
-                    warningTxt = value;
-                    OnPropertyChanged(nameof(WarningTxt));
+                    _warningText = value;
+                    OnPropertyChanged(nameof(WarningText));
                 }
             }
         }
 
-        private string slChampion = "None";
-        public string SlChampion
+        private GameMode _slGameMode = GameMode.NONE;
+        public GameMode SlGameMode
         {
-            get => slChampion;
+            get => _slGameMode;
             set
             {
-                if (slChampion != value)
+                if (_slGameMode != value)
                 {
-                    if (string.IsNullOrEmpty(value))
-                        slChampion = "None";
-                    else
-                        slChampion = value;
-                    OnPropertyChanged(nameof(SlChampion));
-                }
-            }
-        }
-
-        private string slGameMode = "None";
-        public string SlGameMode
-        {
-            get => slGameMode;
-            set
-            {
-                if (slGameMode != value)
-                {
-                    if (string.IsNullOrEmpty(value))
-                        slGameMode = "None";
-                    else
-                        slGameMode = value;
+                    _slGameMode = value;
                     OnPropertyChanged(nameof(SlGameMode));
                 }
             }
         }
 
-
-        private string slDefaultConfig = "None";
+        private string _slDefaultConfig = ProviderConverter.ToName(ConfigModel.s_CurrentProvider);
         public string SlDefaultConfig
         {
-            get => slDefaultConfig;
+            get => _slDefaultConfig;
             set
             {
-                if (slDefaultConfig != value)
+                if (_slDefaultConfig != value)
                 {
                     if (string.IsNullOrEmpty(value))
-                        slDefaultConfig = "None";
+                        _slDefaultConfig = ProviderConverter.ToName(ConfigModel.s_CurrentProvider);
                     else
-                        slDefaultConfig = value;
+                        _slDefaultConfig = value;
                     OnPropertyChanged(nameof(SlDefaultConfig));
                 }
             }
         }
 
-        private string saveInfo;
-
+        private string _saveInfo;
         public string SaveInfo
         {
-            get => saveInfo;
+            get => _saveInfo;
             set
             {
-                if (saveInfo != value)
+                if (_saveInfo != value)
                 {
-                    saveInfo = value;
+                    _saveInfo = value;
                     OnPropertyChanged(nameof(SaveInfo));
                 }
             }
         }
-
         #endregion
 
-        private string _ReferenceBuild;
-        private string _SelectedChampionId;
-        public DefaultBuildConfig _DefaultBuildConfig;
-        private const string _CreateNewKey = "Create New*";
-        private ChampionBD _SelectedBuild = new ChampionBD();
-        private Dictionary<string, string[,]> _SecondPath = new Dictionary<string, string[,]>();
+        private string referenceBuild;
+        private string selectedChampionId;
+        public DefaultBuildConfig DefaultBuildConfig;
+        private const string CREATE_NEW = "Create New*";
+        private ChampionBuild selectedBuild = new ChampionBuild();
         public BuildEditorViewModel()
         {
             Init();
-            PathModel.Init();
 
-            SaveCommand = new Command(o => { SaveConfigExecute(); });
-            SetAsDefaultCommand = new Command(o => { SetAsDefaultExecute(); });
-            ClearDefaultSourceCommand = new Command(o => { ClearDefaultSourceExecute(); });
+            Shards1 = RuneModel.Shards(1, false);
+            Shards2 = RuneModel.Shards(2, false);
+            Shards3 = RuneModel.Shards(3, false);
+
+            SaveCommand = new Command(o => { saveConfigExecute(); });
+            SetAsDefaultCommand = new Command(o => { setAsDefaultExecute(); });
+            ClearDefaultSourceCommand = new Command(o => { clearDefaultSourceExecute(); });
         }
 
         public async void Init()
         {
-            var _pathlist = new ObservableCollection<ItemImageModel>();
+            var runePaths = new ObservableCollection<ItemImageModel>();
 
             await Task.Run(() => {
                 Dictionary<string, Data> data = null;
                 while (data == null)
                 {
-                    data = DataDragonWrapper.Champions?.Data;
+                    data = DataDragonWrapper.s_Champions?.Data;
                     Thread.Sleep(1000);
                 }
                 data = null;
             });
 
-            foreach (var champion in DataDragonWrapper.Champions.Data.Values)
-                ChampionList.Add(champion.name);
+            foreach (var champion in DataDragonWrapper.s_Champions.Data.Values)
+                Champions.Add(champion.name);
 
             GameModes = new ObservableCollection<string>(Enum.GetValues(typeof(GameMode))
             .Cast<GameMode>().Select(v => v.ToString()).Where(l => l != "NONE"));
 
-            foreach (var perk in DataDragonWrapper.perks)
-                _pathlist.Add(ItemImage(perk.key, ImageSrc(perk.key)));
+            foreach (var perk in DataDragonWrapper.s_Perks)
+                runePaths.Add(ItemImage(perk.key, ImageSrc(perk.key)));
 
-            PathList = _pathlist;
-            InitSecondPath();
-            InitShards();
+            RunePaths = runePaths;
         }
 
-        private async void Data_Changed()
+        private async void dataChanged()
         {
-            var _buildsName = new List<string>();
-            var _spells = new List<ItemImageModel>();
+            var buildsName = new List<string>();
+            var spells = new List<ItemImageModel>();
 
             ClearProfile();
 
             if (!string.IsNullOrEmpty(SelectedChampion)
-            && !string.IsNullOrEmpty(SelectedGameMode))
+            && SelectedGameMode != GameMode.NONE)
             {
-                saveInfo = null;
-                var gameMode = gm();
+                SaveInfo = null;
 
-                _buildsName.Add(_CreateNewKey);
-                _SelectedChampionId = DataConverter.ChampionNameToId(SelectedChampion);
+                buildsName.Add(CREATE_NEW);
+                selectedChampionId = Converter.ChampionNameToId(SelectedChampion);
 
                 // Load in default build config
-                _DefaultBuildConfig = new DefaultBuildConfig();
+                DefaultBuildConfig = new DefaultBuildConfig();
 
-                if (File.Exists(defConfigPath(_SelectedChampionId))) _DefaultBuildConfig = getDefaultBuildConfig(_SelectedChampionId);
+                if (File.Exists(LocalBuild.DefaultConfigPath(selectedChampionId))) 
+                    DefaultBuildConfig = LocalBuild.GetDefaultBuildConfig(selectedChampionId);
 
-                var customBuildPath = Main.localBuild.BuildsFolder(_SelectedChampionId, gameMode);
-                var fullPath = $"{customBuildPath}\\{_DefaultBuildConfig.getDefaultConfig(gameMode)}";
+                var customBuildPath = LocalBuild.BuildsFolder(selectedChampionId, SelectedGameMode);
+                var fullPath = $"{customBuildPath}\\{DefaultBuildConfig.GetDefaultConfig(SelectedGameMode)}";
                 
-                if(!File.Exists(fullPath))
-                    _DefaultBuildConfig.resetDefaultConfig(gameMode);
+                if(!File.Exists(fullPath)) DefaultBuildConfig.ResetDefaultConfig(SelectedGameMode);
 
-                SlDefaultConfig = _DefaultBuildConfig.getDefaultConfig(gameMode);
+                SlDefaultConfig = DefaultBuildConfig.GetDefaultConfig(SelectedGameMode);
 
                 await Task.Run(() => {
-                    foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gameMode))
-                        _buildsName.Add(Path.GetFileName(path));
+                    foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
+                        buildsName.Add(Path.GetFileName(path));
 
-                    foreach (var spell in Dictionaries.SpellNameToSpellKey)
+                    foreach (var spell in DataConverter.s_SpellNameToSpellKey)
                     {
-                        if (gameMode != GameMode.ARAM && spell.Key.Equals("Mark"))
-                            continue;
-                        else if (gameMode == GameMode.ARAM && spell.Key.Equals("Smite")
-                        || gameMode == GameMode.ARAM && spell.Key.Equals("Teleport"))
+                        if (SelectedGameMode == GameMode.ARAM && spell.Key.Equals("Smite")
+                        || SelectedGameMode == GameMode.ARAM && spell.Key.Equals("Teleport")
+                        || SelectedGameMode != GameMode.ARAM && spell.Key.Equals("Mark"))
                             continue;
 
-                        _spells.Add(ItemImage(spell.Key, ImageSrc(Dictionaries.SpellNameToSpellID[spell.Key])));
+                        spells.Add(ItemImage(spell.Key, ImageSrc(DataConverter.SpellNameToSpellId(spell.Key))));
                     }
-                    SpellList = _spells;
-                    BuildsName = _buildsName;
+                    Spells = spells;
+                    BuildsName = buildsName;
                 });
             }
             else
             {
-                SelectedGameMode = null;
-                _SelectedBuild = null;
+                SelectedGameMode = GameMode.NONE;
+                selectedBuild = null;
                 BuildsName = null;
-                saveInfo = null;
+                SaveInfo = null;
                 ClearSmallInfo();
             }
         }
@@ -848,50 +808,49 @@ namespace LoL_Assist_WAPP.ViewModel
         public async void FetchBuild()
         {
             if(!string.IsNullOrEmpty(SelectedBuildName) 
-            && !SelectedBuildName.Equals(_CreateNewKey))
+            && !SelectedBuildName.Equals(CREATE_NEW))
             {
-                saveInfo = null;
+                SaveInfo = null;
                 await Task.Run(() => {
-                    foreach (var path in Main.localBuild.GetBuildFiles(_SelectedChampionId, gm()))
+                    foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
                     {
                         if (Path.GetFileName(path) == SelectedBuildName)
                         {
                             try
                             {
-                                using (StreamReader sr = new StreamReader(path))
-                                {
-                                    var jsonContent = sr.ReadToEnd();
-                                    FileName = Path.GetFileNameWithoutExtension(path);
-                                    _SelectedBuild = JsonConvert.DeserializeObject<ChampionBD>(jsonContent);
-                                    _ReferenceBuild = jsonContent;
-                                    LoadBuild(_SelectedBuild);
-                                }
+                                using StreamReader streamReader = new StreamReader(path);
+                                var jsonContent = streamReader.ReadToEnd();
+
+                                FileName = Path.GetFileNameWithoutExtension(path);
+                                selectedBuild = JsonConvert.DeserializeObject<ChampionBuild>(jsonContent);
+                                referenceBuild = jsonContent;
+                                loadBuild(selectedBuild);
                             }
                             catch { }
                         }
                     }
-                    saveInfo = null;
+                    SaveInfo = null;
                 });
             }
             else if(!string.IsNullOrEmpty(SelectedBuildName)
-            && SelectedBuildName.Equals(_CreateNewKey)) {
+            && SelectedBuildName.Equals(CREATE_NEW)) {
                 ClearProfile();
-                saveInfo = "New* Unsaved";
+                SaveInfo = "New* Unsaved";
             }
             else ClearProfile();
         }
 
-        private void Path1_Changed() 
+        private void path1Changed() 
         {
-            Perk1List = new ObservableCollection<ItemImageModel>();
-            Perk2List = new ObservableCollection<ItemImageModel>();
-            Perk3List = new ObservableCollection<ItemImageModel>();
+            Perks1 = new ObservableCollection<ItemImageModel>();
+            Perks2 = new ObservableCollection<ItemImageModel>();
+            Perks3 = new ObservableCollection<ItemImageModel>();
             Keystones = new ObservableCollection<ItemImageModel>();
 
             if (SelectedPath1 != null)
             {
                 int i = 0;
-                foreach (var perk in DataDragonWrapper.perks)
+                foreach (var perk in DataDragonWrapper.s_Perks)
                 {
                     if (perk.name == SelectedPath1.Text)
                     {
@@ -911,13 +870,13 @@ namespace LoL_Assist_WAPP.ViewModel
                                         Keystones.Add(model);
                                         break;
                                     case 1:
-                                        Perk1List.Add(model);
+                                        Perks1.Add(model);
                                         break;
                                     case 2:
-                                        Perk2List.Add(model);
+                                        Perks2.Add(model);
                                         break;
                                     case 3:
-                                        Perk3List.Add(model);
+                                        Perks3.Add(model);
                                         break;
                                 }
                             }
@@ -928,17 +887,17 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private string[,] secondSlot = null;
-        private void Path2_Changed()
+        private string[,] secondarySlot = null;
+        private void path2Changed()
         {
-            Perk5List = new ObservableCollection<ItemImageModel>();
-            Perk4List = new ObservableCollection<ItemImageModel>();
-            var _perk4list = new ObservableCollection<ItemImageModel>();
+            Perks5 = new ObservableCollection<ItemImageModel>();
+            Perks4 = new ObservableCollection<ItemImageModel>();
+            var perks4 = new ObservableCollection<ItemImageModel>();
 
             if (SelectedPath2 != null)
             {
-                secondSlot = _SecondPath[SelectedPath2.Text];
-                foreach (var perk in secondSlot)
+                secondarySlot = RuneModel.r_SecondPath[SelectedPath2.Text];
+                foreach (var perk in secondarySlot)
                 {
                     if(!string.IsNullOrEmpty(perk))
                     {
@@ -947,172 +906,122 @@ namespace LoL_Assist_WAPP.ViewModel
                             Text = perk,
                             Image = ImageSrc(perk.Replace(":", string.Empty))
                         };
-                        _perk4list.Add(model);
+                        perks4.Add(model);
                     }
                 }
-                Perk4List = _perk4list;
+                Perks4 = perks4;
             }
         }
 
-        private void Perk4_Changed()
+        private void perk4Changed()
         {
-            var _perk5list = new ObservableCollection<ItemImageModel>();
+            var perks5 = new ObservableCollection<ItemImageModel>();
             if(SelectedPerk4 != null && !string.IsNullOrEmpty(SelectedPerk4.Text))
             {
                 bool isFound = false;
-                for (int r = 0; r < secondSlot.GetLength(0); r++)
+                for (int r = 0; r < secondarySlot.GetLength(0); r++)
                 {
                     if (isFound) continue;
-                    for (int c = 0; c < secondSlot.GetLength(1); c++)
+                    for (int c = 0; c < secondarySlot.GetLength(1); c++)
                     {
                         if (isFound) continue;
-                        if(SelectedPerk4.Text == secondSlot[r, c])
+                        if(SelectedPerk4.Text == secondarySlot[r, c])
                         {
                             isFound = true;
-                            for (int r2 = 0; r2 < secondSlot.GetLength(0); r2++)
+                            for (int r2 = 0; r2 < secondarySlot.GetLength(0); r2++)
                             {
                                 if (r != r2)
                                 {
-                                    for (int c2 = 0; c2 < secondSlot.GetLength(1); c2++)
+                                    for (int c2 = 0; c2 < secondarySlot.GetLength(1); c2++)
                                     {
-                                        if (!string.IsNullOrEmpty(secondSlot[r2, c2]))
+                                        if (!string.IsNullOrEmpty(secondarySlot[r2, c2]))
                                         {
                                             var model = new ItemImageModel()
                                             {
-                                                Text = secondSlot[r2, c2],
-                                                Image = ImageSrc(secondSlot[r2, c2].Replace(":", string.Empty))
+                                                Text = secondarySlot[r2, c2],
+                                                Image = ImageSrc(secondarySlot[r2, c2].Replace(":", string.Empty))
                                             };
-                                            _perk5list.Add(model);
+                                            perks5.Add(model);
                                         }
                                     }
                                 }
                             }
-                            Perk5List = _perk5list;
+                            Perks5 = perks5;
                         }
                     }
                 }
             }
         }
 
-        private void LoadBuild(ChampionBD championBuild)
+        private void loadBuild(ChampionBuild championBuild)
         {
             try 
             {
-                SelectedSpell1 = SpellList.SingleOrDefault(s => s.Text == Dictionaries.SpellIDToSpellName[championBuild.spell.Spell0]);
-                SelectedSpell2 = SpellList.SingleOrDefault(s => s.Text == Dictionaries.SpellIDToSpellName[championBuild.spell.Spell1]);
+                SelectedSpell1 = Spells.SingleOrDefault(s => s.Text == DataConverter.SpellIdToSpellName(championBuild.Spell.First));
+                SelectedSpell2 = Spells.SingleOrDefault(s => s.Text == DataConverter.SpellIdToSpellName(championBuild.Spell.Second));
             } catch { }
 
             try
             {
-                RuneName = championBuild.rune.Name;
-                SelectedPath1 = PathList.SingleOrDefault(p => p.Text == DataConverter.PathIdToName(championBuild.rune.Path0));
-                SelectedKeystone = Keystones.SingleOrDefault(k => k.Text == DataConverter.PerkIdToName(championBuild.rune.Keystone));
-                SelectedPerk1 = Perk1List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot1));
-                SelectedPerk2 = Perk2List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot2));
-                SelectedPerk3 = Perk3List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot3));
+                RuneName = championBuild.Rune.Name;
+                SelectedPath1 = RunePaths.SingleOrDefault(p => p.Text == Converter.PathIdToName(championBuild.Rune.PrimaryPath));
+                SelectedKeystone = Keystones.SingleOrDefault(k => k.Text == Converter.PerkIdToName(championBuild.Rune.Keystone));
+                SelectedPerk1 = Perks1.SingleOrDefault(p => p.Text == Converter.PerkIdToName(championBuild.Rune.Slot1));
+                SelectedPerk2 = Perks2.SingleOrDefault(p => p.Text == Converter.PerkIdToName(championBuild.Rune.Slot2));
+                SelectedPerk3 = Perks3.SingleOrDefault(p => p.Text == Converter.PerkIdToName(championBuild.Rune.Slot3));
 
-                SelectedPath2 = PathList.SingleOrDefault(p => p.Text == DataConverter.PathIdToName(championBuild.rune.Path1));
-                SelectedPerk4 = Perk4List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot4));
-                SelectedPerk5 = Perk5List.SingleOrDefault(p => p.Text == DataConverter.PerkIdToName(championBuild.rune.Slot5));
+                SelectedPath2 = RunePaths.SingleOrDefault(p => p.Text == Converter.PathIdToName(championBuild.Rune.SecondaryPath));
+                SelectedPerk4 = Perks4.SingleOrDefault(p => p.Text == Converter.PerkIdToName(championBuild.Rune.Slot4));
+                SelectedPerk5 = Perks5.SingleOrDefault(p => p.Text == Converter.PerkIdToName(championBuild.Rune.Slot5));
             }
             catch { }
 
             try
             {
-                SelectedOffense = OffenseList.SingleOrDefault(o => o.Text == Dictionaries.ShardIdToShardDescription[championBuild.rune.Shard0]);
-                SelectedFlex = FlexList.SingleOrDefault(f => f.Text == Dictionaries.ShardIdToShardDescription[championBuild.rune.Shard1]);
-                SelectedDefense = DefenseList.SingleOrDefault(d => d.Text == Dictionaries.ShardIdToShardDescription[championBuild.rune.Shard2]);
+                SelectedShard1 = Shards1.SingleOrDefault(o => o.Text == DataConverter.ShardIdToShardDescription(championBuild.Rune.Shard1));
+                SelectedShard2 = Shards2.SingleOrDefault(f => f.Text == DataConverter.ShardIdToShardDescription(championBuild.Rune.Shard2));
+                SelectedShard3 = Shards3.SingleOrDefault(d => d.Text == DataConverter.ShardIdToShardDescription(championBuild.Rune.Shard3));
             }
             catch { }
         }
 
         #region Space junk
 
-        private void IsChanged()
+        private void isChanged()
         {
-            var sBuild = JsonConvert.SerializeObject(_SelectedBuild, Formatting.Indented);
+            var sBuild = JsonConvert.SerializeObject(selectedBuild);
 
-            if(SelectedGameMode != null && SelectedBuildName != null)
+            if(SelectedGameMode != GameMode.NONE && SelectedBuildName != null)
             {
-                if ((!sBuild.Equals(_ReferenceBuild) ||
+                if ((!sBuild.Equals(referenceBuild) ||
                 !Path.GetFileNameWithoutExtension(SelectedBuildName).Equals(FileName))
-                && !SelectedBuildName.Equals(_CreateNewKey))
-                    saveInfo = "*Unsaved";
-                else if (SelectedBuildName.Equals(_CreateNewKey))
-                    saveInfo = "New* Unsaved";
-                else saveInfo = null;
+                && !SelectedBuildName.Equals(CREATE_NEW))
+                    SaveInfo = "*Unsaved";
+                else if (SelectedBuildName.Equals(CREATE_NEW))
+                    SaveInfo = "New* Unsaved";
+                else SaveInfo = null;
             }
         }
 
-        private void InitSecondPath()
+        private ItemImageModel removeDup(ItemImageModel s1, ItemImageModel s2)
         {
-            _SecondPath.Add("Domination", PathModel.Domination);
-            _SecondPath.Add("Sorcery", PathModel.Sorcery);
-            _SecondPath.Add("Precision", PathModel.Precision);
-            _SecondPath.Add("Inspiration", PathModel.Inspiration);
-            _SecondPath.Add("Resolve", PathModel.Resolve);
-        }
-
-        private void InitShards()
-        {
-            var format = "webp";
-            OffenseList.Add(ItemImage("5.4 bonus Attack Damage or 9 Ability Power (Adaptive)", ImageSrc("diamond", format)));
-            OffenseList.Add(ItemImage("10% bonus attack speed", ImageSrc("axe", format)));
-            OffenseList.Add(ItemImage("8 ability haste", ImageSrc("time", format)));
-
-            FlexList.Add(ItemImage("5.4 bonus Attack Damage or 9 Ability Power (Adaptive)", ImageSrc("diamond", format)));
-            FlexList.Add(ItemImage("6 bonus armor", ImageSrc("shield", format)));
-            FlexList.Add(ItemImage("8 bonus magic resistance", ImageSrc("circle", format)));
-
-            DefenseList.Add(ItemImage("15 − 90 (based on level) bonus health", ImageSrc("heart", format)));
-            DefenseList.Add(ItemImage("6 bonus armor", ImageSrc("shield", format)));
-            DefenseList.Add(ItemImage("8 bonus magic resistance", ImageSrc("circle", format)));
-        }
-
-        private ItemImageModel ItemImage(string text, string image)
-        {
-            var model = new ItemImageModel()
-            {
-                Text = text,
-                Image = image
-            };
-            return model;
-        }
-
-        public string RemoveDup(string s1, string s2)
-        {
-            if (!string.IsNullOrEmpty(s1))
-            {
-                if (s1 == s2)
-                    return null;
-                return s2;
-            }
-            else return s2;
-        }
-
-        public ItemImageModel RemoveDup(ItemImageModel s1, ItemImageModel s2)
-        {
-            if (s1 != null && s2 != null && !string.IsNullOrEmpty(s1.Text))
-            {
-                if (s1.Text == s2.Text)
-                    return null;
-                return s2;
-            }
+            if (s1 != null && s2 != null 
+            && !string.IsNullOrEmpty(s1.Text))
+                return s1.Equals(s2) ? null : s2;
             else return s2;
         }
 
         public void ClearSmallInfo()
         {
             SlDefaultConfig = null;
-            SlGameMode = null;
-            SlChampion = null;
+            SlGameMode = GameMode.NONE;
         }
 
         public void ClearProfile()
         {
             SelectedBuildName = null;
-            _ReferenceBuild = null;
-            _SelectedBuild = new ChampionBD();
+            referenceBuild = null;
+            selectedBuild = new ChampionBuild();
             FileName = null;
             RuneName = null;
             SelectedSpell1 = null;
@@ -1125,16 +1034,16 @@ namespace LoL_Assist_WAPP.ViewModel
             SelectedKeystone = null;    
             SelectedPath1 = null;
             SelectedPath2 = null;
-            SelectedOffense = null;
-            SelectedFlex = null;
-            SelectedDefense = null;
+            SelectedShard1 = null;
+            SelectedShard2 = null;
+            SelectedShard3 = null;
         }
 
         private async Task saved()
         {
-            saveInfo = "Saved!";
+            SaveInfo = "Saved!";
             await Task.Delay(2500);
-            saveInfo = null;
+            SaveInfo = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

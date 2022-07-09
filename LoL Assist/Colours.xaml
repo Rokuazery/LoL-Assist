@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <Color x:Key="aPrimary">#7160E8</Color>
-        <Color x:Key="aSecondary">#403582</Color>
-        <Color x:Key="aTritary">#A093EF</Color>
+    <Color x:Key="aSecondary">#403582</Color>
+    <Color x:Key="aTritary">#A093EF</Color>
 
     <!--<Color x:Key="aPrimary">#03A9F7</Color>
     <Color x:Key="aSecondary">#0076D1</Color>
@@ -15,11 +15,13 @@
     <Color x:Key="CheckMark">White</Color>
     <Color x:Key="title">white</Color>
     <Color x:Key="RedColor">#E74856</Color>
+    <Color x:Key="YelloColor">#FFC40C</Color>
 
     <Color x:Key="FontPrimaryColor">Silver</Color>
     <Color x:Key="FontSecondaryColor">Gray</Color>
     <Color x:Key="FontTritaryColor">#969284</Color>
 
+    <SolidColorBrush x:Key="YelloBrush" Color="{DynamicResource YelloColor}"/>
     <SolidColorBrush x:Key="RedBrush" Color="{DynamicResource RedColor}"/>
     <SolidColorBrush x:Key="BrushTitle" Color="{DynamicResource title}"/>
     <SolidColorBrush x:Key="aBrushPrimary" Color="{DynamicResource aPrimary}"/>

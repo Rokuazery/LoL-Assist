@@ -48,13 +48,25 @@
                     Rokuazery
                 </Hyperlink>
             </TextBlock>
-            <TextBlock HorizontalAlignment="Center">
-                Beta/Alpha Tester: 
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock>
+                Tester: 
                 <Hyperlink x:Name="TesterLink" NavigateUri="https://github.com/BeSalt1080" 
                 RequestNavigate="TesterLink_RequestNavigate" Foreground="{DynamicResource FontTritaryBrush}">
                     Besalt1080
                 </Hyperlink>
-            </TextBlock>
+                </TextBlock>
+
+                <Border Width="1" Background="{DynamicResource aBrushPrimary}" Margin="5, 3"/>
+
+                <TextBlock>
+                Helper: 
+                <Hyperlink NavigateUri="https://github.com/ClaraaXD" 
+                RequestNavigate="TesterLink_RequestNavigate" Foreground="{DynamicResource FontTritaryBrush}">
+                    ClaraaXD 
+                </Hyperlink>
+                </TextBlock>
+            </DockPanel>
             <TextBlock x:Name="Version" HorizontalAlignment="Center"/>
         </StackPanel>
 

@@ -21,8 +21,8 @@ namespace LoL_Assist_WAPP
             ConfigPanel = new View.ConfigPanel(BackDrop);
             InfoPanel = new View.InfoPanel(BackDrop);
 
-            ConfigPanel.Margin = ConfigModel.marginClose;
-            InfoPanel.Margin = ConfigModel.marginClose;
+            ConfigPanel.Margin = ConfigModel.r_MarginClose;
+            InfoPanel.Margin = ConfigModel.r_MarginClose;
 
             Grid.SetRowSpan(InfoPanel, 2);
             Grid.SetRowSpan(ConfigPanel, 2);
@@ -37,7 +37,7 @@ namespace LoL_Assist_WAPP
             Utils.Animation.Margin(element, from, to, time);
         }
 
-        private void SettingsBtn_Click(object sender, RoutedEventArgs e) => Animate(ConfigPanel, ConfigModel.marginClose, ConfigModel.marginOpen);
-        private void InfoBtn_Click(object sender, RoutedEventArgs e) => Animate(InfoPanel, ConfigModel.marginClose, ConfigModel.marginOpen);
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e) => Animate(ConfigPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
+        private void InfoBtn_Click(object sender, RoutedEventArgs e) => Animate(InfoPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
     }
 }

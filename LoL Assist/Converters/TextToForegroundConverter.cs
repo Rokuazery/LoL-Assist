@@ -8,21 +8,19 @@ namespace LoL_Assist_WAPP.Converters
     public class TextToForegroundConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            switch(value.ToString())
+            => value.ToString().ToLower() switch
             {
-                case "Declined":
-                case "Disconnected":
-                case "Invalid Build Config":
-                    return (SolidColorBrush)Application.Current.Resources["RedBrush"]; // Red
-                case "Accepted":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#29ab87")); // Green
-                case "Auto Accept is disabled":
-                    return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffc40c")); // Yellow
-                default:
-                    return (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"];
-            }
-        }
+                _ when value.ToString().ToLower() == "declined" || value.ToString().ToLower() == "disconnected" 
+                || value.ToString().ToLower() == "invalid build config" || value.ToString().ToLower() == "none"
+                => (SolidColorBrush)Application.Current.Resources["RedBrush"],  // Red
+
+                _ when value.ToString().ToLower() == "auto accept is disabled" || value.ToString().ToLower() == "connecting"
+                => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffc40c")), // Yellow
+
+                "accepted" => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#29ab87")),  // Green
+
+                _ => (SolidColorBrush)Application.Current.Resources["FontPrimaryBrush"] // White
+            };
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

@@ -17,7 +17,7 @@ namespace LoL_Assist_WAPP.View
         {
             InitializeComponent();
             backDrop = border;
-            Version.Text = $"App Verion {ConfigModel.version} | Lib Version {Global.version}";
+            Version.Text = $"App Verion {ConfigModel.r_Version} | Lib Version {LibInfo.r_Version}";
         }
 
         private void CreatorLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) => Process.Start(e.Uri.ToString());
@@ -27,7 +27,7 @@ namespace LoL_Assist_WAPP.View
         private void BackBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Utils.Animation.FadeOut(backDrop);
-            Utils.Animation.Margin(this, ConfigModel.marginOpen, ConfigModel.marginClose, 0.2);
+            Utils.Animation.Margin(this, ConfigModel.r_MarginOpen, ConfigModel.r_MarginClose, 0.2);
         }
     }
 }

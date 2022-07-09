@@ -1,16 +1,16 @@
 ﻿using LoL_Assist_WAPP.ViewModel;
+using LoLA.Networking.LCU.Enums;
 using System.Windows.Controls;
 using LoL_Assist_WAPP.Model;
 using System.Windows.Input;
 using LoL_Assist_WAPP.View;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using System.Windows;
+using LoLA.Data;
 using System.IO;
-using LoLA.LCU;
 using System;
 using LoLA;
-using Newtonsoft.Json;
-using LoLA.Objects;
 
 namespace LoL_Assist_WAPP
 {
@@ -45,9 +45,9 @@ namespace LoL_Assist_WAPP
                         viewModel.DeleteConfigExecute();
 
                     Utils.Animation.FadeOut(BackDrop, 0.13);
-                    Utils.Animation.Margin(exitMsg, ConfigModel.marginOpen, new Thickness(0, Height, 0, 0), 0.13);
+                    Utils.Animation.Margin(exitMsg, ConfigModel.r_MarginOpen, new Thickness(0, Height, 0, 0), 0.13);
                 };
-                Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.marginOpen, 0.13);
+                Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
             }
         }
 
@@ -68,7 +68,7 @@ namespace LoL_Assist_WAPP
                 {
                     try
                     {
-                        var championBuildConfig = JsonConvert.DeserializeObject<ChampionBD>(ImportFromPath);
+                        var championBuildConfig = JsonConvert.DeserializeObject<ChampionBuild>(ImportFromPath);
                         if (championBuildConfig != null)
                             AnimateOpen(ImportPanel);
                     }
@@ -83,10 +83,13 @@ namespace LoL_Assist_WAPP
         {
             var fileName = Path.GetFileName(ImportFromPath);
             string championId = ImportChampionList.SelectedValue.ToString();
-            string gameMode = ImportGameModeList.SelectedValue.ToString();
-            if (!string.IsNullOrEmpty(championId) && !string.IsNullOrEmpty(gameMode))
+
+            GameMode gameMode = ImportGameModeList.SelectedValue == null ? GameMode.NONE :
+            (GameMode)Enum.Parse(typeof(GameMode), ImportGameModeList.SelectedValue.ToString());
+
+            if (!string.IsNullOrEmpty(championId) && gameMode != GameMode.NONE)
             {
-                string filePath = Main.localBuild.DataPath(championId, Path.GetFileNameWithoutExtension(fileName), (GameMode)Enum.Parse(typeof(GameMode), gameMode));
+                string filePath = LocalBuild.DataPath(championId, Path.GetFileNameWithoutExtension(fileName), gameMode);
                 File.Copy(ImportFromPath, filePath, true);
                 viewModel.SelectedChampion = championId;
                 viewModel.SelectedGameMode = gameMode;

@@ -22,7 +22,7 @@
             Margin="8,0,0,0" VerticalAlignment="Center" FontWeight="DemiBold"/>
         </Grid>
 
-        <TextBlock x:Name="Msg" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,5"
+        <TextBlock x:Name="Msg" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,10,5" TextAlignment="Center"
         Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" FontWeight="DemiBold" TextWrapping="WrapWithOverflow">
             Are you sure you want to exit LoL Assist?
         </TextBlock>

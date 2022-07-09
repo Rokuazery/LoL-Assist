@@ -1,7 +1,9 @@
-﻿using System.Reflection;
+﻿using LoL_Assist_WAPP.Utils;
+using System.Reflection;
+using LoLA.Utils.Logger;
 using Newtonsoft.Json;
 using System.Windows;
-using LoLA.Utils.Logger;
+using LoLA.Data.Enums;
 using System.IO;
 using LoLA;
 
@@ -9,12 +11,12 @@ namespace LoL_Assist_WAPP.Model
 {
     public static class ConfigModel
     {
-        public static Config config = new Config();
-        public static string PatchNotes { get; set; }
-        public const string DefaultSource = "Metasrc.com";
-        public static Thickness marginOpen = new Thickness(0, 0, 0, 0);
-        public static Thickness marginClose = new Thickness(485, 0, 0, 0); // Main window width
-        public static readonly string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static Config s_Config = new Config();
+        public static Provider s_CurrentProvider = Provider.UGG;
+        public static readonly Thickness r_MarginOpen = new Thickness(0, 0, 0, 0);
+        public static readonly Thickness r_MarginClose = new Thickness(505, 0, 0, 0); // Main window width
+        public static readonly string r_Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public const string RESOURCE_PATH = "pack://application:,,,/Resources/";
 
         public class Config
         {
@@ -38,40 +40,34 @@ namespace LoL_Assist_WAPP.Model
             #endregion
         }
 
-        private const string ConfigFileName = "LoLA Config.json";
+        private const string CONFIG_FILE_NAME = "LoLA Config.json";
         public static void LoadConfig(bool log = true)
         {
-            if(log)
-                Utils.Log("Loading in Configuration...", LogType.INFO);
+            if(log) Helper.Log("Loading in Configuration...", LogType.INFO);
 
-            if (!File.Exists(ConfigFileName))
+            if (!File.Exists(CONFIG_FILE_NAME))
             {
-                File.Create(ConfigFileName).Dispose();
-                var json = JsonConvert.SerializeObject(config);
-                using (var stream = new StreamWriter(ConfigFileName))
-                {
-                    stream.Write(json);
-                }
+                File.Create(CONFIG_FILE_NAME).Dispose();
+                var json = JsonConvert.SerializeObject(s_Config);
+                using var stream = new StreamWriter(CONFIG_FILE_NAME);
+                stream.Write(json);
             }
 
-            config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFileName));
-            Global.Config.logging = config.Logging;
-            Global.Config.caching = config.BuildCache;
+            s_Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(CONFIG_FILE_NAME));
+            GlobalConfig.s_Logging = s_Config.Logging;
+            GlobalConfig.s_Caching = s_Config.BuildCache;
         }
 
         public static void SaveConfig(bool log = true)
         {
-            if (log)
-                Utils.Log("Saving configuration...", LogType.INFO);
+            if (log) Helper.Log("Saving configuration...", LogType.INFO);
 
-            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(s_Config, Formatting.Indented);
 
-            if (File.Exists(ConfigFileName))
+            if (File.Exists(CONFIG_FILE_NAME))
             {
-                using(var stream = new StreamWriter(ConfigFileName))
-                {
-                    stream.Write(json);
-                }
+                using var stream = new StreamWriter(CONFIG_FILE_NAME);
+                stream.Write(json);
             }
             else LoadConfig();
         }

@@ -1,13 +1,14 @@
-﻿using System.Windows.Controls;
+﻿using LoLA.Networking.LCU.Events;
+using LoLA.Networking.LCU.Enums;
+using System.Windows.Controls;
 using System.Threading.Tasks;
 using LoL_Assist_WAPP.Model;
 using System.ComponentModel;
 using System.Windows.Input;
+using LoLA.Networking.LCU;
 using System.Threading;
-using LoLA.LCU.Events;
-using LoLA.LCU;
-using System;
 using System.Windows;
+using System;
 
 namespace LoL_Assist_WAPP.ViewModel
 {
@@ -17,146 +18,149 @@ namespace LoL_Assist_WAPP.ViewModel
         public ICommand AcceptMatchCommand { get; }
         public ICommand DeclineMatchCommand { get; }
 
-        private ICommand hideUserControlCommand;
+        private ICommand _hideUserControlCommand;
         public ICommand HideUserControlCommand
         {
             get
             {
-                if (hideUserControlCommand == null)
+                if (_hideUserControlCommand == null)
                 {
-                    hideUserControlCommand = new Command(p => HideUserControl(p));
+                    _hideUserControlCommand = new Command(p => hideUserControl(p));
                 }
-                return hideUserControlCommand;
+                return _hideUserControlCommand;
             }
         }
         #endregion
 
-        private string timeoutTimer;
+        private string _timeoutTimer;
         public string TimeoutTimer
         {
-            get => timeoutTimer;
+            get => _timeoutTimer;
             set
             {
-                if (timeoutTimer != value)
+                if (_timeoutTimer != value)
                 {
-                    timeoutTimer = value;
+                    _timeoutTimer = value;
                     OnPropertyChanged(nameof(TimeoutTimer));
                 }
             }
         }
 
-        private string acceptStatus = "Auto Accept in 5s";
+        private string _acceptStatus = "Auto Accept in 5s";
         public string AcceptStatus
         {
-            get => acceptStatus;
+            get => _acceptStatus;
             set
             {
-                if (acceptStatus != value)
+                if (_acceptStatus != value)
                 {
-                    acceptStatus = value;
+                    _acceptStatus = value;
                     OnPropertyChanged(nameof(AcceptStatus));
                 }
             }
         }
 
-        private double? timeoutValue;
+        private double? _timeoutValue;
         public double? TimeoutValue
         {
-            get => timeoutValue;
+            get => _timeoutValue;
             set
             {
-                if (timeoutValue != value)
+                if (_timeoutValue != value)
                 {
-                    timeoutValue = value;
+                    _timeoutValue = value;
                     OnPropertyChanged(nameof(TimeoutValue));
                 }
             }
         }
 
-        private Visibility matchfoundVisibility;
+        private Visibility _matchfoundVisibility;
         public Visibility MatchfoundVisibility
         {
-            get => matchfoundVisibility;
+            get => _matchfoundVisibility;
             set
             {
-                if (matchfoundVisibility != value)
+                if (_matchfoundVisibility != value)
                 {
-                    matchfoundVisibility = value;
+                    _matchfoundVisibility = value;
                     OnPropertyChanged(nameof(MatchfoundVisibility));
                 }
             }
         }
 
-        private readonly int _autoAcceptTimer = 5;
-        private bool _isMatchFound = false;
-        private bool _isDecided = false;
+        private readonly int r_autoAcceptTimer = 5; // seconds
+        private bool isMatchFound = false;
+        private bool isDecided = false;
+
         public MatchFoundViewModel()
         {
-            MatchFound();
-            AcceptMatchCommand = new Command(o => { Accept(); }); 
-            DeclineMatchCommand = new Command(o => { Decline(); });
-            LoLAWrapper.phaseMonitor.PhaseChanged += Phase_Changed;
+            matchFound();
+            AcceptMatchCommand = new Command(o => { accept(); }); 
+            DeclineMatchCommand = new Command(o => { decline(); });
+            LoLAWrapper.phaseMonitor.PhaseChanged += phase_Changed;
         }
 
-        private void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e) 
+        private void phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e) 
         {
-            if (e.currentPhase != Phase.ReadyCheck) HideMatchFound();
+            if (e.currentPhase != Phase.ReadyCheck) hideMatchFound();
         }
 
-        private void HideMatchFound()
+        private void hideMatchFound()
         {
             MatchfoundVisibility = Visibility.Collapsed;
-            _isMatchFound = false;
-            _isDecided = false;
+            isMatchFound = false;
+            isDecided = false;
         }
 
-        private async void MatchFound()
+        private async void matchFound()
         {
             await Task.Run(async() => {
-                _isMatchFound = true;
-                _isDecided = false;
+                isMatchFound = true;
+                isDecided = false;
 
-                ConsoleBeep();
+                consoleBeep();
 
-                while (_isMatchFound)
+                while (isMatchFound)
                 {
                     var matchInfo = await LCUWrapper.GetMatchmakingInfo();
                     var timer = matchInfo?.timer == null ? 0 : (int)matchInfo.timer;
 
-                    // update timer UI
+                    // update UI timer
                     TimeoutTimer = $"{10 - timer}s";
-                    if (!_isDecided)
+                    if (!isDecided)
                     {
-                        if (ConfigModel.config.AutoAccept)
+                        if (ConfigModel.s_Config.AutoAccept)
                         {
-                            if (_autoAcceptTimer <= timer) Accept();
-                            else AcceptStatus = $"Auto Accept in {_autoAcceptTimer - timer}s";
+                            if (r_autoAcceptTimer <= timer) accept();
+                            else AcceptStatus = $"Auto Accept in {r_autoAcceptTimer - timer}s";
                         } else AcceptStatus = "Auto Accept is disabled";
                     }
 
-                    if (matchInfo?.playerResponse != "None")
-                        AcceptStatus = matchInfo.playerResponse;
+                    Application.Current.Dispatcher.Invoke(() => {
+                        if (matchInfo?.playerResponse != "None")
+                            AcceptStatus = matchInfo?.playerResponse;
 
-                    TimeoutValue = timer * 10;
-
+                        TimeoutValue = timer * 10;
+                    });
                     //if (timer == 10) HideMatchFound();
                     Thread.Sleep(1000);
                 }
             });
         }
 
-        private async void Accept() => _isDecided = await LCUWrapper.AcceptMatchmakingAsync();
-        private async void Decline() => _isDecided = await LCUWrapper.DeclineMatchmakingAsync();
+        private async void accept() => isDecided = await LCUWrapper.AcceptMatchmakingAsync();
+        private async void decline() => isDecided = await LCUWrapper.DeclineMatchmakingAsync();
 
-        private void ConsoleBeep() // Beep sound
+        private void consoleBeep() // Beep sound
         {
             Console.Beep();
             Console.Beep();
         }
 
-        private void HideUserControl(object p) => Utils.Animation.FadeOut(p as UserControl);
+        private void hideUserControl(object p) => Utils.Animation.FadeOut(p as UserControl);
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

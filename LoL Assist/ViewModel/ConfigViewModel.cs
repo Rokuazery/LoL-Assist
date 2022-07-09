@@ -11,92 +11,92 @@ namespace LoL_Assist_WAPP.ViewModel
     public class ConfigViewModel : INotifyPropertyChanged
     {
         #region General
-        private bool autoRunes;
+        private bool _autoRunes;
         public bool AutoRunes
         {
-            get { return autoRunes; }
+            get { return _autoRunes; }
             set
             {
-                if (autoRunes != value)
+                if (_autoRunes != value)
                 {
-                    autoRunes = value;
-                    ConfigModel.config.AutoRunes = value;
+                    _autoRunes = value;
+                    ConfigModel.s_Config.AutoRunes = value;
                     OnPropertyChanged(nameof(AutoRunes));
                 }
             }
         }
 
-        private bool autoSpells;
+        private bool _autoSpells;
         public bool AutoSpells
         {
-            get => autoSpells;
+            get => _autoSpells;
             set
             {
-                if (autoSpells != value)
+                if (_autoSpells != value)
                 {
-                    autoSpells = value;
-                    ConfigModel.config.AutoSpells = value;
+                    _autoSpells = value;
+                    ConfigModel.s_Config.AutoSpells = value;
                     OnPropertyChanged(nameof(AutoSpells));
                 }
             }
         }
 
-        private bool autoAccept;
+        private bool _autoAccept;
         public bool AutoAccept
         {
-            get => autoAccept;
+            get => _autoAccept;
             set
             {
-                if (autoAccept != value)
+                if (_autoAccept != value)
                 {
-                    autoAccept = value;
-                    ConfigModel.config.AutoAccept = value;
+                    _autoAccept = value;
+                    ConfigModel.s_Config.AutoAccept = value;
                     OnPropertyChanged(nameof(AutoAccept));
                 }
             }
         }
 
-        private bool flashPlaceMentToRight;
+        private bool _flashPlaceMentToRight;
         public bool FlashPlacementToRight
         {
-            get => flashPlaceMentToRight;
+            get => _flashPlaceMentToRight;
             set
             {
-                if (flashPlaceMentToRight != value)
+                if (_flashPlaceMentToRight != value)
                 {
-                    flashPlaceMentToRight = value;
-                    ConfigModel.config.FlashPlacementToRight = value;
+                    _flashPlaceMentToRight = value;
+                    ConfigModel.s_Config.FlashPlacementToRight = value;
                     OnPropertyChanged(nameof(FlashPlacementToRight));
                 }
             }
         }
 
-        private bool useLatestPatch;
+        private bool _useLatestPatch;
         public bool UseLatestPatch
         {
-            get => useLatestPatch;
+            get => _useLatestPatch;
             set
             {
-                if (useLatestPatch != value)
+                if (_useLatestPatch != value)
                 {
-                    useLatestPatch = value;
-                    ConfigModel.config.UseLatestPatch = value;
-                    Global.Config.useLatestPatch = value;
+                    _useLatestPatch = value;
+                    ConfigModel.s_Config.UseLatestPatch = value;
+                    GlobalConfig.s_LatestPatch = value;
                     OnPropertyChanged(nameof(UseLatestPatch));
                 }
             }
         }
 
-        private bool customRunesSpells;
+        private bool _customRunesSpells;
         public bool CustomRunesSpells
         {
-            get => customRunesSpells;
+            get => _customRunesSpells;
             set
             {
-                if (customRunesSpells != value)
+                if (_customRunesSpells != value)
                 {
-                    customRunesSpells = value;
-                    ConfigModel.config.CustomRunesSpells = value;
+                    _customRunesSpells = value;
+                    ConfigModel.s_Config.CustomRunesSpells = value;
                     OnPropertyChanged(nameof(CustomRunesSpells));
                 }
             }
@@ -104,69 +104,65 @@ namespace LoL_Assist_WAPP.ViewModel
         #endregion
 
         #region Miscellaneous
-        private bool lowSpecMode;
+        private bool _lowSpecMode;
         public bool LowSpecMode
         {
-            get => lowSpecMode;
+            get => _lowSpecMode;
             set
             {
-                if (lowSpecMode != value)
+                if (_lowSpecMode != value)
                 {
-                    lowSpecMode = value;
-                    ConfigModel.config.LowSpecMode = value;
-
-                    if (ConfigModel.config.LowSpecMode)
-                        ConfigModel.config.MonitoringDelay = 300;
-                    else ConfigModel.config.MonitoringDelay = 250;
-
+                    _lowSpecMode = value;
+                    ConfigModel.s_Config.LowSpecMode = value;
+                    ConfigModel.s_Config.MonitoringDelay = ConfigModel.s_Config.LowSpecMode ? 300 : 250;
                     OnPropertyChanged(nameof(LowSpecMode));
                 }
             }
         }
 
-        private bool logging;
+        private bool _logging;
         public bool Logging
         {
-            get => logging;
+            get => _logging;
             set
             {
-                if (logging != value)
+                if (_logging != value)
                 {
-                    logging = value;
-                    ConfigModel.config.Logging = value;
-                    Global.Config.logging = value;
+                    _logging = value;
+                    ConfigModel.s_Config.Logging = value;
+                    GlobalConfig.s_Logging = value;
                     OnPropertyChanged(nameof(Logging));
                 }
             }
         }
 
-        private bool buildCache;
+        private bool _buildCache;
         public bool BuildCache
         {
-            get => buildCache;
+            get => _buildCache;
             set
             {
-                if (buildCache != value)
+                if (_buildCache != value)
                 {
-                    buildCache = value;
-                    ConfigModel.config.BuildCache = value;
-                    Global.Config.caching = value;
+                    _buildCache = value;
+                    ConfigModel.s_Config.BuildCache = value;
+                    GlobalConfig.s_Caching = value;
                     OnPropertyChanged(nameof(BuildCache));
                 }
             }
         }
 
-        private bool updateOnStartup;
+        private bool _updateOnStartup;
         public bool UpdateOnStartup
         {
-            get => updateOnStartup;
+            get => _updateOnStartup;
             set
             {
-                if (updateOnStartup != value)
+                if (_updateOnStartup != value)
                 {
-                    updateOnStartup = value;
-                    ConfigModel.config.UpdateOnStartup = value;
-                    Global.Config.caching = value;
+                    _updateOnStartup = value;
+                    ConfigModel.s_Config.UpdateOnStartup = value;
+                    GlobalConfig.s_Caching = value;
                     OnPropertyChanged(nameof(UpdateOnStartup));
                 }
             }
@@ -213,26 +209,26 @@ namespace LoL_Assist_WAPP.ViewModel
 
         private void ShowFolderExecute()
         {
-            var path = Global.libraryFolder;
+            var path = LibInfo.r_LibFolderPath;
             if(Directory.Exists(path)) Process.Start(path);
         }
 
         public void Update()
         {
-            AutoRunes = ConfigModel.config.AutoRunes;
-            AutoSpells = ConfigModel.config.AutoSpells;
-            AutoAccept = ConfigModel.config.AutoAccept;
-            FlashPlacementToRight = ConfigModel.config.FlashPlacementToRight;
-            UseLatestPatch = ConfigModel.config.UseLatestPatch;
-            Global.Config.useLatestPatch = UseLatestPatch;
-            CustomRunesSpells = ConfigModel.config.CustomRunesSpells;
+            AutoRunes = ConfigModel.s_Config.AutoRunes;
+            AutoSpells = ConfigModel.s_Config.AutoSpells;
+            AutoAccept = ConfigModel.s_Config.AutoAccept;
+            FlashPlacementToRight = ConfigModel.s_Config.FlashPlacementToRight;
+            UseLatestPatch = ConfigModel.s_Config.UseLatestPatch;
+            GlobalConfig.s_LatestPatch = UseLatestPatch;
+            CustomRunesSpells = ConfigModel.s_Config.CustomRunesSpells;
 
-            Logging = ConfigModel.config.Logging;
-            Global.Config.logging = Logging;
-            LowSpecMode = ConfigModel.config.LowSpecMode;
-            BuildCache = ConfigModel.config.BuildCache;
-            Global.Config.caching = BuildCache;
-            UpdateOnStartup = ConfigModel.config.UpdateOnStartup;
+            Logging = ConfigModel.s_Config.Logging;
+            GlobalConfig.s_Logging = Logging;
+            LowSpecMode = ConfigModel.s_Config.LowSpecMode;
+            BuildCache = ConfigModel.s_Config.BuildCache;
+            GlobalConfig.s_Caching = BuildCache;
+            UpdateOnStartup = ConfigModel.s_Config.UpdateOnStartup;
         }
         #region Space junk
         public event PropertyChangedEventHandler PropertyChanged;

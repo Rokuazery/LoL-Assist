@@ -3,10 +3,6 @@
                     xmlns:viewmodel="clr-namespace:LoL_Assist_WAPP.ViewModel"
                     xmlns:view="clr-namespace:LoL_Assist_WAPP.View">
 
-    <DataTemplate DataType="{x:Type viewmodel:RoleSelectViewModel}">
-        <view:RoleSelectPanel/>
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type viewmodel:PatchViewModel}">
         <view:PatchNotesPanel/>
     </DataTemplate>
@@ -17,5 +13,13 @@
     
     <DataTemplate DataType="{x:Type viewmodel:MatchFoundViewModel}">
         <view:MatchFoundPanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodel:RuneEditorViewModel}">
+        <view:RuneEditorPanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodel:DownloadViewModel}">
+        <view:DownloadPanel/>
     </DataTemplate>
 </ResourceDictionary>

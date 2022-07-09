@@ -5,13 +5,14 @@ namespace LoL_Assist_WAPP.ViewModel
 {
     internal class MessageBoxViewModel : INotifyPropertyChanged
     {
-        public Action action { get; set; }
-        public string message { get; set; }
-        public string title { get; set; }
-        public double width { get; set; }
-        public double height { get; set; }
+        public Action Action { get; set; }
+        public string Message { get; set; }
+        public string Title { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

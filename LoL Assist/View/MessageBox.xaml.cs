@@ -23,13 +23,13 @@ namespace LoL_Assist_WAPP.View
         {
             await Task.Delay(2);
             var data = ((MessageBoxViewModel)DataContext);
-            MsgBox msgBox = new MsgBox(data.message, data.width, data.height);
+            MsgBox msgBox = new MsgBox(data.Message, data.Width, data.Height);
             msgBox.Opacity = 0;
             msgBox.Visibility = Visibility.Collapsed;
             MsgContainer.Children.Add(msgBox);
             msgBox.Decided += delegate (bool result)
             {
-                if (result) data.action.Invoke();
+                if (result) data.Action.Invoke();
                 Utils.Animation.FadeOut(this);
             };
             Utils.Animation.FadeIn(msgBox);
