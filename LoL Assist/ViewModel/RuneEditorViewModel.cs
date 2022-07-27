@@ -559,8 +559,7 @@ namespace LoL_Assist_WAPP.ViewModel
                     var itemModel = new ItemImageModel {
                         Text = perk.name,
                         Image = selectedPath.Equals(perk.name) ?
-                        Helper.ImageSrc($"{selectedPath}") :
-                        Helper.ImageSrc($"g_{perk.name}")
+                        Helper.ImageSrc(perk.name) : Helper.ImageSrc($"g_{perk.name}")
                     };
 
                     PrimaryPaths.Add(itemModel);
@@ -702,8 +701,8 @@ namespace LoL_Assist_WAPP.ViewModel
                     continue;
 
                 var image = selectedPerk != null && selectedPerk.Equals(secondSlot[index, i]) ?
-                Helper.ImageSrc($"{secondSlot[index, i].Replace(":", string.Empty)}") :
-                Helper.ImageSrc($"g_{secondSlot[index, i].Replace(":", string.Empty)}");
+                Helper.ImageSrc(secondSlot[index, i]) : Helper.ImageSrc($"g_{secondSlot[index, i]}");
+
                 var itemImageModel = Helper.ItemImage(secondSlot[index, i], image);
 
                 newPerks.Add(itemImageModel);
@@ -730,166 +729,96 @@ namespace LoL_Assist_WAPP.ViewModel
                     break;
             }
 
-            var selectedPerkIndex = getSecondaryPathSlotIndex(selectedPerk);
-            var perk4Index = getSecondaryPathSlotIndex(currentPerk4);
-            var perk5Index = getSecondaryPathSlotIndex(currentPerk5);
-            var perk6Index = getSecondaryPathSlotIndex(currentPerk6);
-
-            int lastSlot = lastSelectedSlot[lastSlotIndex];
-            var lastIndexTemp = lastSlotIndex;
-
-            if (!string.IsNullOrEmpty(selectedPerk))
-                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
-
             if (changeNeeded)
             {
                 switch (index)
                 {
                     case 0:
-                        Perks4 = populateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
-                        currentPerk4 = selectedPerk;
-                        if (currentPerk4 != null)
-                        {
-                            if (perk5Index == -1 && perk6Index == -1)
-                            {
-                                rune.Slot4 = Converter.PerkNameToId(currentPerk4);
-
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[0] = selectedPerkIndex;
-                            }
-                            else if (perk5Index != -1 && perk6Index != -1)
-                            {
-                                if (lastSlot == perk5Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk5);
-
-                                    currentPerk5 = null;
-                                    Perks5 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk5, 1);
-                                }
-                                else if (lastSlot == perk6Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk6);
-
-                                    currentPerk6 = null;
-                                    Perks6 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk6, 2);
-                                }
-
-                                lastSelectedSlot[lastIndexTemp] = getSecondaryPathSlotIndex(currentPerk4);
-                            }
-                            else if ((perk4Index == -1 && perk6Index == -1 && perk5Index != -1)
-                            || (perk4Index == -1 && perk6Index != -1 && perk5Index == -1))
-                            {
-                                var currentRune = perk5Index != -1 ? currentPerk5 : currentPerk6;
-                                setSecondaryPathSlot(selectedPerk, currentRune);
-
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[1] = selectedPerkIndex;
-                            }
-                            else if (perk4Index != -1)
-                            {
-                                setSecondaryPathSlot(selectedPerk, currentPerk4);
-                                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
-                            }
-                        }
+                        selectSecondaryPerk(selectedPerk, currentPerk4, currentPerk5, currentPerk6, index);
                         break;
                     case 1:
-                        Perks5 = populateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
-                        currentPerk5 = selectedPerk;
-                        if (currentPerk5 != null)
-                        {
-                            if (perk4Index == -1 && perk6Index == -1)
-                            {
-                                rune.Slot4 = Converter.PerkNameToId(currentPerk5);
-                  
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[0] = selectedPerkIndex;
-                            }
-                            else if (perk4Index != -1 && perk6Index != -1)
-                            {
-                                if (lastSlot == perk4Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk4);
-
-                                    currentPerk4 = null;
-                                    Perks4 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk4, 0);
-                                }
-                                else if (lastSlot == perk6Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk6);
-
-                                    currentPerk6 = null;
-                                    Perks6 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk6, 2);
-                                }
-                                lastSelectedSlot[lastIndexTemp] = getSecondaryPathSlotIndex(currentPerk5);
-                            }
-                            else if ((perk4Index!= -1 && perk6Index == -1 && perk5Index == -1)
-                            || (perk4Index == -1 && perk6Index != -1 && perk5Index == -1))
-                            {
-                                var currentRune = perk4Index != -1 ? currentPerk4 : currentPerk6;
-                                setSecondaryPathSlot(selectedPerk, currentRune);
-
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[1] = selectedPerkIndex;
-                            }
-                            else if (perk5Index != -1)
-                            {
-                                setSecondaryPathSlot(selectedPerk, currentPerk5);
-                                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
-                            }
-                        }
+                        selectSecondaryPerk(selectedPerk, currentPerk5, currentPerk4, currentPerk6, index);
                         break;
                     case 2:
-                        Perks6 = populateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
-                        currentPerk6 = selectedPerk;
-                        if (currentPerk6 != null)
-                        {
-                            if (perk4Index == -1 && perk5Index == -1)
-                            {
-                                rune.Slot4 = Converter.PerkNameToId(currentPerk6);
-
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[0] = selectedPerkIndex;
-                            }
-                            else if (perk4Index != -1 && perk5Index != -1)
-                            {
-                                if (lastSlot == perk4Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk4);
-
-                                    currentPerk4 = null;
-                                    Perks4 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk4, 0);
-                                }
-                                else if(lastSlot == perk5Index)
-                                {
-                                    setSecondaryPathSlot(selectedPerk, currentPerk5);
-
-                                    currentPerk5 = null;
-                                    Perks5 = populateSecondaryPathSlot(currentSecondaryPath, currentPerk5, 1);
-                                }
-                                lastSelectedSlot[lastIndexTemp] = getSecondaryPathSlotIndex(currentPerk6);
-                            }
-                            else if (perk4Index != -1 && perk6Index == -1 && perk5Index == -1
-                            || (perk4Index == -1 && perk6Index == -1 && perk5Index != -1))
-                            {
-                                var currentRune = perk4Index != -1 ? currentPerk4 : currentPerk5;
-                                setSecondaryPathSlot(selectedPerk, currentRune);
-
-                                lastSlotIndex = 0;
-                                lastSelectedSlot[1] = selectedPerkIndex;
-                            }
-                            else if (perk6Index != -1)
-                            {
-                                setSecondaryPathSlot(selectedPerk, currentPerk6);
-                                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
-                            }
-                        }
+                        selectSecondaryPerk(selectedPerk, currentPerk6, currentPerk4, currentPerk5, index);
                         break;
                 }
             }
         }
 
-        private void setSecondaryPathSlot(string selectedPerk, string currentPerk)
+        private void selectSecondaryPerk(string selectedPerk, string perk1, string perk2, string perk3, int index)
         {
+            var selectedPerkIndex = getSecondaryPathSlotIndex(selectedPerk);
+            var perk1Index = getSecondaryPathSlotIndex(perk1);
+            var perk2Index = getSecondaryPathSlotIndex(perk2);
+            var perk3Index = getSecondaryPathSlotIndex(perk3);
+
+            int lastSlot = lastSelectedSlot[lastSlotIndex];
+            var lastIndex = lastSlotIndex;
+
+            if (!string.IsNullOrEmpty(selectedPerk))
+                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
+
+            var perks = populateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
+
+            setSecondaryPathPerksByIndex(perks, index);
+
+            var perk1Temp = perk1;
+            perk1 = setSecondaryPathCurrentPerkByIndex(selectedPerk, index);
+
+            if (perk1 != null)
+            {
+                if (perk2Index == -1 && perk3Index == -1)
+                {
+                    rune.Slot4 = Converter.PerkNameToId(selectedPerk);
+
+                    lastSlotIndex = 0;
+                    lastSelectedSlot[0] = selectedPerkIndex;
+                }
+                else if (perk2Index != -1 && perk3Index != -1)
+                {
+                    if (lastSlot == perk2Index)
+                    {
+                        setSecondaryPathRuneSlot(selectedPerk, perk2);
+
+                        perk2 = setSecondaryPathCurrentPerkByIndex(null, perk2Index);
+                        setSecondaryPathPerksByIndex(populateSecondaryPathSlot(currentSecondaryPath, perk2, perk2Index), perk2Index);
+                    }
+                    else if (lastSlot == perk3Index)
+                    {
+                        setSecondaryPathRuneSlot(selectedPerk, perk3);
+
+                        perk3 = setSecondaryPathCurrentPerkByIndex(null, perk3Index);
+                        setSecondaryPathPerksByIndex(populateSecondaryPathSlot(currentSecondaryPath, perk3, perk3Index), perk3Index);
+                    }
+
+                    lastSelectedSlot[lastIndex] = getSecondaryPathSlotIndex(perk1);
+                }
+                else if ((perk1Index == -1 && perk2Index == -1 && perk3Index != -1)
+                || (perk1Index == -1 && perk2Index != -1 && perk3Index == -1))
+                {
+                    var currentRune = perk2Index != -1 ? perk2 : perk3;
+                    setSecondaryPathRuneSlot(selectedPerk, currentRune);
+
+                    lastSlotIndex = 0;
+                    lastSelectedSlot[1] = selectedPerkIndex;
+                }
+                else if (perk1Index != -1)
+                {
+                    setSecondaryPathRuneSlot(selectedPerk, perk1Temp);
+                    lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
+                }
+            }
+        }
+
+        private void setSecondaryPathRuneSlot(string selectedPerk, string currentPerk)
+        {
+            var currentPerkId = Converter.PerkNameToId(selectedPerk);
+            var selectedPerkId = Converter.PerkNameToId(selectedPerk);
+            var slot4 = Converter.PerkIdToName(rune.Slot4);
+            var slot5 = Converter.PerkIdToName(rune.Slot5);
+
+
             if (rune.Slot4 == Converter.PerkNameToId(currentPerk))
                 rune.Slot4 = Converter.PerkNameToId(selectedPerk);
             else
@@ -923,79 +852,51 @@ namespace LoL_Assist_WAPP.ViewModel
             Perks5 = populateSecondaryPathSlot(currentSecondaryPath, null, 1);
             Perks6 = populateSecondaryPathSlot(currentSecondaryPath, null, 2);
 
-            var perk4Index = getSecondaryPathSlotIndex(selectedPerk4);
-            var perk5Index = getSecondaryPathSlotIndex(selectedPerk5);
+            var slot4Index = getSecondaryPathSlotIndex(selectedPerk4);
+            var slot5Index = getSecondaryPathSlotIndex(selectedPerk5);
 
             lastSlotIndex = 0; // reset last slot index
 
-            if(perk4Index != -1)
+            if(slot4Index != -1)
             {
-                lastSelectedSlot[0] = perk4Index;
+                lastSelectedSlot[0] = slot4Index;
                 var newPerks4 = new ObservableCollection<ItemImageModel>();
                 for (int i = 0; i < secondSlot.GetLength(1); i++)
                 {
-                    var rune = secondSlot[perk4Index, i];
+                    var rune = secondSlot[slot4Index, i];
 
                     if (rune == null) continue;
 
                     var image = selectedPerk4 != null && selectedPerk4.Equals(rune) ?
-                    Helper.ImageSrc($"{rune.Replace(":", string.Empty)}") :
-                    Helper.ImageSrc($"g_{rune.Replace(":", string.Empty)}");
+                    Helper.ImageSrc(rune) : Helper.ImageSrc($"g_{rune}");
                     var itemImageModel = Helper.ItemImage(rune, image);
 
                     newPerks4.Add(itemImageModel);
                 }
 
-                switch (perk4Index)
-                {
-                    case 0:
-                        Perks4 = newPerks4;
-                        currentPerk4 = selectedPerk4;
-                        break;
-                    case 1:
-                        Perks5 = newPerks4;
-                        currentPerk5 = selectedPerk4;
-                        break;
-                    case 2:
-                        Perks6 = newPerks4;
-                        currentPerk6 = selectedPerk4;
-                        break;
-                }
+                setSecondaryPathPerksByIndex(newPerks4, slot4Index);
+                setSecondaryPathCurrentPerkByIndex(selectedPerk4, slot4Index);
             }
 
-            if(perk5Index != -1)
+            if(slot5Index != -1)
             {
-                lastSelectedSlot[1] = perk5Index;
+                lastSelectedSlot[1] = slot5Index;
                 var newPerks5 = new ObservableCollection<ItemImageModel>();
                 for (int i = 0; i < secondSlot.GetLength(1); i++)
                 {
-                    var rune = secondSlot[perk5Index, i];
+                    var rune = secondSlot[slot5Index, i];
 
                     if (rune == null) continue;
 
                     var image = selectedPerk5 != null && selectedPerk5.Equals(rune) ?
-                    Helper.ImageSrc($"{rune.Replace(":", string.Empty)}") :
-                    Helper.ImageSrc($"g_{rune.Replace(":", string.Empty)}");
+                    Helper.ImageSrc(rune) : Helper.ImageSrc($"g_{rune}");
                     var itemImageModel = Helper.ItemImage(rune, image);
 
                     newPerks5.Add(itemImageModel);
                 }
 
-                switch (perk5Index)
-                {
-                    case 0:
-                        Perks4 = newPerks5;
-                        currentPerk4 = selectedPerk5;
-                        break;
-                    case 1:
-                        Perks5 = newPerks5;
-                        currentPerk5 = selectedPerk5;
-                        break;
-                    case 2:
-                        Perks6 = newPerks5;
-                        currentPerk6 = selectedPerk5;
-                        break;
-                }
+                setSecondaryPathPerksByIndex(newPerks5, slot5Index);
+                setSecondaryPathCurrentPerkByIndex(selectedPerk5, slot5Index);
             }
         }
 
@@ -1071,28 +972,6 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private ObservableCollection<ItemImageModel> itemImageModels(string currentValue, string newValue, ObservableCollection<ItemImageModel> itemModels)
-        {
-            if (currentValue != newValue)
-            {
-                var newItemModels = new ObservableCollection<ItemImageModel>();
-
-                foreach (var model in itemModels)
-                {
-                    var itemModel = new ItemImageModel {
-                        Text = model.Text,
-                        Image = newValue.Equals(model.Text) ?
-                        Helper.ImageSrc($"{newValue.Replace(":", string.Empty)}") :
-                        Helper.ImageSrc($"g_{model.Text.Replace(":", string.Empty)}")
-                    };
-
-                    newItemModels.Add(itemModel);
-                }
-                return newItemModels;
-            }
-            return null;
-        }
-
         private void updatePrimaryPathSlots(string selectedPath)
         {
             Perks1 = new ObservableCollection<ItemImageModel>();
@@ -1113,7 +992,7 @@ namespace LoL_Assist_WAPP.ViewModel
                             {
                                 var model = new ItemImageModel() {
                                     Text = rune.name,
-                                    Image = Helper.ImageSrc($"g_{rune.name.Replace(":", string.Empty)}")
+                                    Image = Helper.ImageSrc($"g_{rune.name}")
                                 };
 
                                 switch (i)
@@ -1137,6 +1016,61 @@ namespace LoL_Assist_WAPP.ViewModel
                     }
                 }
             }
+        }
+
+        private string setSecondaryPathCurrentPerkByIndex(string perk, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    currentPerk4 = perk;
+                    break;
+                case 1:
+                    currentPerk5 = perk;
+                    break;
+                case 2:
+                    currentPerk6 = perk;
+                    break;
+            }
+            return perk;
+        }
+
+        private void setSecondaryPathPerksByIndex(ObservableCollection<ItemImageModel> perks, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Perks4 = perks;
+                    break;
+                case 1:
+                    Perks5 = perks;
+                    break;
+                case 2:
+                    Perks6 = perks;
+                    break;
+            }
+        }
+
+        private ObservableCollection<ItemImageModel> itemImageModels(string currentValue, string newValue, ObservableCollection<ItemImageModel> itemModels)
+        {
+            if (currentValue != newValue)
+            {
+                var newItemModels = new ObservableCollection<ItemImageModel>();
+
+                foreach (var model in itemModels)
+                {
+                    var itemModel = new ItemImageModel
+                    {
+                        Text = model.Text,
+                        Image = newValue.Equals(model.Text) ?
+                        Helper.ImageSrc(newValue) : Helper.ImageSrc($"g_{model.Text}")
+                    };
+
+                    newItemModels.Add(itemModel);
+                }
+                return newItemModels;
+            }
+            return null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

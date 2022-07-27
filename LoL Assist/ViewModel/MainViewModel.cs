@@ -557,7 +557,8 @@ namespace LoL_Assist_WAPP.ViewModel
             }
         }
 
-        private void dispatcherInvoke(Action action) => Application.Current.Dispatcher.Invoke(action);
+        private void dispatcherInvoke(Action action) 
+            => Application.Current.Dispatcher.Invoke(action);
 
         #region LoL Checker
         // Checks for LeagueClient process and get summoner info
@@ -750,6 +751,8 @@ namespace LoL_Assist_WAPP.ViewModel
             else if (summonerInfo.displayName == null
             || summonerInfo.summonerLevel == 0)
                 return null;
+
+            Console.WriteLine(summonerInfo.summonerId);
 
             return $"{summonerInfo?.displayName} | Lvl {summonerInfo?.summonerLevel}";
         }

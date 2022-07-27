@@ -88,9 +88,10 @@ namespace LoL_Assist_WAPP.Utils
             }
             return "Jeff's";
         }
+
         public static string ImageSrc(string name, string format = "png")
         {
-            return $"{ConfigModel.RESOURCE_PATH}{name}.{format}";
+            return $"{ConfigModel.RESOURCE_PATH}{name.Replace(":", string.Empty)}.{format}";
         }
 
         public static string GetLine(string text, int lineNo)

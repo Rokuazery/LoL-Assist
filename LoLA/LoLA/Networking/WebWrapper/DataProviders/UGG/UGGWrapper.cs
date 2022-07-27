@@ -20,18 +20,35 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
         private const string UGG_API_VERSION = "1.1";
         private const string UGG_LOL_VERSION = "12_12";
         private const string UGG_OVERVIEW_VERSION = "1.5.0";
+        private const string UGG_API_URL = "stats2.u.gg/lol/";
 
         private const int OVERVIEW_WORLD = 12;
         private const int OVERVIEW_PLATINUM_PLUS = 10;
-        private static string getUrl(string championKey)
-            => $"{Protocol.HTTPS}stats2.u.gg/lol/{UGG_API_VERSION}/overview/{UGG_LOL_VERSION}/ranked_solo_5x5/{championKey}/{UGG_OVERVIEW_VERSION}.json";
+        private static string getOverviewUrl(string championKey, GameMode gameMode)
+        {
+            string gameModeUrlPath = string.Empty;
+
+            switch (gameMode)
+            {
+                case GameMode.PRACTICETOOL:
+                case GameMode.CLASSIC:
+                    gameModeUrlPath = "ranked_solo_5x5";
+                    break;
+                case GameMode.ARAM:
+                    gameModeUrlPath = "normal_aram";
+                    break;  
+            }
+
+            var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{UGG_LOL_VERSION}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
+            
+            return apiUrl;
+        }
 
         public static async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED)
         {
             ChampionBuild championBuild = new ChampionBuild();
             var championData = s_Champions.Data[championId]; 
             var jsonContent = string.Empty;
-
 
             var filePath = DataPath(championId, gameMode, role);
             if (IsBuildFileValid(championId, gameMode, role))
@@ -44,7 +61,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             {
                 Log($"Downloading {Misc.FixedName(championId)} build data from {Provider.UGG}...", LogType.INFO);
 
-                var championJObject = await GetChampionDataAsync(championData.key);
+                var championJObject = await GetChampionDataAsync(championData.key, gameMode);
 
                 if (championJObject != null)
                 {
@@ -72,9 +89,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return championBuild;
         }
 
-        public static async Task<JObject> GetChampionDataAsync(string championKey)
+        public static async Task<JObject> GetChampionDataAsync(string championKey, GameMode gameMode)
         {
-            var rawDataObject = await WebEx.DlDe<JObject>(getUrl(championKey));
+            var rawDataObject = await WebEx.DlDe<JObject>(getOverviewUrl(championKey, gameMode));
             var championJObject = (JObject)rawDataObject[OVERVIEW_WORLD.ToString()][OVERVIEW_PLATINUM_PLUS.ToString()];
             return championJObject;
         }

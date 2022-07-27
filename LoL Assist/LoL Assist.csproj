@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LoL_Assist_WAPP</RootNamespace>
     <AssemblyName>LoL Assist</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>

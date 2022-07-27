@@ -81,12 +81,18 @@ namespace LoL_Assist_WAPP.ViewModel
         private void initPatchNote()
         {
             StringBuilder patchNotes = new StringBuilder();
-            patchNotes.AppendLine("• Added an option for role select (available for a certain game mode only)");
-            patchNotes.AppendLine("• Added a system tray menu [Exit, Show, Patch Notes, Minimize to Tray]");
-            patchNotes.AppendLine("• Fixed an issue where LoL Assist UI being unresponsive");
-            patchNotes.AppendLine("• Minor UI improvements");
-            patchNotes.AppendLine("• Better MVVM Bindings");
-            patchNotes.AppendLine("• Code clean up"); 
+            patchNotes.AppendLine("• Added U.GG Runes");
+            patchNotes.AppendLine("• Added a realtime rune editor");
+            patchNotes.AppendLine("• Better LeagueClient detection");
+            patchNotes.AppendLine("• Using new rewritten LoLA library");
+            patchNotes.AppendLine("• Added runes & spells provider/source option");
+            patchNotes.AppendLine("• Moved directory data from '\\AppData\\Local\\Temp\\LoLA' to '\\AppData\\Local\\Temp\\LoLA Data'");
+            patchNotes.AppendLine("• Minor design changes (tooltip, button, etc)");
+
+            patchNotes.AppendLine("• Fixed minimize to tray");
+            patchNotes.AppendLine("• Fixed an issue where role selection reset after phase changed");
+            patchNotes.AppendLine("• Fixed LoL Assist crashing issue when launching LeagueClient");
+            patchNotes.AppendLine("• Fixed an issue where Phase Monitor won't update at initialize");
 
             PatchNotes = patchNotes.ToString();
         }
