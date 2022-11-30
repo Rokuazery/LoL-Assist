@@ -1,13 +1,10 @@
-﻿using LoL_Assist_WAPP.Model;
-using LoLA;
-using LoLA.Utils.Logger;
-using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using LoL_Assist_WAPP.Models;
 using System.Diagnostics;
-using System.Linq;
+using LoLA.Utils.Logger;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using LoLA;
 
 namespace LoL_Assist_WAPP.Utils
 {

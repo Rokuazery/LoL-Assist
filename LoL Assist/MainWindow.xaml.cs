@@ -1,9 +1,8 @@
-﻿using System.Windows.Controls;
-using LoL_Assist_WAPP.Model;
-using System.Windows.Input;
+﻿using LoL_Assist_WAPP.ViewModels;
+using System.Windows.Controls;
+using LoL_Assist_WAPP.Models;
 using System.Windows;
 using System;
-using System.Windows.Media;
 
 namespace LoL_Assist_WAPP
 {
@@ -12,14 +11,15 @@ namespace LoL_Assist_WAPP
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly View.InfoPanel InfoPanel;
-        private readonly View.ConfigPanel ConfigPanel;
+        private readonly Views.InfoPanel InfoPanel;
+        private readonly Views.ConfigPanel ConfigPanel;
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
 
-            ConfigPanel = new View.ConfigPanel(BackDrop);
-            InfoPanel = new View.InfoPanel(BackDrop);
+            ConfigPanel = new Views.ConfigPanel(BackDrop);
+            InfoPanel = new Views.InfoPanel(BackDrop);
 
             ConfigPanel.Margin = ConfigModel.r_MarginClose;
             InfoPanel.Margin = ConfigModel.r_MarginClose;
@@ -31,13 +31,13 @@ namespace LoL_Assist_WAPP
             MainGrid.Children.Add(ConfigPanel);
         }
 
-        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
+        private void animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.Margin(element, from, to, time);
         }
 
-        private void SettingsBtn_Click(object sender, RoutedEventArgs e) => Animate(ConfigPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
-        private void InfoBtn_Click(object sender, RoutedEventArgs e) => Animate(InfoPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
+        private void InfoBtn_Click(object sender, RoutedEventArgs e) => animate(InfoPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
+        private void OptionsBtn_Click(object sender, RoutedEventArgs e) => animate(ConfigPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
     }
 }

@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="LoL_Assist_WAPP.Views.MatchFoundPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:extensions="clr-namespace:LoL_Assist_WAPP.Extensions"
+             mc:Ignorable="d" Visibility="{Binding MatchfoundVisibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Style>
+        <Style>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="UserControl.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.0"
+                                             To="1.0"
+                                             Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+    <Grid>
+        <Border Background="Black" Opacity="0.6"/>
+        <Grid Width="220" Height="145">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+            <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" 
+        BorderBrush="{DynamicResource BorderGradientBrush}" Grid.RowSpan="2" />
+
+            <Grid Grid.Row="0">
+                <StackPanel Margin="0,5,0,0">
+                    <TextBlock Text="Match Found!" HorizontalAlignment="Center" FontWeight="DemiBold" Foreground="{DynamicResource BrushTitle}" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="aaStatus" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11" Text="{Binding AcceptStatus, UpdateSourceTrigger=PropertyChanged}" 
+                    Foreground="{Binding ElementName=aaStatus, Path=Foreground, Converter={StaticResource TextToForegroundConverter}}"/>
+                    <ProgressBar Height="15" Margin="10" Style="{DynamicResource FlatStyleProgressbar}" extensions:ProgressBarSmoother.SmoothValue="{Binding TimeoutValue, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" VerticalAlignment="Bottom" Text="{Binding TimeoutTimer, UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Center" Margin="0,0,0,0" x:Name="aCount"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Template="{DynamicResource FlatStyleButton}" Content="Accept"
+            Margin="10" Grid.Column="0" x:Name="AcceptBtn" Command="{Binding AcceptMatchCommand}"/>
+
+                <Button Template="{DynamicResource FlatStyleButton}" Content="Decline"
+            Margin="10" Grid.Column="1" Command="{Binding DeclineMatchCommand}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

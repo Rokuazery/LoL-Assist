@@ -51,6 +51,7 @@ namespace LoLA.Networking.LCU.Events
                         ChampionChanged?.Invoke(this, new ChampionChangedArgs(currentChampion));
                     }
                 }
+
                 await Task.Delay(MonitorDelay);
             }
         }

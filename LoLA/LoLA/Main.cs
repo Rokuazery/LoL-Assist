@@ -2,6 +2,7 @@
 using LoLA.Networking.WebWrapper.DataProviders.UGG;
 using LoLA.Networking.WebWrapper.DataDragon;
 using static LoLA.Utils.Logger.LogService;
+using System.Collections.Generic;
 using LoLA.Networking.LCU.Enums;
 using System.Threading.Tasks;
 using LoLA.Utils.Logger;
@@ -34,9 +35,10 @@ namespace LoLA
             }
         }
 
-        public static async Task<ChampionBuild> RequestBuildsData(string championId, GameMode gameMode, Provider provider, Role role = Role.RECOMENDED)
+        public static async Task<ChampionBuild> RequestBuildsData(string championId, GameMode gameMode, Provider provider, Role role = Role.RECOMENDED, int index = 0)
         {
             ChampionBuild championBuild = new ChampionBuild();
+
             switch (provider)
             {
                 case Provider.Local:
@@ -47,8 +49,8 @@ namespace LoLA
                     championBuild = await MetasrcWrapper.FetchDataAsync(championId, gameMode, role);
                     break;
                 case Provider.UGG:
-                    if(gameMode == GameMode.CLASSIC || gameMode == GameMode.PRACTICETOOL)
-                        championBuild = await UGGWrapper.FetchDataAsync(championId, gameMode, role);
+                    if(gameMode == GameMode.CLASSIC || gameMode == GameMode.PRACTICETOOL || gameMode == GameMode.ARAM)
+                        championBuild = await UGGWrapper.FetchDataAsync(championId, gameMode, role, index);
                     else
                         championBuild = await MetasrcWrapper.FetchDataAsync(championId, gameMode, role);
                     break;

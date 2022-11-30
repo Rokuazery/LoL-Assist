@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewmodels="clr-namespace:LoL_Assist_WAPP.ViewModels"
+                    xmlns:models="clr-namespace:LoL_Assist_WAPP.Models"
+                    xmlns:views="clr-namespace:LoL_Assist_WAPP.Views">
+    <DataTemplate DataType="{x:Type viewmodels:ChampionPickerViewModel}">
+        <views:ChampionPickerPanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type models:MessageBoxModel}">
+        <views:MessageBox/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodels:MatchFoundViewModel}">
+        <views:MatchFoundPanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodels:MessageViewModel}">
+        <views:MessagePanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodels:RuneEditorViewModel}">
+        <views:RuneEditorPanel/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewmodels:DownloadViewModel}">
+        <views:DownloadPanel/>
+    </DataTemplate>
+</ResourceDictionary>

@@ -3,6 +3,7 @@ using LoLA.Networking.LCU.Objects;
 using System.Collections.Generic;
 using LoLA.Networking.Extensions;
 using LoLA.Networking.LCU.Enums;
+using LoLA.Networking.LCU.Data;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using LoLA.Utils.Logger;
@@ -135,6 +136,30 @@ namespace LoLA.Networking.LCU
         public static async Task<bool> DeclineMatchmakingAsync() 
             => await getResponseRequestAsync(RequestMethod.POST, "/lol-matchmaking/v1/ready-check/decline");
 
+        public static async Task<SessionData> GetSessionDataAsync()
+        {
+            if (!await InitAsync())
+                return null;
+
+            var sessionData = new SessionData();
+            sessionData.GameMode = await GetCurrentGameModeAsync();
+            try
+            {
+                var json = await getDataRequestAsync(RequestMethod.GET, "/lol-gameflow/v1/session");
+                var session = JObject.Parse(json);
+                var gameDataPath = session["gameData"];
+                var queuePath = gameDataPath["queue"];
+     
+                sessionData.Category = queuePath["category"].ToString();
+                sessionData.Description = queuePath["description"].ToString();
+                sessionData.IsRanked = queuePath["isRanked"].ToObject<bool>();
+
+                return sessionData;
+
+            }
+            catch { return sessionData; }
+        }
+
         public static async Task<GameMode> GetCurrentGameModeAsync()
         {
             if (!await InitAsync())
@@ -142,10 +167,11 @@ namespace LoLA.Networking.LCU
 
             try
             {
-                string json = await getDataRequestAsync(RequestMethod.GET, "/lol-lobby/v2/lobby");
-                JObject obj = JsonConvert.DeserializeObject<JObject>(json);
-                JObject innerObj = obj["gameConfig"] as JObject;
-                return (GameMode)Enum.Parse(typeof(GameMode), innerObj["gameMode"].ToString().ToUpper());
+                var json = await getDataRequestAsync(RequestMethod.GET, "/lol-lobby/v2/lobby");
+
+                var obj = JObject.Parse(json);
+                var gameConfig = obj["gameConfig"] as JObject;
+                return (GameMode)Enum.Parse(typeof(GameMode), gameConfig["gameMode"].ToString().ToUpper());
             }
             catch { return GameMode.NONE; }
         }
@@ -167,7 +193,7 @@ namespace LoLA.Networking.LCU
 
             try
             {
-                JObject obj = JsonConvert.DeserializeObject<JObject>(json);
+                JObject obj = JObject.Parse(json);
                 return obj == null ? string.Empty : obj["championName"].Value<string>();
             }
             catch { return string.Empty; }
@@ -186,12 +212,14 @@ namespace LoLA.Networking.LCU
             return new Summoner();
         }
 
-        public static async Task<string> GetCurrentSessionAsync()
+        public static async Task<JObject> GetCurrentSessionAsync()
         {
             if (!await InitAsync())
                 return null;
 
-            return await getDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
+            var currentSessionJson = await getDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
+
+            return JsonConvert.DeserializeObject<JObject>(currentSessionJson);;
         }
 
         public static async Task<Matchmaking> GetMatchmakingInfo()
@@ -229,19 +257,46 @@ namespace LoLA.Networking.LCU
             var currentSession = await GetCurrentSessionAsync();
             string[] spells = new string[2];
 
-            if (!string.IsNullOrEmpty(currentSession))
+            if (currentSession != null)
             {
-                JObject obj = JsonConvert.DeserializeObject<JObject>(currentSession);
-
-                var currentSummoner = obj["myTeam"][0];
-                //spells[0] = DataConverter.s_SpellKeyToSpellName[(int)currentSummoner["spell1Id"]];
-                //spells[1] = DataConverter.s_SpellKeyToSpellName[(int)currentSummoner["spell2Id"]];
-
+                var currentSummoner = currentSession["myTeam"][0];
                 spells[0] = DataConverter.SpellKeyToSpellName((int)currentSummoner["spell1Id"]);
                 spells[1] = DataConverter.SpellKeyToSpellName((int)currentSummoner["spell2Id"]);
                 return spells;
             }
             return null;
+        }
+
+        public static async Task<JArray> GetMessagesAsync(string id)
+        {
+            if (!await InitAsync())
+                return null;
+
+            var json = await getDataRequestAsync(RequestMethod.GET, $"/lol-chat/v1/conversations{id}/messages");
+            return json != null ? JArray.Parse(json) : null;
+        }
+
+        public static async Task<JArray> GetConversationsAsync()
+        {
+            if (!await InitAsync())
+                return null;
+
+            var json = await getDataRequestAsync(RequestMethod.GET, "/lol-chat/v1/conversations");
+            return json != null ? JArray.Parse(json) : null;
+        }
+
+        public static async Task SendMessageAsync(JArray conversations,string message, string type)
+        {
+            foreach (var conversation in conversations.Root)
+            {
+                if (conversation["type"].ToString() == type)
+                {
+                    var conversationId = conversation["id"].ToString();
+
+                    var body = Encoding.UTF8.GetBytes("{\"body\":\"" + message + "\"}");
+                    await sendDataRequestAsync(RequestMethod.POST, $"/lol-chat/v1/conversations/{conversationId}/messages", body);
+                }
+            }
         }
         #endregion
 
@@ -272,8 +327,8 @@ namespace LoLA.Networking.LCU
                 return false;
             }
             catch { return false; }
-
         }
+
         private static async Task<bool> getResponseRequestAsync(RequestMethod requestMethod, string url)
         {
             if (!await InitAsync())

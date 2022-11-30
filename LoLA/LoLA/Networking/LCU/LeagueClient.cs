@@ -1,23 +1,23 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.IO;
+using System;
 
 namespace LoLA.Networking.LCU
 {
     public static class LeagueClient
     {
-        public static string ProccName = "LeagueClient";
+        public const string PROCC_NAME = "LeagueClient";
         public static string GetLocation()
         {
-            var process = Process.GetProcessesByName(ProccName);
+            var process = Process.GetProcessesByName(PROCC_NAME);
             if (process.Length > 0)
             {
                 try
                 {
-                    string fullPath = process.First()?.MainModule?.FileName;
+                    var fullPath = process?.First()?.MainModule?.FileName;
                     return Path.GetDirectoryName(fullPath);
-                }
-                catch { return null; }
+                } catch(NullReferenceException) {  }
             }
             return null;
         }

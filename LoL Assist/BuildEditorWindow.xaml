@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LoL_Assist_WAPP" xmlns:view="clr-namespace:LoL_Assist_WAPP.View"
-        mc:Ignorable="d" MouseLeftButtonDown="Window_MouseLeftButtonDown" SnapsToDevicePixels="True"
-        MinHeight="463" MinWidth="650" Height="463" Width="650" MaxHeight="463" MaxWidth="650" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Title="LoL Assist - Advanced Runes &amp; Spells Editor">
-    <!--Height="440" Width="585"-->
+        mc:Ignorable="d" SnapsToDevicePixels="True" x:Name="Wnd"
+        MinHeight="450" MinWidth="550" Height="450" Width="550" MaxHeight="450" MaxWidth="550" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Title="LoL Assist - Advanced Runes &amp; Spells Editor">
+    <Window.InputBindings>
+        <MouseBinding MouseAction="LeftClick" Command="{Binding MoveWindowCommand}" CommandParameter="{Binding ElementName=Wnd}"/>
+    </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="5"/>
     </WindowChrome.WindowChrome>
@@ -23,7 +24,7 @@
              Margin="7,0,0,0" FontWeight="DemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="1.5,0"/>
             <DockPanel HorizontalAlignment="Right">
-                <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="CloseBtn" Tag="{DynamicResource XmarkIcon}" VerticalAlignment="Center" ToolTip="Close"
+                <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="CloseBtn" Tag="{StaticResource XmarkIcon}" VerticalAlignment="Center" ToolTip="Close"
                 Margin="0,0,6,0" Click="CloseBtn_Click"/>
             </DockPanel>
         </Grid>
@@ -157,7 +158,7 @@
                         <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
 
                         <TextBlock Text="file name:" VerticalAlignment="Center" Margin="0,0,0,3"/>
-                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=FileName}" MaxLength="35" Tag="Enter file name..."
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxLength="35" Tag="Enter file name..."
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
                     </StackPanel>
 
@@ -183,7 +184,7 @@
                         <Border Height="2" CornerRadius="1.5" Background="{DynamicResource aBrushSecondary}"/>
 
                         <TextBlock Text="name:" VerticalAlignment="Center" Margin="0,0,0,3"/>
-                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=RuneName}" MaxLength="20" Tag="Enter rune name..."
+                        <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding Path=RuneName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxLength="20" Tag="Enter rune name..."
                         IsEnabled="{Binding ElementName=BuildNameList, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"/>
 
                         <TextBlock Text="primary path:" VerticalAlignment="Center" Margin="0,0,0,3"/>

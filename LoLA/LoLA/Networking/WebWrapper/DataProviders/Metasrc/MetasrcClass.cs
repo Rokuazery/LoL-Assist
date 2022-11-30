@@ -21,7 +21,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
 
                 s_Key = Task.Run(() => WebEx.DlDe<Key>(JSON_URL)).Result;
 
-                if (s_Key == null || string.IsNullOrEmpty(s_Key.Perks)) throw new Exception();
+                if (s_Key == null || string.IsNullOrEmpty(s_Key.Perks)) throw new NullReferenceException();
 
                 var names = typeof(Key).GetFields(FLAG).ToList();
                 var values = s_Key.GetType().GetFields(FLAG).Select(field => field.GetValue(s_Key)).ToList();
@@ -38,7 +38,6 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
 
         public class Key
         {
-            //public int IndexRB { get; set; }
             public string TipRB { get; set; }
             public string SrcRB { get; set; }
             public string RepRB { get; set; }
@@ -50,9 +49,6 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             public string SrcSP { get; set; }
             public int FirstSP { get; set; }
             public int SecondSP { get; set; }
-            //public string MISC { get; set; }
-            //public string ARAM { get; set; }
-            //public string CLASSIC { get; set; }
         }
     }
 }

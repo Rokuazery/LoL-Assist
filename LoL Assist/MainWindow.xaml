@@ -3,17 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:view="clr-namespace:LoL_Assist_WAPP.View" x:Name="Me"
-        xmlns:viewModel ="clr-namespace:LoL_Assist_WAPP.ViewModel"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen" Background="{DynamicResource bBrushSecondary}" RenderOptions.BitmapScalingMode="HighQuality" Topmost="{Binding Path=Topmost, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+        xmlns:view="clr-namespace:LoL_Assist_WAPP.Views" x:Name="Me"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen" Background="{DynamicResource bBrushSecondary}" RenderOptions.BitmapScalingMode="HighQuality" Topmost="True"
         Title="LoL Assist" Height="380" Width="505" MinHeight="380" MinWidth="505" MaxHeight="350" MaxWidth="485" BorderBrush="{DynamicResource BorderGradientBrush}" BorderThickness="1">
     <!--Topmost="{Binding Path=Topmost, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
     <Window.InputBindings>
         <MouseBinding MouseAction="LeftClick" Command="{Binding MoveWindowCommand}"/>
     </Window.InputBindings>
-    <Window.DataContext>
-        <viewModel:MainViewModel/>
-    </Window.DataContext>
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0" CornerRadius="0" CaptionHeight="0" UseAeroCaptionButtons="False" ResizeBorderThickness="5"/>
     </WindowChrome.WindowChrome>
@@ -54,7 +50,7 @@
             <DockPanel HorizontalAlignment="Left" >
                 <TextBlock x:Name="AppName" Margin="5,2,0,0" FontWeight="DemiBold" FontSize="11" Foreground="{DynamicResource BrushTitle}" Text="LoL Assist"/>
 
-                <Button Template="{DynamicResource IconStyleButton}" x:Name="InfoBtn" Click="InfoBtn_Click" Margin="5,0,0,1.5" ToolTip="Info" Width="12" Height="12"
+                <Button Template="{DynamicResource IconButtonTemplate}" x:Name="InfoBtn" Click="InfoBtn_Click" Margin="5,0,0,1.5" ToolTip="Info" Width="12" Height="12"
                 Tag="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
 
                 <Border Width="1" Margin="6,5,1,5" Background="{DynamicResource BorderGradientBrush}"/>
@@ -79,11 +75,16 @@
 
             <DockPanel Margin="5,0" HorizontalAlignment="Right">
                 <StackPanel x:Name="MorePanel" Orientation="Horizontal" Width="0">
-                    <Button Template="{DynamicResource IconStyleButton}" Margin="0,0,6,0" Command="{Binding ShowDownloadPanelCommand}" ToolTip="Downloads" Width="12" Height="12" 
-                Tag="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z" Focusable="False"/>
-                    <Button Template="{DynamicResource IconStyleButton}" x:Name="EditBtn" Margin="0,0,6,0" Command="{Binding ShowEditRunesPanelCommand}" ToolTip="Rune Editor" Width="12" Height="12" 
+                    
+                    <Button Template="{DynamicResource IconButtonTemplate}" Margin="0,0,6,0" Command="{Binding ShowDownloadPanelCommand}" ToolTip="Downloads" Width="12" Height="12" 
+                Tag="{StaticResource DownloadIcon}" Focusable="False"/>
+                    <Button Template="{DynamicResource IconButtonTemplate}" x:Name="EditBtn" Margin="0,0,6,0" Command="{Binding ShowEditRunesPanelCommand}" ToolTip="Rune Editor" Width="12" Height="12" 
                 Tag="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" Focusable="False"/>
-                    <Button Template="{DynamicResource IconStyleButton}" x:Name="SettingsBtn" Click="SettingsBtn_Click" ToolTip="Settings" Width="12" Height="12" Focusable="False" Margin="0,0,6,0"
+
+                    <Button Template="{DynamicResource IconButtonTemplate}" Margin="0,0,6,0" Command="{Binding ShowAutoMessagePanelCommand}" ToolTip="Auto Message" Width="12" Height="12" 
+                Tag="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" Focusable="False"/>
+
+                    <Button Template="{DynamicResource IconButtonTemplate}" x:Name="OptionsBtn" Click="OptionsBtn_Click" ToolTip="Options" Width="12" Height="12" Focusable="False" Margin="0,0,6,0"
                 Tag="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
                     <Border Width="1" Margin="0,5,6,5" Background="{DynamicResource BorderGradientBrush}"/>
                 </StackPanel>
@@ -137,7 +138,7 @@
                         <EventTrigger RoutedEvent="ToggleButton.Checked">
                             <BeginStoryboard>
                                 <Storyboard x:Name="ShowStackPanel">
-                                    <DoubleAnimation Storyboard.TargetName="MorePanel" Storyboard.TargetProperty="Width" From="0" To="61" Duration="0:0:0.15"/>
+                                    <DoubleAnimation Storyboard.TargetName="MorePanel" Storyboard.TargetProperty="Width" From="0" To="80" Duration="0:0:0.15"/>
                                     <DoubleAnimation Storyboard.TargetName="TglMenuPathAngle" Storyboard.TargetProperty="Angle" To="0" Duration="0:0:0.15"/>
                                 </Storyboard>
                             </BeginStoryboard>
@@ -146,56 +147,67 @@
                     </ToggleButton.Triggers>
                 </ToggleButton>
 
-
                 <!--M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z-->
                 <Border Width="1" Margin="6,5,6,5" Background="{DynamicResource BorderGradientBrush}"/>
-                <Button Template="{DynamicResource IconStyleButton}" Tag="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" 
+                <Button Template="{DynamicResource IconButtonTemplate}" Tag="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" 
                 Margin="0,0,6,0" ToolTip="Minimize to tray"  Width="12" Height="12" Command="{Binding MinimizeToTrayCommand}" CommandParameter="tray"/>
-                <Button Template="{DynamicResource IconStyleButton}" Tag="M6 19h12v2H6z" Margin="0,0,6,0" ToolTip="Minimize"  Width="12" Height="12" Command="{Binding MinimizeWindowCommand}"/>
+                <Button Template="{DynamicResource IconButtonTemplate}" Tag="M6 19h12v2H6z" Margin="0,0,6,0" ToolTip="Minimize"  Width="12" Height="12" Command="{Binding MinimizeWindowCommand}"/>
 
-                <Button Template="{DynamicResource IconStyleButtonRed}" Command="{Binding ShutdownAppCommand}" ToolTip="Exit" Width="12" Height="12" Tag="{DynamicResource XmarkIcon}"/>
+                <Button Template="{DynamicResource IconStyleButtonRed}" Command="{Binding ShutdownAppCommand}" ToolTip="Exit" Width="12" Height="12" Tag="{StaticResource XmarkIcon}"/>
             </DockPanel>
             <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}"/>
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding ChampionContainerVisibility}">
-                <Border Background="{DynamicResource bBrushTritary}" Margin="-5" CornerRadius="0,5,0,5"/>
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11">
+
+                <StackPanel>
+                    <Grid HorizontalAlignment="Left">
+                        <Border Background="{DynamicResource bBrushTritary}" BorderBrush="{DynamicResource aBrushPrimary}" BorderThickness="1" Margin="-5" CornerRadius="0,5,0,5"/>
+                        <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11" VerticalAlignment="Center">
                         <Run Text="Game Mode: " Foreground="{DynamicResource FontPrimaryBrush}"/>
-                        <Run Text="{Binding GMode}" Foreground="{DynamicResource FontSecondaryBrush}"/>
-                    </TextBlock>
+                        <Run Text="{Binding GMode}" Foreground="{DynamicResource FontSecondaryBrush}"/> 
+                        <Run Text="{Binding GDetail}" Foreground="{DynamicResource FontSecondaryBrush}"/>
+                        </TextBlock>
+                    </Grid>
 
-                    <Border Height="0.5" Margin="0,5,0,10" Background="{DynamicResource FontPrimaryBrush}"  Visibility="{Binding Path=RoleSelectVisibility}" />
-
-                    <ComboBox ItemsSource="{Binding Path=Roles}" Visibility="{Binding Path=RoleSelectVisibility}" HorizontalAlignment="Left" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" 
-                    Style="{DynamicResource FlatComboboxStyle}" Width="135" SelectedItem="{Binding Path=SelectedRole, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5" >
+                    <ComboBox ItemsSource="{Binding Path=Roles}" Visibility="{Binding Path=RoleSelectVisibility}" HorizontalAlignment="Left" VerticalAlignment="Top" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" 
+                    Style="{DynamicResource FlatComboboxStyle}" Width="135" SelectedItem="{Binding Path=SelectedRole, UpdateSourceTrigger=PropertyChanged}" Margin="-5,10,0,0" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel>
-                                    <Border CornerRadius="5" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center">
+                                    <Border CornerRadius="5" Width="18" Height="18" Margin="0,0,5,0" VerticalAlignment="Center">
                                         <Border.Background>
                                             <ImageBrush ImageSource="{Binding Image}" RenderOptions.BitmapScalingMode="HighQuality"/>
                                         </Border.Background>
                                     </Border>
 
-                                    <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Text}" Foreground="{DynamicResource FontPrimaryBrush}"/>
+                                    <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Text}" Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" Margin="0,0,0,1"/>
                                 </DockPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <!--<Button Template="{DynamicResource FlatStyleButton}" Height="26" Content="Edit Runes" Focusable="False" Command="{Binding ShowEditRunesPanelCommand}"/>-->
+                    <!--<TextBlock Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11" VerticalAlignment="Center" Visibility="{Binding GDetail, Converter={StaticResource NullToCollapseConverter}}">
+
+                    </TextBlock>-->
                 </StackPanel>
             </Grid>
 
             <TextBlock x:Name="wStatus" Text="{Binding Path=WorkingStatus}" FontWeight="DemiBold" Visibility="{Binding Path=WorkingStatusVisibility}"
             Foreground="{DynamicResource FontSecondaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-            <TextBlock x:Name="ConnectionStatus" Text="{Binding Path=ConnectionStatus}" 
-            Foreground="{Binding ElementName=ConnectionStatus, Path=Text, Converter={StaticResource TextToForegroundConverter}}"
-            VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
+            <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
+                <TextBlock ToolTip="This will force LoL Assist to re-import Runes &amp; Spells"
+                Margin="5" Visibility="{Binding Path=ManualImportVisibility}" HorizontalAlignment="Right">
+             <Hyperlink Foreground="{DynamicResource FontSecondaryBrush}" Command="{Binding Path=ManualImportCommand}">
+               <TextBlock Text="Re-Import"/>
+           </Hyperlink>
+        </TextBlock>
+                <!--{Binding Path=ManualImportVisibility}-->
+                <TextBlock x:Name="ConnectionStatus" Text="{Binding Path=ConnectionStatus}" 
+            Foreground="{Binding ElementName=ConnectionStatus, Path=Text, Converter={StaticResource TextToForegroundConverter}}"/>
+            </StackPanel>
 
             <Grid x:Name="ChampionContainer" Visibility="{Binding Path=ChampionContainerVisibility}" VerticalAlignment="Center" Margin="0,-20,0,0" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -209,21 +221,41 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" x:Name="ChampionImageContainer" Width="98" Height="98" Margin="0,0,0,5">
-                    <Ellipse Fill="{DynamicResource aBrushSecondary}"/>
-                    <Ellipse Margin="2" Fill="{DynamicResource bBrushSecondary}"/>
+                    <Border Margin="2" Background="{DynamicResource bBrushSecondary}" CornerRadius="50" BorderThickness="3" BorderBrush="{DynamicResource aBrushSecondary}"/>
                     <Ellipse Margin="2">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="pack://application:,,,/Resources/NoIcon.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <ImageBrush ImageSource="{StaticResource NoIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Ellipse.Fill>
                         <Ellipse.Effect>
                             <DropShadowEffect Opacity=".5"/>
                         </Ellipse.Effect>
                     </Ellipse>
-                    <Ellipse Margin="2">
+                    <Ellipse Margin="5">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Path=ChampionImage, Converter={StaticResource StringToImageConverter}}" />
                         </Ellipse.Fill>
                     </Ellipse>
+                    
+                    <Grid x:Name="WarningGrid" Visibility="{Binding Path=WarningGridVisibility, UpdateSourceTrigger=PropertyChanged}" ToolTipService.InitialShowDelay="50">
+                        <Grid.ToolTip>
+                            <ToolTip Background="Transparent" BorderThickness="0">
+                                <Grid>
+                                    <StackPanel Margin="5">
+                                        <DockPanel HorizontalAlignment="Left">
+                                            <TextBlock Text="WARNINGS:" Foreground="{DynamicResource YellowBrush}" Margin="0,0,3,0" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Path=WarningCount, UpdateSourceTrigger=PropertyChanged}" 
+                                    Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="SemiBold"/>
+                                        </DockPanel>
+                                        <TextBlock x:Name="Warning" Foreground="{DynamicResource FontPrimaryBrush}"
+                                Text="{Binding Path=WarningStatus, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </ToolTip>
+                        </Grid.ToolTip>
+                        <Ellipse Fill="Black" Opacity="0.45" Margin="5"/>
+                        <Path Data="{StaticResource ExclamationIcon}" Fill="{DynamicResource YellowBrush}" Stretch="UniformToFill" Width="25" Height="22" VerticalAlignment="Center" Margin="0,0,0,5"/>
+                    </Grid>
+
                 </Grid>
 
                 <Border Grid.Row="1" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="0,5"/>
@@ -233,39 +265,15 @@
                 <TextBlock Grid.Row="3" Text="{Binding ImportStatus}" Foreground="{DynamicResource FontTritaryBrush}" TextAlignment="Center" FontWeight="DemiBold" FontSize="11" HorizontalAlignment="Center"/>
             </Grid>
 
-            <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" ToolTip="This will force LoL Assist to import Runes &amp; Spells"
-         Margin="5" Visibility="{Binding Path=ManualImportVisibility}">
-             <Hyperlink Foreground="{DynamicResource FontPrimaryBrush}" Command="{Binding Path=ManualImportCommand}">
-               <TextBlock Text="Re-Import"/>
-           </Hyperlink>
-        </TextBlock>
             <!--<Button x:Name="DebugBtn" Content="Debug" Height="25" Width="120" 
             HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Command="{Binding Path=DebugCommand}"/>-->
+        </Grid>
 
-            <Grid x:Name="WarningGrid" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5" Width="20" 
-            Height="17" Background="{DynamicResource bBrushSecondary}" Visibility="{Binding Path=WarningGridVisibility, UpdateSourceTrigger=PropertyChanged}">
-                <Grid.ToolTip>
-                    <ToolTip Background="Transparent" BorderThickness="0">
-                        <Grid>
-                            <Border Background="{DynamicResource bBrushPrimary}" BorderBrush="{DynamicResource aBrushPrimary}" BorderThickness="1"
-                            CornerRadius="5"/>
-                            <StackPanel Margin="5">
-                                <DockPanel HorizontalAlignment="Left">
-                                    <TextBlock Text="WARNINGS:" Foreground="{DynamicResource YelloBrush}" Margin="0,0,3,0" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Path=WarningCount, UpdateSourceTrigger=PropertyChanged}" 
-                                    Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="SemiBold"/>
-                                </DockPanel>
-                                <TextBlock x:Name="Warning" Foreground="{DynamicResource FontPrimaryBrush}"
-                                Text="{Binding Path=WarningStatus, UpdateSourceTrigger=PropertyChanged}"/>
-                            </StackPanel>
-                        </Grid>
-                    </ToolTip>
-                </Grid.ToolTip>
-                <Path Data="{DynamicResource ExclamationIcon}" Fill="{DynamicResource YelloBrush}" Stretch="UniformToFill"/>
-            </Grid>
+        <Grid Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="26" Width="160">
+            
         </Grid>
 
         <Border Grid.RowSpan="2" Background="#99000000" Opacity="0" x:Name="BackDrop" Visibility="Hidden"/>
-        <ContentControl Opacity="1" Grid.RowSpan="2" Content="{Binding TopMostContent, UpdateSourceTrigger=PropertyChanged}" Focusable="False" />
+        <ContentControl Opacity="1" Grid.RowSpan="2" Content="{Binding TopMostContent, UpdateSourceTrigger=PropertyChanged}" Focusable="False" Visibility="{Binding Topmost, Converter={StaticResource NullToCollapseConverter}}"/>
     </Grid>
 </Window>

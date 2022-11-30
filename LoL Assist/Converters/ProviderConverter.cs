@@ -5,7 +5,7 @@ namespace LoL_Assist_WAPP.Converters
 {
     public static class ProviderConverter
     {
-        // Test
+        // Hewwo
         public static string ToName(Provider provider)
             => provider switch {
                 Provider.UGG => "U.GG",

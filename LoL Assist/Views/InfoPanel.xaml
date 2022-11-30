@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="LoL_Assist_WAPP.Views.InfoPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LoL_Assist_WAPP.Views"
+             mc:Ignorable="d" 
+             Width="270" Height="170">
+    <Grid x:Name="MainGrid">
+        <!--https://img.shields.io/github/stars/rokuazery/lol-assist?color=blue&label=Stars&logo=github&style=for-the-badge-->
+        <Border Background="{DynamicResource bBrushSecondary}" CornerRadius="8,0,8,0" BorderThickness="1.5" BorderBrush="{DynamicResource BorderGradientBrush}"/>
+        
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.Foreground="{DynamicResource FontTritaryBrush}">
+            <Button x:Name="Github" Width="76" Height="76" Margin="0,0,0,5" Background="Transparent" BorderThickness="0" Click="Github_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Grid x:Name="LogoGrid" Width="76" Height="76" >
+                    <Image Source="{DynamicResource LoLAIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <Grid Width="26" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Right" ToolTip="Visit LoL Assist on Github">
+                        <Border Background="{DynamicResource aBrushSecondary}" CornerRadius="16"/>
+                        <Image Cursor="Hand" Source="{DynamicResource GithubIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
+                </Grid>
+            </Button>
+            
+            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,3" Foreground="{DynamicResource FontPrimaryBrush}">
+                Created by 
+                <Hyperlink x:Name="CreatorLink" NavigateUri="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                RequestNavigate="CreatorLink_RequestNavigate" Foreground="{DynamicResource FontPrimaryBrush}">
+                    Rokuazery
+                </Hyperlink>
+            </TextBlock>
+            <DockPanel HorizontalAlignment="Center">
+                <TextBlock>
+                Tester: 
+                <Hyperlink x:Name="TesterLink" NavigateUri="https://github.com/BeSalt1080" 
+                RequestNavigate="TesterLink_RequestNavigate" Foreground="{DynamicResource FontTritaryBrush}">
+                    Besalt1080
+                </Hyperlink>
+                </TextBlock>
+
+                <Border Width="1" Background="{DynamicResource aBrushPrimary}" Margin="5, 3"/>
+
+                <TextBlock>
+                Helper: 
+                <Hyperlink NavigateUri="https://github.com/ClaraaXD" 
+                RequestNavigate="TesterLink_RequestNavigate" Foreground="{DynamicResource FontTritaryBrush}">
+                    ClaraaXD 
+                </Hyperlink>
+                </TextBlock>
+            </DockPanel>
+            <TextBlock x:Name="Version" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <Button Template="{DynamicResource IconStyleButtonRed}" x:Name="BackBtn" Click="BackBtn_Click" VerticalAlignment="Top"
+         HorizontalAlignment="Right" Margin="0,8,7,0" Tag="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" ToolTip="Back"/>
+    </Grid>
+</UserControl>

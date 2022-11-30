@@ -1,9 +1,9 @@
-﻿using LoL_Assist_WAPP.ViewModel;
+﻿using LoL_Assist_WAPP.ViewModels;
 using LoLA.Networking.LCU.Enums;
 using System.Windows.Controls;
-using LoL_Assist_WAPP.Model;
+using LoL_Assist_WAPP.Models;
+using LoL_Assist_WAPP.Views;
 using System.Windows.Input;
-using LoL_Assist_WAPP.View;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Windows;
@@ -25,11 +25,6 @@ namespace LoL_Assist_WAPP
             InitializeComponent();
             DataContext = viewModel;
         }
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                DragMove();
-        }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -47,7 +42,7 @@ namespace LoL_Assist_WAPP
                     Utils.Animation.FadeOut(BackDrop, 0.13);
                     Utils.Animation.Margin(exitMsg, ConfigModel.r_MarginOpen, new Thickness(0, Height, 0, 0), 0.13);
                 };
-                Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
+                animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
             }
         }
 
@@ -70,7 +65,7 @@ namespace LoL_Assist_WAPP
                     {
                         var championBuildConfig = JsonConvert.DeserializeObject<ChampionBuild>(ImportFromPath);
                         if (championBuildConfig != null)
-                            AnimateOpen(ImportPanel);
+                            animateOpen(ImportPanel);
                     }
                     catch { saveStatus.Text = "Invalid Build Config"; }
                     
@@ -78,7 +73,7 @@ namespace LoL_Assist_WAPP
             }
         }
 
-        private void CancelImportBtn_Click(object sender, RoutedEventArgs e) => AnimateClose(ImportPanel);
+        private void CancelImportBtn_Click(object sender, RoutedEventArgs e) => animateClose(ImportPanel);
         private void ImportBtn_Click(object sender, RoutedEventArgs e)
         {
             var fileName = Path.GetFileName(ImportFromPath);
@@ -95,7 +90,7 @@ namespace LoL_Assist_WAPP
                 viewModel.SelectedGameMode = gameMode;
                 viewModel.SelectedBuildName = fileName;
                 viewModel.FetchBuild();
-                AnimateClose(ImportPanel);
+                animateClose(ImportPanel);
             }
             ImportChampionList.SelectedValue = null;
             ImportGameModeList.SelectedValue = null;
@@ -103,18 +98,18 @@ namespace LoL_Assist_WAPP
 
         #region Animations
 
-        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
+        private void animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.Margin(element, from, to, time);
         }
 
-        private void AnimateOpen(FrameworkElement element, double time = 0.13)
+        private void animateOpen(FrameworkElement element, double time = 0.13)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.FadeIn(element, time);
         }
-        private void AnimateClose(FrameworkElement element, double time = 0.13)
+        private void animateClose(FrameworkElement element, double time = 0.13)
         {
             Utils.Animation.FadeOut(BackDrop, time);
             Utils.Animation.FadeOut(element, time);

@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media.Animation;
-using LoL_Assist_WAPP.Model;
+using LoL_Assist_WAPP.Models;
 using System.Windows;
 using System;
 

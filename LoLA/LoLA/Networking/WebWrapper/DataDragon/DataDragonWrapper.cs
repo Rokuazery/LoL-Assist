@@ -15,7 +15,7 @@ namespace LoLA.Networking.WebWrapper.DataDragon
     {
         public static List<Perk> s_Perks = new List<Perk>();
         public static Champions s_Champions = new Champions();
-        public static List<string> s_Versions = new List<string>();
+        public static List<string> s_Patches = new List<string>();
         private static readonly string r_dataDragonUrl = $"{Protocol.HTTP}ddragon.leagueoflegends.com/cdn/";
 
         public static async Task InitAsync(string patch = "latest")
@@ -25,9 +25,9 @@ namespace LoLA.Networking.WebWrapper.DataDragon
             Task<Champions> championTasks = null;
             List<Task> tasks = new List<Task>();
 
-            s_Versions = await WebEx.DlDe<List<string>>("https://ddragon.leagueoflegends.com/api/versions.json");
+            s_Patches = await WebEx.DlDe<List<string>>("https://ddragon.leagueoflegends.com/api/versions.json");
 
-            GlobalConfig.s_DataDragonPatch = patch == "latest" ?  s_Versions[0] : patch;
+            GlobalConfig.s_DataDragonPatch = patch == "latest" ?  s_Patches[0] : patch;
 
             var championsWebModel = new WebModel()
             {
@@ -56,11 +56,18 @@ namespace LoLA.Networking.WebWrapper.DataDragon
             WebModel webModel = new WebModel();
 
             string imageName = championId + ".png";
-            path = string.Format($"{ChampionFolder(championId)}\\champion_{imageName}");
+            path = $"{ChampionFolder(championId)}\\champion_{imageName}";
 
             webModel.Url = $"{r_dataDragonUrl}{GlobalConfig.s_DataDragonPatch}/img/champion/{imageName}";
             webModel.Path = path;
             return await WebEx.RunDownloadAysnc(webModel);
+        }
+
+        public static string GetChampionImagePath(string championId)
+        {
+            var path = $"{ChampionFolder(championId)}\\champion_{championId}.png";
+            var returnPath = File.Exists(path) ? path : string.Empty;
+            return returnPath;
         }
 
         public static string ChampionFolder(string championId, string Patch = "")
@@ -83,6 +90,13 @@ namespace LoLA.Networking.WebWrapper.DataDragon
                 Log(IoEx.Source, IoEx.Message, LogType.EROR);
                 return null;
             }
+        }
+
+        public static string GetPatchMM(int index = 0)
+        {
+            var patch = s_Patches[index];
+            patch = patch.Substring(0, patch.LastIndexOf("."));
+            return patch;
         }
     }
 }

@@ -1,0 +1,404 @@
+﻿<UserControl x:Class="LoL_Assist_WAPP.Views.RuneEditorPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:LoL_Assist_WAPP.ViewModels"
+             xmlns:extensions="clr-namespace:LoL_Assist_WAPP.Extensions"
+             mc:Ignorable="d" x:Name="Me"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewModels:RuneEditorViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ControlTemplate x:Key="RuneButtonTemplate" TargetType="{x:Type Button}">
+            <Grid Focusable="False" Cursor="Hand">
+                <Border x:Name="RuneBtnBorder" CornerRadius="8" Opacity="0">
+                    <Border.Background>
+                        <SolidColorBrush x:Name="RuneBtnColor" Color="{DynamicResource bPrimary}"/>
+                    </Border.Background>
+                </Border>
+                <Image Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                 Height="{Binding Height, RelativeSource={RelativeSource TemplatedParent}}"
+                 Width="{Binding Width, RelativeSource={RelativeSource TemplatedParent}}"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <EventTrigger RoutedEvent="UIElement.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="False" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RuneBtnBorder" To="1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.PreviewMouseUp">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation AutoReverse="True" Duration="0:0:0.05" Storyboard.TargetName="RuneBtnColor" To="{StaticResource aPrimary}" Storyboard.TargetProperty="Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="UIElement.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation AutoReverse="False" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RuneBtnBorder" To="0"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <UserControl.Style>
+        <Style>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="UserControl.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.0"
+                                             To="1.0"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+    <Grid>
+        <Border Background="Black" Opacity="0.8"/>
+        <Grid Margin="20,20,10,20">
+            <Grid.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid  Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+            Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding PrimaryPaths, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,30" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.PrimaryPathSelectCommand}">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding Text}"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Keystones, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,35" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <extensions:AlignableWrapPanel HorizontalContentAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="42" Width="42" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.KeystoneSelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <extensions:AlignableWrapPanel HorizontalContentAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk1SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <extensions:AlignableWrapPanel HorizontalContentAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk2SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <extensions:AlignableWrapPanel HorizontalContentAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk3SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Column="1" Width="1" Background="{DynamicResource bBrushPrimary}" Margin="5, 30" Opacity="0.8"
+            Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+
+            <Grid Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
+            Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding SecondaryPaths, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.SecondaryPathSelectCommand}">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding Text}"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk4SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk5SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Perks6, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="32" Width="32" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Perk6SelectCommand}">
+                                    <Button.ToolTip>
+                                        <StackPanel MaxWidth="230">
+                                            <TextBlock Foreground="{DynamicResource FontPrimaryBrush}" Text="{Binding Text}" Margin="0,0,0,5"/>
+                                            <TextBlock Foreground="{DynamicResource FontSecondaryBrush}" Text="{Binding Text, Converter={StaticResource RunePerkToolTipConverter}}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Shards1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="20" Width="20" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Shard1SelectCommand}">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding Text}"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Shards2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="20" Width="20" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Shard2SelectCommand}">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding Text}"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Shards3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Focusable="False" VerticalAlignment="Top" Margin="0,0,0,10" HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Template="{DynamicResource RuneButtonTemplate}" Height="20" Width="20" Tag="{Binding Image}" CommandParameter="{Binding Text}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, Path=DataContext.Shard3SelectCommand}">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding Text}"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Column="3" Width="1" Background="{DynamicResource bBrushPrimary}" Margin="5, 30" Opacity="0.8"
+            Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+
+            <Grid Grid.Column="4" Margin="5,27,0,0">
+                <StackPanel VerticalAlignment="Top">
+                    <TextBlock Text="Current rune page:" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+                    <ComboBox ItemsSource="{Binding RunePages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemTemplate="{DynamicResource ItemEllipsis}"
+                    SelectedItem="{Binding SelectedRunePageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                    Style="{DynamicResource FlatComboboxStyle}" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" Margin="0,0,0,5"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}">
+                        <ComboBox.ToolTip>
+                            <TextBlock Text="{Binding SelectedRunePageName}" TextTrimming="CharacterEllipsis" />
+                        </ComboBox.ToolTip>
+                    </ComboBox>
+
+                    <TextBlock Text="Rune name:" Foreground="{DynamicResource FontSecondaryBrush}" Margin="0,0,0,3"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+                    <TextBox Style="{DynamicResource FlatTextboxStyle}" Text="{Binding RunePageName}" Margin="0,0,0,10" Tag="Rune name..."
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+
+                    <Button Template="{DynamicResource FlatStyleButton}" Content="Save" Height="24" Margin="0,0,0,5"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"
+                    Command="{Binding SaveRunePageCommand}"/>
+                    <Button Template="{DynamicResource FlatStyleButton}" Content="Reload" Height="24"
+                    Command="{Binding ReloadRunePagesCommand}" Margin="0,0,0,5"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}"/>
+                </StackPanel>
+
+                <StackPanel  VerticalAlignment="Bottom" Margin="0,0,0,30">
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                    Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToCollapseConverter}}">
+                    <Hyperlink Command="{Binding OpenBuildEditorCommand}" Foreground="DodgerBlue">
+                        Advanced Runes &amp; Spells Editor
+                    </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        
+        <StackPanel Visibility="{Binding SelectedRunePageName, Converter={StaticResource NullToVisibleConverter}}" Margin="10"
+        VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path Data="{DynamicResource ExclamationIcon}" Fill="{DynamicResource YellowBrush}" Stretch="Uniform" Height="32" Width="32" Margin="0,0,0,25"/>
+
+            <TextBlock Text="Uh oh, failed to fetch data from LeagueClient make sure your LeagueClient is running!" 
+            Foreground="#C89B3C" TextWrapping="Wrap"
+            FontWeight="Bold" Margin="0,0,0,60" Width="250" TextAlignment="Center"/>
+
+            <Button Template="{DynamicResource FlatStyleButton}" Content="Refresh" Height="24" Width="95"
+            Command="{Binding ReloadRunePagesCommand}"/>
+        </StackPanel>
+
+        <Border Background="{DynamicResource bBrushSecondary}" Height="30" Width="30" Focusable="False"
+        VerticalAlignment="Top" HorizontalAlignment="Right" CornerRadius="10" Margin="10">
+            <Button Template="{DynamicResource IconStyleButtonRed}" Height="30" Width="30" Command="{Binding CloseRuneEditorCommand}"
+            Tag="{StaticResource XmarkIcon}" Focusable="False" CommandParameter="{Binding ElementName=Me}">
+                <Button.ToolTip>Close</Button.ToolTip>
+            </Button>
+        </Border>
+    </Grid>
+</UserControl>

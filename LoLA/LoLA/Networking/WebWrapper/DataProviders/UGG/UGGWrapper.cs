@@ -1,6 +1,7 @@
 ﻿using static LoLA.Networking.WebWrapper.DataDragon.DataDragonWrapper;
-using LoLA.Networking.WebWrapper.DataProviders.METAsrc;
+using static LoLA.Networking.WebWrapper.DataProviders.Utils.Helper;
 using static LoLA.Utils.Logger.LogService;
+using System.Collections.Generic;
 using LoLA.Networking.Extensions;
 using LoLA.Networking.LCU.Enums;
 using System.Threading.Tasks;
@@ -12,18 +13,22 @@ using System.Linq;
 using LoLA.Utils;
 using LoLA.Data;
 using System.IO;
+using System;
 
 namespace LoLA.Networking.WebWrapper.DataProviders.UGG
 {
     public static class UGGWrapper
     {
-        private const string UGG_API_VERSION = "1.1";
-        private const string UGG_LOL_VERSION = "12_12";
+        private const string UGG_API_VERSION = "1.5";
         private const string UGG_OVERVIEW_VERSION = "1.5.0";
         private const string UGG_API_URL = "stats2.u.gg/lol/";
 
         private const int OVERVIEW_WORLD = 12;
         private const int OVERVIEW_PLATINUM_PLUS = 10;
+
+        private static string getCurrentPatch()
+            => GetPatchMM().Replace('.', '_');
+
         private static string getOverviewUrl(string championKey, GameMode gameMode)
         {
             string gameModeUrlPath = string.Empty;
@@ -39,19 +44,22 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                     break;  
             }
 
-            var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{UGG_LOL_VERSION}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
-            
+            var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{getCurrentPatch()}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
+
+            #if DEBUG
+            Console.WriteLine(apiUrl);
+            #endif
             return apiUrl;
         }
 
-        public static async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED)
+        public static async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED, int index = -1)
         {
             ChampionBuild championBuild = new ChampionBuild();
             var championData = s_Champions.Data[championId]; 
             var jsonContent = string.Empty;
 
-            var filePath = DataPath(championId, gameMode, role);
-            if (IsBuildFileValid(championId, gameMode, role))
+            var filePath = DataPath(championId, gameMode, role, Provider.UGG);
+            if (IsBuildFileValid(championId, gameMode, role, Provider.UGG))
             {
                 Log($"Loading in {Misc.FixedName(championId)} build data from {Provider.UGG}...", LogType.INFO);
                 using (var stream = new StreamReader(filePath)) { jsonContent = stream.ReadToEnd(); }
@@ -60,15 +68,14 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             else
             {
                 Log($"Downloading {Misc.FixedName(championId)} build data from {Provider.UGG}...", LogType.INFO);
-
                 var championJObject = await GetChampionDataAsync(championData.key, gameMode);
 
                 if (championJObject != null)
                 {
                     championBuild.Id = championData.id;
                     championBuild.Name = championData.name;
-                    championBuild.Rune = GetRune(championData.name, role, championJObject);
-                    championBuild.Spell = GetSpellCombo(role, championJObject);
+                    championBuild.Runes = GetRunes(championData.name, gameMode, role, championJObject);
+                    championBuild.Spells = GetSpellCombos(gameMode, role, championJObject);
 
                     jsonContent = JsonConvert.SerializeObject(championBuild);
 
@@ -89,11 +96,15 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return championBuild;
         }
 
-        public static async Task<JObject> GetChampionDataAsync(string championKey, GameMode gameMode)
+        public static async Task<JObject> GetChampionDataAsync(string championKey, GameMode gm)
         {
-            var rawDataObject = await WebEx.DlDe<JObject>(getOverviewUrl(championKey, gameMode));
-            var championJObject = (JObject)rawDataObject[OVERVIEW_WORLD.ToString()][OVERVIEW_PLATINUM_PLUS.ToString()];
-            return championJObject;
+            var rawDataObject = await WebEx.DlDe<JObject>(getOverviewUrl(championKey, gm));
+            if (gm != GameMode.ARAM)
+            {
+                var championJObject = (JObject)rawDataObject[OVERVIEW_WORLD.ToString()][OVERVIEW_PLATINUM_PLUS.ToString()];
+                return championJObject;
+            }
+            return rawDataObject;
         }
 
         public static Role[] GetPossibleRoles(JObject jObject)
@@ -109,109 +120,250 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 .ToArray();
         }
 
-        public static Rune GetRune(string championName, Role role, JObject jObject)
+        public static List<Rune> GetRunes(string championName, GameMode gm, Role role, JObject championData)
         {
-            Rune rune = new Rune();
-            var championData = jObject;
+            Log("Loading in runes", LogType.INFO);
+            List<Rune> runes = new List<Rune>();
 
-            var roleTemp = role;
+            if (gm != GameMode.ARAM)
+            {
+                var roleTemp = role;
 
-            if (role == Role.RECOMENDED)
-                role = GetPossibleRoles(jObject)[0];
+                if (role == Role.RECOMENDED)
+                    role = GetPossibleRoles(championData)[0];
 
-            var root = championData[((int)role).ToString()].First();
-            var perksRoot = root.First();
-            var shardsRoot = root[8][2];
+                var root = championData[((int)role).ToString()].First();
+                var rune = filterRune(root, $"U.GG: {championName} {(roleTemp != Role.RECOMENDED ? $"[{role}]" : string.Empty)}");
+                runes.Add(rune);
+            }
+            else
+            {
+                List<JToken> tokens = new List<JToken>();
+                foreach (var item in championData.Children())
+                    item.ToList().ForEach(i => tokens.Add(i["8"]["6"]));
 
-            int primaryPath = perksRoot[2].ToObject<int>();
-            int secondaryPath = perksRoot[3].ToObject<int>();
-            int[] runeIds = perksRoot[4].Select(p => p.ToObject<int>())  // perks
+                int runeIndex = 0;
+
+                foreach (var token in tokens)
+                {
+                    var root = token.First();
+                    var runeTemp = filterRune(root, $"U.GG: {championName} ARAM[{runeIndex}]");
+
+                    runes.Add(runeTemp);
+                    runeIndex++;
+                }
+
+                if (runes.Count == 0)
+                {
+                    Log("Runes [0] NULL", LogType.WARN);
+                    return null;
+                }
+            }
+            return runes;
+        }
+
+        private static Rune filterRune(JToken root, string runeName)
+        {
+            Log("Filtering rune...", LogType.INFO);
+            try
+            {
+                var rune = new Rune();
+
+                var perksRoot = root.First();
+                var shardsRoot = root[8][2];
+
+                var primaryPath = perksRoot[2].ToObject<int>();
+                var secondaryPath = perksRoot[3].ToObject<int>();
+                var runeIds = perksRoot[4].Select(p => p.ToObject<int>())  // perks
                 .Concat(shardsRoot.Select(s => int.Parse(s.ToString()))) // shards
                 .ToArray();
 
-            rune = new Rune()
-            {
-                Name = string.Format("U.GG: {0} {1}", championName, roleTemp != Role.RECOMENDED ? $"[{role}]" : string.Empty),
-                PrimaryPath = primaryPath,
-                Keystone = runeIds[0],
-                Slot1 = runeIds[1],
-                Slot2 = runeIds[2],
-                Slot3 = runeIds[3],
+                rune.Name = runeName;
+                rune.PrimaryPath = primaryPath;
+                rune.Keystone = runeIds[0];
 
-                SecondaryPath = secondaryPath,
-                Slot4 = runeIds[4],
-                Slot5 = runeIds[5],
+                var primaryPerks = s_Perks.Where(p => p.id == rune.PrimaryPath).ToList();
 
-                Shard1 = runeIds[6],
-                Shard2 = runeIds[7],
-                Shard3 = runeIds[8],
-            };
+                int[] primaryPerksFound = new int[2];
+                int primaryPerkSlot = 1;
 
-            return rune;
-        }
+                // For some reason with the new API version of U.GG they randomize the index for the runeIds or I just don't know what's happening
+                // Wonky way to fix 
+                for (int i = 0; i < 3; i++)
+                {
+                    bool isFound = false;
+                    foreach (var path in primaryPerks)
+                    {
+                        if (isFound) break;
+                        foreach (var runeInfo in path.slots[primaryPerkSlot].runes)
+                        {
+                            if (isFound) break;
+                            foreach (var runeId in runeIds)
+                            {
+                                if (runeId == runeInfo.id)
+                                {
+                                    isFound = true;
+                                    if (primaryPerkSlot == 1)
+                                    {
+                                        rune.Slot1 = runeId;
+                                        primaryPerkSlot++;
+                                        break;
+                                    }
 
-        public static Spell GetSpellCombo(Role role, JObject jObject)
-        {
-            var spell = new Spell();
-            var championData = jObject;
+                                    if(primaryPerkSlot == 2)
+                                    {
+                                        rune.Slot2 = runeId;
+                                        primaryPerkSlot++;
+                                        break;
+                                    }
 
-            if (role == Role.RECOMENDED)
-                role = GetPossibleRoles(jObject)[0];
+                                    if (primaryPerkSlot == 3)
+                                    {
+                                        rune.Slot3 = runeId;
+                                        primaryPerkSlot++;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
-            var root = championData[((int)role).ToString()].First();
-            var spells = root[1][2];
-            spell.First = DataConverter.SpellKeyToSpellId(spells[0].ToObject<int>());
-            spell.Second = DataConverter.SpellKeyToSpellId(spells[1].ToObject<int>());
+                rune.SecondaryPath = secondaryPath;
+                var secondaryPerks = s_Perks.Where(p => p.id == rune.SecondaryPath).ToList();
 
-            return spell;
-        }
+                int secondaryPerkFound = 0;
+                int tempSecondaryPerkFound = 0;
 
-        public static bool IsBuildFileValid(string championId, GameMode gameMode, Role role)
-        {
-            Log("Checking for build file...", LogType.INFO);
+                foreach (var path in secondaryPerks)
+                {
+                    foreach (var slot in path.slots)
+                    {
+                        foreach (var runeInfo in slot.runes)
+                        {
+                            foreach (var runeId in runeIds)
+                            {
+                                if(runeId == runeInfo.id && runeId != tempSecondaryPerkFound)
+                                {
+                                    if(secondaryPerkFound == 0)
+                                    {
+                                        //Console.WriteLine($"First Found: {runeId}");
+                                        tempSecondaryPerkFound = runeId;
+                                        rune.Slot4 = runeId;
+                                        secondaryPerkFound++;
+                                        continue;
+                                    }
 
-            string json;
-            string filePath = DataPath(championId, gameMode, role);
+                                    if(secondaryPerkFound == 1)
+                                    {
+                                        //Console.WriteLine($"Second Found: {runeId}");
+                                        rune.Slot5 = runeId;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
-            if (!GlobalConfig.s_Caching || !File.Exists(filePath))
-                return false;
+                rune.Shard1 = runeIds[6];
+                rune.Shard2 = runeIds[7];
+                rune.Shard3 = runeIds[8];
 
-            using (var stream = new StreamReader(filePath)) { json = stream.ReadToEnd(); }
-
-            if (string.IsNullOrEmpty(json))
-                return false;
-
-            try
-            {
-                var championBuild = JsonConvert.DeserializeObject<ChampionBuild>(json);
-
-                if (championBuild.Rune == null) return false;
-
-                if (string.IsNullOrEmpty(championBuild.Spell.First)
-                && string.IsNullOrEmpty(championBuild.Spell.Second))
-                    return false;
+                return rune;
             }
-            catch { return false; }
-
-            return true;
+            catch
+            {
+                Log("Failed to filter rune", LogType.EROR);
+                Environment.Exit(0);
+                return null;
+            }
         }
 
-        public static string DataPath(string championId, GameMode gameMode, Role role)
+        //private static Rune filterRune(JToken root, string runeName)
+        //{
+        //    Log("Filtering rune...", LogType.INFO);
+        //    try
+        //    {
+        //        var rune = new Rune();
+
+        //        var perksRoot = root.First();
+        //        var shardsRoot = root[8][2];
+
+        //        var primaryPath = perksRoot[2].ToObject<int>();
+        //        var secondaryPath = perksRoot[3].ToObject<int>();
+        //        var runeIds = perksRoot[4].Select(p => p.ToObject<int>())  // perks
+        //       .Concat(shardsRoot.Select(s => int.Parse(s.ToString()))) // shards
+        //       .ToArray();
+
+        //        rune.Name = runeName;
+        //        rune.PrimaryPath = primaryPath;
+        //        rune.Keystone = runeIds[0];
+        //        rune.Slot1 = runeIds[1];
+        //        rune.Slot2 = runeIds[2];
+        //        rune.Slot3 = runeIds[3];
+        //        rune.SecondaryPath = secondaryPath;
+        //        rune.Slot4 = runeIds[4];
+        //        rune.Slot5 = runeIds[5];
+        //        rune.Shard1 = runeIds[6];
+        //        rune.Shard2 = runeIds[7];
+        //        rune.Shard3 = runeIds[8];
+
+        //        return rune;
+        //    }
+        //    catch
+        //    {
+        //        Log("Failed to filter rune", LogType.EROR);
+        //        Environment.Exit(0);
+        //        return null;
+        //    }
+        //}
+
+        public static  List<Spell> GetSpellCombos(GameMode gm, Role role, JObject championData)
         {
-            int maxLength = 5;
+            Log("Loading in spell combo", LogType.INFO);
+            List<Spell> spells = new List<Spell>();
+            if (gm != GameMode.ARAM)
+            {
+                if (role == Role.RECOMENDED)
+                    role = GetPossibleRoles(championData)[0];
 
-            string version = GlobalConfig.s_LatestPatch ? s_Versions[0] : s_Versions[1];
+                var root = championData[((int)role).ToString()].First();
+                var spellRoots = root[1][2];
 
-            if (version.Length > maxLength)
-                version = version.Substring(0, maxLength);
-
-            string dir = Path.Combine(ChampionFolder(championId), version);
-            Directory.CreateDirectory(dir);
-
-            if (role != Role.RECOMENDED)
-                return Path.Combine(dir, $"UGG-{championId} {gameMode} {role}.json");
+                var spell = new Spell();
+                spell.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
+                spell.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
+                spells.Add(spell);
+            }
             else
-                return Path.Combine(dir, $"UGG-{championId} {gameMode}.json");
+            {
+                List<JToken> tokens = new List<JToken>();
+                foreach (var item in championData.Children())
+                    item.ToList().ForEach(i => tokens.Add(i["8"]["6"]));
+
+
+                foreach (var token in tokens)
+                {
+                    var spellTemp = new Spell();
+
+                    var root = token.First();
+                    var spellRoots = root[1][2];
+
+                    spellTemp.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
+                    spellTemp.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
+
+                    spells.Add(spellTemp);
+                }
+
+                if (spells.Count == 0)
+                {
+                    Log("Spells [0] NULL", LogType.WARN);
+                    return null;
+                }
+            }
+
+            return spells;
         }
     }
 }

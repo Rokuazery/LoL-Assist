@@ -1,4 +1,5 @@
 ﻿using static LoLA.Networking.WebWrapper.DataDragon.DataDragonWrapper;
+using static LoLA.Networking.WebWrapper.DataProviders.Utils.Helper;
 using static LoLA.Utils.Logger.LogService;
 using System.Collections.Generic;
 using LoLA.Networking.Extensions;
@@ -25,8 +26,8 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             var championData = s_Champions.Data[championId];
             var jsonContent = string.Empty;
 
-            var filePath = DataPath(championId, gameMode, role);
-            if (IsBuildFileValid(championId, gameMode, role))
+            var filePath = DataPath(championId, gameMode, role, Provider.METAsrc);
+            if (IsBuildFileValid(championId, gameMode, role, Provider.METAsrc))
             {
                 Log($"Loading in {Misc.FixedName(championId)} build data from {Provider.METAsrc}...", LogType.INFO);
 
@@ -36,27 +37,27 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             else
             {
                 Log($"Downloading {Misc.FixedName(championId)} build data from {Provider.METAsrc}...", LogType.INFO);
-                string html = await GetHtmlAsync(championId, gameMode, role);
+                var html = await GetHtmlAsync(championId, gameMode, role);
 
                 if (!string.IsNullOrEmpty(html))
                 {
                     var document = new HtmlDocument();
                     document.LoadHtml(html);
 
-                    Task<Rune> rune = null;
-                    Task<Spell> spell = null;
+                    Task<List<Rune>> runeTasks = null;
+                    Task<List<Spell>> spellTasks = null;
 
                     List<Task> tasks = new List<Task> {
-                        (rune = GetRuneBuildAsync(championData.id, championData.name, gameMode, role, document)),
-                        (spell = GetSpellComboAsync(championData.id, gameMode, role, document))
+                        (runeTasks = GetRunesAsync(championData.id, championData.name, gameMode, role, document)),
+                        (spellTasks = GetSpellCombosAsync(championData.id, gameMode, role, document))
                     };
                     Parallel.ForEach(tasks, async task => { await task; });
 
                     championBuild.Id = championData.id;
                     championBuild.Name = championData.name;
 
-                    championBuild.Rune = await rune;
-                    championBuild.Spell = await spell;
+                    championBuild.Runes = await runeTasks;
+                    championBuild.Spells = await spellTasks;
 
                     jsonContent = JsonConvert.SerializeObject(championBuild);
 
@@ -77,14 +78,15 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             return championBuild;
         }
 
-        public static async Task<Rune> GetRuneBuildAsync(string championId, string championName, GameMode gameMode, Role role,HtmlDocument document)
+        public static async Task<List<Rune>> GetRunesAsync(string championId, string championName, GameMode gameMode, Role role,HtmlDocument document)
         {
-            Rune rune = null;
+            List<Rune> runes = new List<Rune>();
             HtmlNodeCollection runeToolTips = null;
             HtmlDocument runeContainerHtml = new HtmlDocument();
 
             try
             {
+                Log("Loading in runes...", LogType.INFO);
                 await Task.Run(() => {
                     var runeContainer = document.DocumentNode.SelectSingleNode($"//div[@id='{MetasrcClass.s_Key.Perks}']");
                     //Console.WriteLine(runeContainer.InnerHtml); // Debug
@@ -93,12 +95,12 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
 
                     runeContainerHtml.LoadHtml(runeContainer.InnerHtml);
                     if (string.IsNullOrEmpty(runeContainerHtml.DocumentNode.InnerHtml))
-                        File.Delete(DataPath(championId, gameMode, role));
+                        File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
 
                     runeToolTips = runeContainerHtml.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.TipRB}']");
                 });
 
-                if (runeToolTips.Count == 0) return rune;
+                if (runeToolTips.Count == 0) throw new Exception();
 
                 var runeIds = new List<int>();
                 foreach (var runeToolTip in runeToolTips)
@@ -106,9 +108,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     .Replace(MetasrcClass.s_Key.RepRB, string.Empty)));
 
                 foreach (var runeId in runeIds)
-                    if (runeId == 0) return rune;
+                    if (runeId == 0) throw new Exception();
 
-                rune = new Rune()
+                var rune = new Rune()
                 {
                     Name = string.Format("METAsrc: {0} {1}", championName, role != Role.RECOMENDED ? $"[{role}]" : string.Empty),
                     PrimaryPath = runeIds[0],
@@ -125,39 +127,45 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     Shard2 = runeIds[9],
                     Shard3 = runeIds[10],
                 };
+                runes.Add(rune);
             }
             catch (Exception)
             {
                 Log("Failed to get rune build", LogType.EROR);
-                File.Delete(DataPath(championId, gameMode, role));
+                File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
             }
-            return rune;
+            return runes;
         }
 
-        public static async Task<Spell> GetSpellComboAsync(string championId, GameMode gameMode, Role role, HtmlDocument document)
+        public static async Task<List<Spell>> GetSpellCombosAsync(string championId, GameMode gameMode, Role role, HtmlDocument document)
         {
-            Spell spell = new Spell();
+            List<Spell> spells = new List<Spell>();
             HtmlDocument spellContainerHtml = new HtmlDocument();
             await Task.Run(() => {
                 try
                 {
+                    Log("Loading in spell combo...", LogType.INFO);
                     var spellContainer = document.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.Spells}']")[MetasrcClass.s_Key.IndexSP];
 
                     if (spellContainer == null || string.IsNullOrEmpty(spellContainer.InnerHtml))
-                        File.Delete(DataPath(championId, gameMode, role));
+                        File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
                     spellContainerHtml.LoadHtml(spellContainer.InnerHtml);
 
-                    var Spells = spellContainerHtml.DocumentNode.SelectNodes($"//img[@class='{MetasrcClass.s_Key.ImgSP}']");
-                    spell.First = Path.GetFileNameWithoutExtension(Spells[MetasrcClass.s_Key.FirstSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
-                    spell.Second = Path.GetFileNameWithoutExtension(Spells[MetasrcClass.s_Key.SecondSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
+                    var spellsImage = spellContainerHtml.DocumentNode.SelectNodes($"//img[@class='{MetasrcClass.s_Key.ImgSP}']");
+
+                    var spell = new Spell();
+
+                    spell.First = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.FirstSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
+                    spell.Second = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.SecondSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
+                    spells.Add(spell);
                 }
                 catch
                 {
                     Log("Failed to get spell combo", LogType.EROR);
-                    File.Delete(DataPath(championId, gameMode, role));
+                    File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
                 }
             });
-            return spell;
+            return spells;
         }
 
         public static async Task<string> GetHtmlAsync(string championId, GameMode gameMode, Role role)
@@ -167,96 +175,52 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                 var roleTemp = role.ToString().ToLower();
                 var currentRole = roleTemp == "recomended" ? string.Empty : roleTemp;
 
-                string rawHtml = string.Empty;
-                string decodedHtml = string.Empty;
-
-                const int maxLength = 5;
+                var rawHtml = string.Empty;
+                var decodedHtml = string.Empty;
 
                 championId = championId.ToLower();
 
                 Log("Fetching Html...", LogType.INFO);
 
-                string version = GlobalConfig.s_LatestPatch ? s_Versions[0] : s_Versions[1];
+                var lolPatch = GlobalConfig.s_LatestPatch ? GetPatchMM(0) : GetPatchMM(1);
 
-                if (version.Length > maxLength)
-                    version = version.Substring(0, maxLength);
+                string url = null;
 
                 switch (gameMode)
                 {
                     case GameMode.ARAM:
-                        rawHtml = await WebEx.RunDownloadStringAsync($"{Protocol.HTTPS}www.metasrc.com/aram/{version}/champion/{championId}");
+                        url = $"{Protocol.HTTPS}www.metasrc.com/aram/{lolPatch}/champion/{championId}";
                         break;
                     case GameMode.URF:
-                        rawHtml = await WebEx.RunDownloadStringAsync($"{Protocol.HTTPS}www.metasrc.com/urf/champion/{championId}");
+                        url = $"{Protocol.HTTPS}www.metasrc.com/urf/champion/{championId}";
                         break;
                     case GameMode.ARURF:
                     case GameMode.CLASSIC:
                     case GameMode.PRACTICETOOL:
-                        rawHtml = await WebEx.RunDownloadStringAsync($"{Protocol.HTTPS}www.metasrc.com/5v5/{version}/champion/{championId}/{currentRole}");
+                        url = $"{Protocol.HTTPS}www.metasrc.com/5v5/{lolPatch}/champion/{championId}/{currentRole}";
                         break;
                     case GameMode.ONEFORALL:
-                        rawHtml = await WebEx.RunDownloadStringAsync($"{Protocol.HTTPS}www.metasrc.com/ofa/champion/{championId}");
+                        url = $"{Protocol.HTTPS}www.metasrc.com/ofa/champion/{championId}";
                         break;
                     case GameMode.ULTBOOK:
-                        rawHtml = await WebEx.RunDownloadStringAsync($"{Protocol.HTTPS}www.metasrc.com/ultbook/champion/{championId}");
+                        url = $"{Protocol.HTTPS}www.metasrc.com/ultbook/champion/{championId}";
                         break;
                 }
+                
+                rawHtml = url != null ? await WebEx.RunDownloadStringAsync(url) : throw new Exception();
+
                 decodedHtml = HttpUtility.HtmlDecode(rawHtml);
                 return decodedHtml;
             }
             catch (WebException webEx)
             {
                 Log(webEx.Message, LogType.EROR);
-                return null;
             }
-        }
-
-        public static bool IsBuildFileValid(string championId, GameMode gameMode, Role role)
-        {
-            Log("Checking for build file...", LogType.INFO);
-
-            string json;
-            string filePath = DataPath(championId, gameMode, role);
-
-            if (!GlobalConfig.s_Caching || !File.Exists(filePath))
-                return false;
-
-            using (var stream = new StreamReader(filePath)) { json = stream.ReadToEnd(); }
-
-            if (string.IsNullOrEmpty(json))
-                return false;
-
-            try
+            catch
             {
-                var championBuild = JsonConvert.DeserializeObject<ChampionBuild>(json);
-
-                if (championBuild.Rune == null) return false;
-
-                if (string.IsNullOrEmpty(championBuild.Spell.First)
-                && string.IsNullOrEmpty(championBuild.Spell.Second))
-                    return false;
+                Log("NULL URL",LogType.EROR);
             }
-            catch { return false; }
-
-            return true;
-        }
-
-        public static string DataPath(string championId, GameMode gameMode, Role role)
-        {
-            int maxLength = 5;
-
-            string version = GlobalConfig.s_LatestPatch ? s_Versions[0] : s_Versions[1];
-
-            if (version.Length > maxLength)
-                version = version.Substring(0, maxLength);
-
-            string dir = Path.Combine(ChampionFolder(championId), version);
-            Directory.CreateDirectory(dir);
-
-            if(role != Role.RECOMENDED)
-                return Path.Combine(dir, $"METAsrc-{championId} {gameMode} {role}.json");
-            else
-                return Path.Combine(dir, $"METAsrc-{championId} {gameMode}.json");
+            return null;
         }
     }
 }

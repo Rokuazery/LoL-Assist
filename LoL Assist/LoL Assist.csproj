@@ -70,9 +70,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\LoLA\LoLA\bin\Debug\LoLA.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -100,6 +97,11 @@
     <Compile Include="BuildEditorWindow.xaml.cs">
       <DependentUpon>BuildEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ItemInsertedCommand.cs" />
+    <Compile Include="Commands\ItemReceivedCommand.cs" />
+    <Compile Include="Commands\ItemRemovedCommand.cs" />
+    <Compile Include="Converters\ChampionToImageConverter.cs" />
     <Compile Include="Converters\EmptyToNoneConverter.cs" />
     <Compile Include="Converters\NullToCollapseConverter.cs" />
     <Compile Include="Converters\NullToVisibleConverter.cs" />
@@ -109,13 +111,14 @@
     <Compile Include="Converters\TextToForegroundConverter.cs" />
     <Compile Include="Extensions\AlignableWrapPanel.cs" />
     <Compile Include="Extensions\ProgressBarSmoother.cs" />
-    <Compile Include="Model\ConfigModel.cs" />
+    <Compile Include="Models\ConfigModel.cs" />
     <Compile Include="Converters\IndexToBoolConverter.cs" />
     <Compile Include="Converters\ItemToBoolConverter.cs" />
-    <Compile Include="Model\ItemImageModel.cs" />
-    <Compile Include="Model\LoLAWrapper.cs" />
-    <Compile Include="Model\ProgressReportModel.cs" />
-    <Compile Include="Model\RuneModel.cs" />
+    <Compile Include="Models\ItemImageModel.cs" />
+    <Compile Include="Models\LoLAWrapper.cs" />
+    <Compile Include="Models\MessageBoxModel.cs" />
+    <Compile Include="Models\ProgressReportModel.cs" />
+    <Compile Include="Models\RuneModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -124,48 +127,60 @@
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\Updater.cs" />
-    <Compile Include="ViewModel\BuildEditorViewModel.cs" />
-    <Compile Include="ViewModel\ConfigViewModel.cs" />
-    <Compile Include="ViewModel\DownloadViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\Command.cs" />
-    <Compile Include="ViewModel\MatchFoundViewModel.cs" />
-    <Compile Include="ViewModel\MessageBoxViewModel.cs" />
-    <Compile Include="ViewModel\PatchViewModel.cs" />
-    <Compile Include="ViewModel\RuneEditorViewModel.cs" />
-    <Compile Include="View\ConfigPanel.xaml.cs">
+    <Compile Include="ViewModels\BuildEditorViewModel.cs" />
+    <Compile Include="ViewModels\ChampionPickerViewModel.cs" />
+    <Compile Include="ViewModels\ChampionPickViewModel.cs" />
+    <Compile Include="ViewModels\ConfigViewModel.cs" />
+    <Compile Include="ViewModels\DownloadViewModel.cs" />
+    <Compile Include="ViewModels\ItemListViewModel.cs" />
+    <Compile Include="ViewModels\ItemViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\MatchFoundViewModel.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
+    <Compile Include="ViewModels\RuneEditorViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ChampionItemListView.xaml.cs">
+      <DependentUpon>ChampionItemListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChampionPickerPanel.xaml.cs">
+      <DependentUpon>ChampionPickerPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DownloadPanel.xaml.cs">
+    <Compile Include="Views\DownloadPanel.xaml.cs">
       <DependentUpon>DownloadPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MessageBox.xaml.cs">
+    <Compile Include="Views\MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MsgBox.xaml.cs">
+    <Compile Include="Views\MessagePanel.xaml.cs">
+      <DependentUpon>MessagePanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\InfoPanel.xaml.cs">
+    <Compile Include="Views\InfoPanel.xaml.cs">
       <DependentUpon>InfoPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MatchFoundPanel.xaml.cs">
+    <Compile Include="Views\MatchFoundPanel.xaml.cs">
       <DependentUpon>MatchFoundPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\PatchNotesPanel.xaml.cs">
-      <DependentUpon>PatchNotesPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\RuneEditorPanel.xaml.cs">
+    <Compile Include="Views\RuneEditorPanel.xaml.cs">
       <DependentUpon>RuneEditorPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\MainWIndow.xaml.cs">
+      <DependentUpon>MainWIndow.xaml</DependentUpon>
     </Compile>
     <Page Include="BuildEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Colours.xaml">
+    <Page Include="ResourceDictionaries\Theme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DataTemplates.xaml">
+    <Page Include="ResourceDictionaries\DataTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -181,39 +196,51 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Styles.xaml">
+    <Page Include="ResourceDictionaries\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ConfigPanel.xaml">
+    <Page Include="Views\ChampionItemListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DownloadPanel.xaml">
+    <Page Include="Views\ChampionPickerPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ConfigPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MessageBox.xaml">
+    <Page Include="Views\DownloadPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MsgBox.xaml">
+    <Page Include="Views\MessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\InfoPanel.xaml">
+    <Page Include="Views\MessagePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MatchFoundPanel.xaml">
+    <Page Include="Views\MsgBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\PatchNotesPanel.xaml">
+    <Page Include="Views\InfoPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\RuneEditorPanel.xaml">
+    <Page Include="Views\MatchFoundPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RuneEditorPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\MainWIndow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,7 +259,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -766,5 +792,22 @@
   <ItemGroup>
     <Resource Include="Resources\ugg.png" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

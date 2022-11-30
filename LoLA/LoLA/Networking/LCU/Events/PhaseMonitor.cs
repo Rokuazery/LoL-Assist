@@ -20,13 +20,13 @@ namespace LoLA.Networking.LCU.Events
         public event EventHandler<PhaseChangedArgs> PhaseChanged;
         public bool IsMonitoring { get; set; } = true;
         public int MonitorDelay { get; set; } = 300;
-        private Phase LastPhase { get; set; }
+        private Phase previousPhase { get; set; }
 
         public PhaseMonitor()
         {
-            Thread MonitorThread = new Thread(phaseMonitor);
-            MonitorThread.IsBackground = true;
-            MonitorThread.Start();
+            var monitorThread = new Thread(phaseMonitor);
+            monitorThread.IsBackground = true;
+            monitorThread.Start();
         }
 
         public async void phaseMonitor()
@@ -40,9 +40,9 @@ namespace LoLA.Networking.LCU.Events
                 }
 
                 var currentPhase = await LCUWrapper.GetGamePhaseAsync();
-                if (LastPhase != currentPhase)
+                if (previousPhase != currentPhase)
                 {
-                    LastPhase = currentPhase;
+                    previousPhase = currentPhase;
                     PhaseChanged?.Invoke(this, new PhaseChangedArgs(currentPhase));
                 }
                 await Task.Delay(MonitorDelay);

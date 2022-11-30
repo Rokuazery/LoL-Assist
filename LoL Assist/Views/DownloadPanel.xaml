@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="LoL_Assist_WAPP.Views.DownloadPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extensions="clr-namespace:LoL_Assist_WAPP.Extensions"
+             mc:Ignorable="d" x:Name="Me"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Style>
+        <Style>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="UserControl.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.0"
+                                             To="1.0"
+                                             Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+    <Grid>
+        <Border Background="Black" Opacity="0.8"/>
+        <StackPanel VerticalAlignment="Center" >
+
+            <Path Data="{StaticResource DownloadIcon}" Fill="{DynamicResource FontPrimaryBrush}" Width="56" Height="56" Stretch="Uniform" Margin="0,0,0,35"/>
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding DownloadSelectContainerVisibility}" Margin="0,0,0,50">
+                <Button Height="24" Width="180" Template="{DynamicResource FlatStyleButton}" Content="Download champion assets" Command="{Binding DownloadCommand}" CommandParameter="asst"/>
+                <!--<Button Height="24" Width="180" Template="{DynamicResource FlatStyleButton}" Content="Download U.GG builds" Command="{Binding DownloadCommand}" CommandParameter="ugg" Margin="0,0,0,10"/>
+                <Button Height="24" Width="180" Template="{DynamicResource FlatStyleButton}" Content="Download METAsrc builds" Command="{Binding DownloadCommand}" CommandParameter="meta" Margin="0,0,0,10"/>-->
+                
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Center" Margin="80,0,80,30" Visibility="{Binding DownloadigContainerVisibility}">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontWeight" Value="DemiBold"/>
+                        <Setter Property="Foreground" Value="{DynamicResource FontPrimaryBrush}"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="{Binding DownloadStatus}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <ProgressBar Height="15" Style="{DynamicResource FlatStyleProgressbar}" extensions:ProgressBarSmoother.SmoothValue="{Binding DownloadProgress}"/>
+                <Grid Margin="0,5,0,50">
+                    <TextBlock Text="{Binding DownloadedTotal}" Foreground="{DynamicResource FontSecondaryBrush}" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                    <TextBlock Text="{Binding DownloadPercentage}" Foreground="{DynamicResource FontSecondaryBrush}" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                </Grid>
+                <Grid>
+                    <TextBlock Text="Do not close LoL Assist while downloading" FontSize="10" VerticalAlignment="Bottom" Foreground="{DynamicResource YellowBrush}"/>
+                    <Button Height="24" Width="85" Visibility="{Binding CancelBtnVisibility}" Template="{DynamicResource FlatStyleButton}" Content="Cancel" Command="{Binding CancelDownloadCommand}" HorizontalAlignment="Right"/>
+
+                    <!--<Button Height="24" Width="85" Template="{DynamicResource FlatStyleButton}" Content="Exit" Command="{Binding CloseDownloadPanelCommand}" CommandParameter="{Binding ElementName=Me}" HorizontalAlignment="Right"/>-->
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+
+        <Border Background="{DynamicResource bBrushSecondary}" Height="30" Width="30" Focusable="False"
+        VerticalAlignment="Top" HorizontalAlignment="Right" CornerRadius="10" Margin="10">
+            <Button Template="{DynamicResource IconStyleButtonRed}" Height="30" Width="30" Command="{Binding CloseDownloadPanelCommand}"
+            Tag="{StaticResource XmarkIcon}" Focusable="False" CommandParameter="{Binding ElementName=Me}">
+                <Button.ToolTip>Close</Button.ToolTip>
+            </Button>
+        </Border>
+
+        <ContentControl Opacity="1" Grid.RowSpan="2" Content="{Binding TopMostContent, UpdateSourceTrigger=PropertyChanged}" Focusable="False" />
+    </Grid>
+</UserControl>
