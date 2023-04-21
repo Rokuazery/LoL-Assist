@@ -26,9 +26,10 @@
 <p align="center" styles="word-wrap: break-word;">
 LoL Assist is a tool designed to help League of Legends players improve their gameplay by automatically importing popular or commonly used runes and spells for their champions from external sources like <a href="https://www.metasrc.com">METAsrc</a> and <a href="https://u.gg">U.GG</a>. The program features a simple user interface that makes it easy to use. Additionally, the program offers an auto-accept matchmaking feature, which allows players to accept matches without having to worry about missing out when the match found. Overall, LoL Assist is a helpful tool that can save players time and effort in selecting the right runes and spells for their champions, allowing them to focus on playing the game.
 
-If you find LoL Assist useful, please consider supporting me and the project by giving it a star. It would mean a lot to me! 😄❤️<br> <a href="https://github.com/Rokuazery/LoL-Assist/releases/latest">Download the latest release</a></p>
+If you find LoL Assist useful, please consider supporting me and the project by giving it a star. It would mean a lot to me! 😄❤️</p>
 
 <div align="center">
+You can get the latest release of LoL Assist by clicking the following link: <a href="https://github.com/Rokuazery/LoL-Assist/releases/latest">Download here</a>.
 <h3>Features</h3>
 <p>
 • Auto import runes<br>
