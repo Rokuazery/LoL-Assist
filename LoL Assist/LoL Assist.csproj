@@ -36,9 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -51,9 +49,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -61,14 +59,17 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LoLA, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="LoLA, Version=2.0.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\LoLA\LoLA\bin\Debug\LoLA.dll</HintPath>
+      <HintPath>..\LoLA\LoLA\bin\x64\Release\LoLA.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -154,8 +155,8 @@
     <Compile Include="Views\MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MessagePanel.xaml.cs">
-      <DependentUpon>MessagePanel.xaml</DependentUpon>
+    <Compile Include="Views\AutoMessagePanel.xaml.cs">
+      <DependentUpon>AutoMessagePanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
@@ -168,9 +169,6 @@
     </Compile>
     <Compile Include="Views\RuneEditorPanel.xaml.cs">
       <DependentUpon>RuneEditorPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Windows\MainWIndow.xaml.cs">
-      <DependentUpon>MainWIndow.xaml</DependentUpon>
     </Compile>
     <Page Include="BuildEditorWindow.xaml">
       <SubType>Designer</SubType>
@@ -220,7 +218,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MessagePanel.xaml">
+    <Page Include="Views\AutoMessagePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,10 +235,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RuneEditorPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Windows\MainWIndow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -73,7 +73,7 @@ namespace LoL_Assist_WAPP.Views
             Animation.Margin(element, from, to, time);
         }
 
-        private void resetConfigBtn_Click(object sender, RoutedEventArgs e)
+        private void ResetConfigBtn_Click(object sender, RoutedEventArgs e)
         {
             MsgBox exitMsg = new MsgBox("By clicking 'Yes' LoL Assist config will be reset to the default value. Do you want to continue this action?", 230, 130);
             exitMsg.Margin = new Thickness(0, Height, 0, 0);
@@ -85,7 +85,6 @@ namespace LoL_Assist_WAPP.Views
                 {
                     ConfigModel.s_Config = new ConfigModel.Config();
                     ConfigModel.SaveConfig();
-                    ConfigViewModel.Update();
                 }
 
                 Animation.FadeOut(BackDrop, 0.13);

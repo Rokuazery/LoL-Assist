@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:LoL_Assist_WAPP.Models"
              mc:Ignorable="d" 
              Width="350" Height="250">
     <Grid x:Name="MainGrid">
@@ -33,19 +34,19 @@
                             <TextBlock Text="General" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,2,0,0"/>
                             <Border Background="{DynamicResource aBrushPrimary}" Height="1" Margin="0,2,0,8"/>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto runes" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=AutoRunes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=AutoRunes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     Automatically import Runes
                                 </CheckBox.ToolTip>
                             </CheckBox>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto spells"  HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=AutoSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=AutoSpells, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     Automatically import Spells
                                 </CheckBox.ToolTip>
                             </CheckBox>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Auto accept"  HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=AutoAccept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=AutoAccept, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Automatically accept matchmaking in 5 seconds
@@ -54,7 +55,7 @@
                             </CheckBox>
 
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Use LoL latest patch" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=UseLatestPatch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=UseLatestPatch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Use the latest champion builds for the current patch,
@@ -66,7 +67,7 @@
                             </CheckBox>
                             
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Flash placement to right" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=FlashPlacementToRight, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=FlashPlacementToRight, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock TextWrapping="Wrap" MaxWidth="250">
                                 Put Flash to the secondary slot <Bold>(required 'Auto Spells' enabled)</Bold>
@@ -81,7 +82,7 @@
                             <TextBlock Text="Miscellaneous" Foreground="{DynamicResource FontPrimaryBrush}" FontWeight="DemiBold" Margin="0,2,0,0"/>
                             <Border Background="{DynamicResource aBrushPrimary}" Height="1" Margin="0,2,0,8"/>
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Logging" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=Logging, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=Logging, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Logs error &amp; events to a .log file
@@ -90,7 +91,7 @@
                             </CheckBox>
 
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Potato mode" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=LowSpecMode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=LowSpecMode, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Remove some animations &amp; increase update interval
@@ -99,7 +100,7 @@
                             </CheckBox>
 
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Builds caching" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=BuildCache, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=BuildCache, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                 Saves champion's runes &amp; spells config to a json format file 
@@ -110,7 +111,7 @@
                             </CheckBox>
 
                             <CheckBox Style="{DynamicResource FlatStyleCheckbox}" Content="Update on startup" HorizontalAlignment="Left"
-                    IsChecked="{Binding Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6">
+                    IsChecked="{Binding Source={x:Static models:ConfigModel.s_Config}, Path=UpdateOnStartup, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6">
                                 <CheckBox.ToolTip>
                                     <TextBlock MaxWidth="250" TextWrapping="Wrap">
                                Update LoL Assist on startup if available
@@ -157,7 +158,7 @@
 
                 <DockPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,7,0">
                     <Button Template="{DynamicResource FlatStyleButton}" Margin="5,0,0,0" Grid.Column="0" x:Name="resetConfigBtn"
-                Click="resetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset config"/>
+                Click="ResetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset config"/>
                 </DockPanel>
             </Grid>
         </Grid>

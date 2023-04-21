@@ -31,13 +31,13 @@ namespace LoL_Assist_WAPP
             MainGrid.Children.Add(ConfigPanel);
         }
 
-        private void animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
+        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.Margin(element, from, to, time);
         }
 
-        private void InfoBtn_Click(object sender, RoutedEventArgs e) => animate(InfoPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
-        private void OptionsBtn_Click(object sender, RoutedEventArgs e) => animate(ConfigPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
+        private void InfoBtn_Click(object sender, RoutedEventArgs e) => Animate(InfoPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
+        private void OptionsBtn_Click(object sender, RoutedEventArgs e) => Animate(ConfigPanel, ConfigModel.r_MarginClose, ConfigModel.r_MarginOpen);
     }
 }

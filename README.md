@@ -23,9 +23,10 @@
 </a>
 </div>
 
-<p align="center" styles="word-wrap: break-word;">LoL Assist is an automatic Runes & Spells importer for League of Legends with a simple-looking UI.
-Builds are scraped from <a href="https://www.metasrc.com">METAsrc</a> and <a href="https://u.gg">U.GG</a>, and I'll be adding more options soon or later on.
-Consider giving my project a star to support me and the project. 😄❤️<br> <a href="https://github.com/Rokuazery/LoL-Assist/releases/latest">Download the latest release</a></p>
+<p align="center" styles="word-wrap: break-word;">
+LoL Assist is a tool designed to help League of Legends players improve their gameplay by automatically importing popular or commonly used runes and spells for their champions from external sources like <a href="https://www.metasrc.com">METAsrc</a> and <a href="https://u.gg">U.GG</a>. The program features a simple user interface that makes it easy to use. Additionally, the program offers an auto-accept matchmaking feature, which allows players to accept matches without having to worry about missing out when the match found. Overall, LoL Assist is a helpful tool that can save players time and effort in selecting the right runes and spells for their champions, allowing them to focus on playing the game.
+
+If you find LoL Assist useful, please consider supporting me and the project by giving it a star. It would mean a lot to me! 😄❤️<br> <a href="https://github.com/Rokuazery/LoL-Assist/releases/latest">Download the latest release</a></p>
 
 <div align="center">
 <h3>Features</h3>
@@ -43,10 +44,10 @@ Consider giving my project a star to support me and the project. 😄❤️<br> 
 <div align="center">
 <h3>To do</h3>
 <p>
-Auto detect roles for ranked ❌<br>
+Auto role detection for ranked ❌<br>
 Items importer ❌<br>
 Korean Builds? ❌<br>
-Rune options (a way to select between best runes) ❌
+Customizable rune options ❌
 </p>
 </div>
 
@@ -67,11 +68,14 @@ Rune options (a way to select between best runes) ❌
 </div>
 
 ## Acknowledgements
+
 This project wouldn't be possible without their tools...
- - [@Pupix](https://github.com/Pupix) -> [Rift Explorer](https://github.com/Pupix/rift-explorer)
- - [@pipe01](https://github.com/pipe01) -> [lcu-event-viewer](https://github.com/pipe01/lcu-event-viewer), [legendary-rune-maker](https://github.com/pipe01/legendary-rune-maker)
- - [@Hi-Ray](https://github.com/Hi-Ray), [@MingweiSamuel](https://github.com/MingweiSamuel) -> [LCU Explorer](https://github.com/HextechDocs/lcu-explorer)
+
+- [@Pupix](https://github.com/Pupix) -> [Rift Explorer](https://github.com/Pupix/rift-explorer)
+- [@pipe01](https://github.com/pipe01) -> [lcu-event-viewer](https://github.com/pipe01/lcu-event-viewer), [legendary-rune-maker](https://github.com/pipe01/legendary-rune-maker)
+- [@Hi-Ray](https://github.com/Hi-Ray), [@MingweiSamuel](https://github.com/MingweiSamuel) -> [LCU Explorer](https://github.com/HextechDocs/lcu-explorer)
 
 ## Helpers / Contributors
+
 - [@ClaraaXD](https://github.com/ClaraaXD)
 - [@Besalt1080](https://github.com/BeSalt1080)

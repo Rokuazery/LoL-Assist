@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace LoL_Assist_WAPP.Views
 {
     /// <summary>
-    /// Interaction logic for MessagePanel.xaml
+    /// Interaction logic for AutoMessagePanel.xaml
     /// </summary>
-    public partial class MessagePanel: UserControl
+    public partial class AutoMessagePanel: UserControl
     {
-        public MessagePanel()
+        public AutoMessagePanel()
         {
             InitializeComponent();
         }

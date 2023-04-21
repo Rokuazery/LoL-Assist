@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LoLA.Networking.LCU;
 using LoLA.Data;
 using LoLA;
+using System.Linq;
 
 namespace LoL_Assist_WAPP.Models
 {
@@ -17,63 +18,39 @@ namespace LoL_Assist_WAPP.Models
 
         public static async Task<bool> SetRuneAsync(Rune rune, RunePage CurrentRunePage, bool forceUpdate = false)
         {
-            if (CurrentRunePage != null)
-            {
-                if ((CurrentRunePage.name != rune.Name) || forceUpdate)
-                {
-                    var runePage = Converter.RuneToRunePage(rune);
-                    var currentRunePage = await LCUWrapper.GetCurrentRunePageAsync();
-                    if (currentRunePage != null)
-                    {
-                        ulong selectedId = currentRunePage.id;
-                        if (currentRunePage.isDeletable)
-                            await LCUWrapper.DeleteRunePageAsync(selectedId);
-                    }
+            if (CurrentRunePage == null || (CurrentRunePage.name == rune.Name) && !forceUpdate)
+                return false;
 
-                    if (!await LCUWrapper.AddRunePageAsync(runePage))
-                    {
-                        List<RunePage> pages = await LCUWrapper.GetRunePagesAsync();
-                        foreach (RunePage page in pages)
-                        {
-                            if (page.isDeletable && page.isActive)
-                            {
-                                runePage.order = 0;
-                                await LCUWrapper.DeleteRunePageAsync(page.id);
-                                return await LCUWrapper.AddRunePageAsync(runePage);
-                            }
-                        }
-                    }
-                }
+            var newRunePage = Converter.RuneToRunePage(rune);
+            var currentRunePageId = (await LCUWrapper.GetCurrentRunePageAsync())?.id;
+
+            if (currentRunePageId.HasValue && (await LCUWrapper.DeleteRunePageAsync(currentRunePageId.Value)))
+            {
+                await LCUWrapper.AddRunePageAsync(newRunePage);
+                return true;
             }
-            return false;
+
+            var activeAndDeleteablePage = (await LCUWrapper.GetRunePagesAsync())
+                .Where(page => page.isDeletable && page.isActive).FirstOrDefault();
+
+            await LCUWrapper.DeleteRunePageAsync(activeAndDeleteablePage.id);
+
+            newRunePage.order = 0;
+            return await LCUWrapper.AddRunePageAsync(newRunePage);
         }
 
         public async static Task ImportSpellsAsync(Spell spell, GameMode gameMode)
         {
-            await Task.Run(() => {
-                var flashId = "SummonerFlash";
-                if (ConfigModel.s_Config.FlashPlacementToRight)
-                {
-                    if (spell.First.Equals(flashId))
-                    {
-                        var flash = spell.First;
-                        spell.First = spell.Second;
-                        spell.Second = flash;
-                    }
-                }
-                else
-                {
-                    if (spell.Second.Equals(flashId))
-                    {
-                        var flash = spell.Second;
-                        spell.Second = spell.First;
-                        spell.First = flash;
-                    }
-                }
-                spell.First = DataConverter.SpellIdToSpellKey(spell.First).ToString();
-                spell.Second = DataConverter.SpellIdToSpellKey(spell.Second).ToString();
-                LCUWrapper.SetSummonerSpellsAsync(spell, gameMode).Wait();
-            });
+            var flashId = "SummonerFlash";
+
+            // Swap flash
+            if (ConfigModel.s_Config.FlashPlacementToRight && spell.First == flashId ||
+                !ConfigModel.s_Config.FlashPlacementToRight && spell.Second == flashId)
+                (spell.First, spell.Second) = (spell.Second, spell.First);
+
+            spell.First = DataConverter.SpellIdToSpellKey(spell.First).ToString();
+            spell.Second = DataConverter.SpellIdToSpellKey(spell.Second).ToString();
+            await LCUWrapper.SetSummonerSpellsAsync(spell, gameMode);
         }
     }
 }

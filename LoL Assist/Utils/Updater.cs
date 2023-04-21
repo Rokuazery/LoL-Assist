@@ -5,6 +5,7 @@ using LoLA.Utils.Logger;
 using System.Net;
 using System;
 using LoLA;
+using System.IO;
 
 namespace LoL_Assist_WAPP.Utils
 {
@@ -31,6 +32,9 @@ namespace LoL_Assist_WAPP.Utils
                             FileName = "LoLA Updater.exe",
                             UseShellExecute = true
                         };
+
+                        if (!File.Exists(processInfo.FileName))
+                            throw new Exception("LoLA Updater.exe is missing!");
 
                         bool isUpdateAvailable = true;
 

@@ -13,13 +13,13 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
         public static Key s_Key;
         private const BindingFlags FLAG = BindingFlags.NonPublic | BindingFlags.Instance;
         private const string JSON_URL = "https://onedrive.live.com/download?resid=5E12824F9E63EA74%214965&authkey=AB7i7uPLfWaM4Yc";
-        public static void Init()
+        public static async void Init()
         {
             try
             {
                 Log("Downloading Meta keys...", LogType.INFO);
 
-                s_Key = Task.Run(() => WebEx.DlDe<Key>(JSON_URL)).Result;
+                s_Key = await Task.FromResult(await WebEx.DlDe<Key>(JSON_URL));
 
                 if (s_Key == null || string.IsNullOrEmpty(s_Key.Perks)) throw new NullReferenceException();
 

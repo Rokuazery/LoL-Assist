@@ -7,21 +7,18 @@ namespace LoLA.Utils
 {
     public static class Misc
     {
-        public static string StripHTML(string input)
-        {
-            return Regex.Replace(input, "<.*?>", String.Empty);
-        }
+        public static string StripHTML(string input) => 
+            Regex.Replace(input, "<.*?>", string.Empty);
 
         public static string FixedName(string name)
         {
-            if (!string.IsNullOrEmpty(name))
-            {
-                if (name.Contains("'"))
-                    return name;
+            if (string.IsNullOrEmpty(name))
+                return "Jeff's";
 
-                return name + "'s";
-            }
-            return "Jeff's";
+            if (!name.Contains("'"))
+                name += "'s";
+
+            return name;
         }
 
         public static string Normalize(string input)

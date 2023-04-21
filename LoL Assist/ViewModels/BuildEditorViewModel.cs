@@ -8,7 +8,6 @@ using LoLA.Networking.LCU.Enums;
 using LoL_Assist_WAPP.Commands;
 using System.Threading.Tasks;
 using LoL_Assist_WAPP.Models;
-using System.ComponentModel;
 using System.Windows.Input;
 using System.Threading;
 using Newtonsoft.Json;
@@ -18,7 +17,6 @@ using LoLA.Data;
 using System.IO;
 using System;
 using LoLA;
-using LoLA.Networking.LCU.Objects;
 
 namespace LoL_Assist_WAPP.ViewModels
 {
@@ -29,7 +27,7 @@ namespace LoL_Assist_WAPP.ViewModels
         public ICommand SetAsDefaultCommand { get; }
         public ICommand ClearDefaultSourceCommand { get; }
         public ICommand MoveWindowCommand { get; }
-        private void setAsDefaultExecute()
+        private void SetAsDefaultExecute()
         {
             try
             {
@@ -71,7 +69,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private void clearDefaultSourceExecute()
+        private void ClearDefaultSourceExecute()
         {
             if (SelectedChampion != null && SelectedGameMode != GameMode.NONE)
             {
@@ -81,7 +79,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private async void saveConfigExecute()
+        private async void SaveConfigExecute()
         {
             if(!string.IsNullOrEmpty(FileName) && SelectedChampion != null && SelectedGameMode != GameMode.NONE)
             {
@@ -97,14 +95,13 @@ namespace LoL_Assist_WAPP.ViewModels
                     referenceBuild = json;
                 }
 
-                var _buildsName = new List<string>();
-                _buildsName.Add(CREATE_NEW);
+                var _buildsName = new List<string>() { CREATE_NEW };
                 foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
                     _buildsName.Add(Path.GetFileName(path));
 
                 BuildsName = _buildsName;
                 SelectedBuildName = Path.GetFileName(filePath);
-                await saved();
+                await Saved();
             }
             else if(string.IsNullOrEmpty(FileName))
             {
@@ -154,7 +151,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 {
                     _selectedChampion = value;
                     OnPropertyChanged(nameof(SelectedChampion));
-                    dataChanged();
+                    DataChanged();
                 }
             }
         }
@@ -170,7 +167,7 @@ namespace LoL_Assist_WAPP.ViewModels
                     SlGameMode = value;
                     _selectedGameMode = value;
                     OnPropertyChanged(nameof(SelectedGameMode));
-                    dataChanged();
+                    DataChanged();
                 }
             }
         }
@@ -216,7 +213,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 {
                     _fileName = value;
                     OnPropertyChanged(nameof(FileName));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -245,7 +242,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 if (_selectedSpell1 != value)
                 {
                     _selectedSpell1 = value;
-                    SelectedSpell2 = removeDup(SelectedSpell1, SelectedSpell2);
+                    SelectedSpell2 = RemoveDup(SelectedSpell1, SelectedSpell2);
                     if (value != null)
                     {
                         #if DEBUG
@@ -254,7 +251,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Spells.FirstOrDefault().First = DataConverter.SpellNameToSpellId(value.Text);
                     }
                     OnPropertyChanged(nameof(SelectedSpell1));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -268,7 +265,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 if (_selectedSpell2 != value)
                 {
                     _selectedSpell2 = value;
-                    SelectedSpell1 = removeDup(SelectedSpell2, SelectedSpell1);
+                    SelectedSpell1 = RemoveDup(SelectedSpell2, SelectedSpell1);
                     if(value != null)
                     {
                         #if DEBUG
@@ -278,7 +275,7 @@ namespace LoL_Assist_WAPP.ViewModels
                     }
 
                     OnPropertyChanged(nameof(SelectedSpell2));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -299,7 +296,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Runes.FirstOrDefault().Name = value;
 
                     OnPropertyChanged(nameof(RuneName));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -327,13 +324,13 @@ namespace LoL_Assist_WAPP.ViewModels
                 if (_selectedPath1 != value)
                 {
                     _selectedPath1 = value;
-                    SelectedPath2 = removeDup(SelectedPath1, SelectedPath2);
+                    SelectedPath2 = RemoveDup(SelectedPath1, SelectedPath2);
                     if(value != null)
                         selectedBuild.Runes.FirstOrDefault().PrimaryPath = Converter.PathNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPath1));
                     path1Changed();
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -365,7 +362,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Runes.FirstOrDefault().Keystone = Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedKeystone));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -397,7 +394,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Runes.FirstOrDefault().Slot1 = Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk1));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -429,7 +426,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Runes.FirstOrDefault().Slot2 = Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk2));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -461,7 +458,7 @@ namespace LoL_Assist_WAPP.ViewModels
                         selectedBuild.Runes.First().Slot3 = Converter.PerkNameToId(value.Text);
 
                     OnPropertyChanged(nameof(SelectedPerk3));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -477,11 +474,11 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedPath2 = value;
                     if(value != null)
                         selectedBuild.Runes.FirstOrDefault().SecondaryPath = Converter.PathNameToId(value.Text);
-                    SelectedPath1 = removeDup(SelectedPath2, SelectedPath1);
+                    SelectedPath1 = RemoveDup(SelectedPath2, SelectedPath1);
 
                     OnPropertyChanged(nameof(SelectedPath2));
                     path2Changed();
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -511,11 +508,11 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedPerk4 = value;
                     if(value!=null)
                         selectedBuild.Runes.FirstOrDefault().Slot4 = Converter.PerkNameToId(value.Text);
-                    SelectedPerk5 = removeDup(value, SelectedPerk5);
+                    SelectedPerk5 = RemoveDup(value, SelectedPerk5);
 
                     OnPropertyChanged(nameof(SelectedPerk4));
-                    perk4Changed();
-                    isChanged();
+                    Perk4Changed();
+                    IsChanged();
                 }
             }
         }
@@ -545,10 +542,10 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedPerk5 = value;
                     if(value != null)
                         selectedBuild.Runes.FirstOrDefault().Slot5 = Converter.PerkNameToId(value.Text);
-                    SelectedPerk4 = removeDup(value, SelectedPerk4);
+                    SelectedPerk4 = RemoveDup(value, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedPerk5));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -578,10 +575,10 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedShard1 = value;
                     if (value != null)
                         selectedBuild.Runes.FirstOrDefault().Shard1 = DataConverter.ShardDescriptionToShardId(value.Text);
-                    SelectedPerk4 = removeDup(SelectedShard1, SelectedPerk4);
+                    SelectedPerk4 = RemoveDup(SelectedShard1, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedShard1));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -611,10 +608,10 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedShard2 = value;
                     if (value != null)
                         selectedBuild.Runes.FirstOrDefault().Shard2 = DataConverter.ShardDescriptionToShardId(value.Text);
-                    SelectedPerk4 = removeDup(SelectedShard2, SelectedPerk4);
+                    SelectedPerk4 = RemoveDup(SelectedShard2, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedShard2));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -644,10 +641,10 @@ namespace LoL_Assist_WAPP.ViewModels
                     _selectedShard3 = value;
                     if (value != null)
                         selectedBuild.Runes.FirstOrDefault().Shard3 = DataConverter.ShardDescriptionToShardId(value.Text);
-                    SelectedPerk4 = removeDup(SelectedShard3, SelectedPerk4);
+                    SelectedPerk4 = RemoveDup(SelectedShard3, SelectedPerk4);
 
                     OnPropertyChanged(nameof(SelectedShard3));
-                    isChanged();
+                    IsChanged();
                 }
             }
         }
@@ -731,13 +728,13 @@ namespace LoL_Assist_WAPP.ViewModels
             Shards2 = RuneModel.Shards(2, false);
             Shards3 = RuneModel.Shards(3, false);
 
-            MoveWindowCommand = new Command(wnd => dragMove(wnd));
-            SaveCommand = new Command(_ => saveConfigExecute());
-            SetAsDefaultCommand = new Command(_ => setAsDefaultExecute());
-            ClearDefaultSourceCommand = new Command(_ => clearDefaultSourceExecute());
+            MoveWindowCommand = new Command(wnd => DragMove(wnd));
+            SaveCommand = new Command(_ => SaveConfigExecute());
+            SetAsDefaultCommand = new Command(_ => SetAsDefaultExecute());
+            ClearDefaultSourceCommand = new Command(_ => ClearDefaultSourceExecute());
         }
 
-        private void dragMove(object wnd)
+        private void DragMove(object wnd)
         {
             var window = wnd as Window;
             window.DragMove();
@@ -769,7 +766,7 @@ namespace LoL_Assist_WAPP.ViewModels
             RunePaths = runePaths;
         }
 
-        private async void dataChanged()
+        private async void DataChanged()
         {
             var buildsName = new List<string>();
             var spells = new List<ItemImageModel>();
@@ -813,11 +810,6 @@ namespace LoL_Assist_WAPP.ViewModels
                     Spells = spells;
                     BuildsName = buildsName;
                 });
-
-                // bad : (
-                //selectedBuild = new ;
-
-
             }
             else
             {
@@ -829,39 +821,41 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        public async void FetchBuild()
+        public void FetchBuild()
         {
-            if(!string.IsNullOrEmpty(SelectedBuildName) 
-            && !SelectedBuildName.Equals(CREATE_NEW))
+            if (string.IsNullOrEmpty(SelectedBuildName) || SelectedBuildName.Equals(CREATE_NEW))
             {
-                SaveInfo = null;
-                await Task.Run(() => {
-                    foreach (var path in LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode))
-                    {
-                        if (Path.GetFileName(path) == SelectedBuildName)
-                        {
-                            try
-                            {
-                                using StreamReader streamReader = new StreamReader(path);
-                                var jsonContent = streamReader.ReadToEnd();
-
-                                FileName = Path.GetFileNameWithoutExtension(path);
-                                selectedBuild = JsonConvert.DeserializeObject<ChampionBuild>(jsonContent);
-                                referenceBuild = jsonContent;
-                                loadBuild(selectedBuild);
-                            }
-                            catch { }
-                        }
-                    }
-                    SaveInfo = null;
-                });
-            }
-            else if(!string.IsNullOrEmpty(SelectedBuildName)
-            && SelectedBuildName.Equals(CREATE_NEW)) {
                 ClearProfile();
                 SaveInfo = "New* Unsaved";
+                return;
             }
-            else ClearProfile();
+
+            SaveInfo = null;
+
+            var path = LocalBuild.GetBuildFiles(selectedChampionId, SelectedGameMode)
+                .FirstOrDefault(p => Path.GetFileName(p) == SelectedBuildName);
+
+            if (path == null)
+            {
+                ClearProfile();
+                return;
+            }
+
+            try
+            {
+                using var streamReader = new StreamReader(path);
+                var jsonContent = streamReader.ReadToEnd();
+
+                FileName = Path.GetFileNameWithoutExtension(path);
+                selectedBuild = JsonConvert.DeserializeObject<ChampionBuild>(jsonContent);
+                referenceBuild = jsonContent;
+                LoadBuild(selectedBuild);
+            }
+            catch (IOException ex)
+            {
+                Log($"Failed to read build file: {ex.Message}", LoLA.Utils.Logger.LogType.EROR);
+                ClearProfile();
+            }
         }
 
         private void path1Changed() 
@@ -873,39 +867,37 @@ namespace LoL_Assist_WAPP.ViewModels
 
             if (SelectedPath1 != null)
             {
-                int i = 0;
-                foreach (var perk in DataDragonWrapper.s_Perks)
+                var perk = DataDragonWrapper.s_Perks.FirstOrDefault(p => p.name == SelectedPath1.Text);
+                if (perk != null)
                 {
-                    if (perk.name == SelectedPath1.Text)
+                    int i = 0;
+                    foreach (var slot in perk.slots)
                     {
-                        foreach (var slot in perk.slots)
+                        foreach (var rune in slot.runes)
                         {
-                            foreach (var rune in slot.runes)
+                            var model = new ItemImageModel()
                             {
-                                var model = new ItemImageModel()
-                                {
-                                    Text = rune.name,
-                                    Image = ImageSrc(rune.name.Replace(":", string.Empty))
-                                };
+                                Text = rune.name,
+                                Image = ImageSrc(rune.name.Replace(":", string.Empty))
+                            };
 
-                                switch (i)
-                                {
-                                    case 0:
-                                        Keystones.Add(model);
-                                        break;
-                                    case 1:
-                                        Perks1.Add(model);
-                                        break;
-                                    case 2:
-                                        Perks2.Add(model);
-                                        break;
-                                    case 3:
-                                        Perks3.Add(model);
-                                        break;
-                                }
+                            switch (i)
+                            {
+                                case 0:
+                                    Keystones.Add(model);
+                                    break;
+                                case 1:
+                                    Perks1.Add(model);
+                                    break;
+                                case 2:
+                                    Perks2.Add(model);
+                                    break;
+                                case 3:
+                                    Perks3.Add(model);
+                                    break;
                             }
-                            i++;
                         }
+                        i++;
                     }
                 }
             }
@@ -937,47 +929,52 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private void perk4Changed()
+        private void Perk4Changed()
         {
+            if (SelectedPerk4 == null || string.IsNullOrEmpty(SelectedPerk4.Text))
+                return;
+
             var perks5 = new ObservableCollection<ItemImageModel>();
-            if(SelectedPerk4 != null && !string.IsNullOrEmpty(SelectedPerk4.Text))
+
+            bool isFound = false;
+
+            for (int r = 0; r < secondarySlot.GetLength(0) && !isFound; r++)
             {
-                bool isFound = false;
-                for (int r = 0; r < secondarySlot.GetLength(0); r++)
+                for (int c = 0; c < secondarySlot.GetLength(1) && !isFound; c++)
                 {
-                    if (isFound) continue;
-                    for (int c = 0; c < secondarySlot.GetLength(1); c++)
+                    if (SelectedPerk4.Text == secondarySlot[r, c])
                     {
-                        if (isFound) continue;
-                        if(SelectedPerk4.Text == secondarySlot[r, c])
+                        isFound = true;
+
+                        for (int r2 = 0; r2 < secondarySlot.GetLength(0); r2++)
                         {
-                            isFound = true;
-                            for (int r2 = 0; r2 < secondarySlot.GetLength(0); r2++)
+                            if (r != r2)
                             {
-                                if (r != r2)
+                                for (int c2 = 0; c2 < secondarySlot.GetLength(1); c2++)
                                 {
-                                    for (int c2 = 0; c2 < secondarySlot.GetLength(1); c2++)
+                                    string perk = secondarySlot[r2, c2];
+
+                                    if (!string.IsNullOrEmpty(perk))
                                     {
-                                        if (!string.IsNullOrEmpty(secondarySlot[r2, c2]))
+                                        var model = new ItemImageModel
                                         {
-                                            var model = new ItemImageModel()
-                                            {
-                                                Text = secondarySlot[r2, c2],
-                                                Image = ImageSrc(secondarySlot[r2, c2].Replace(":", string.Empty))
-                                            };
-                                            perks5.Add(model);
-                                        }
+                                            Text = perk,
+                                            Image = ImageSrc(perk.Replace(":", string.Empty))
+                                        };
+
+                                        perks5.Add(model);
                                     }
                                 }
                             }
-                            Perks5 = perks5;
                         }
+
+                        Perks5 = perks5;
                     }
                 }
             }
         }
 
-        private void loadBuild(ChampionBuild championBuild)
+        private void LoadBuild(ChampionBuild championBuild)
         {
             if(championBuild.Spells != null && championBuild.Spells.Count > 0)
             {
@@ -991,9 +988,8 @@ namespace LoL_Assist_WAPP.ViewModels
             }
             else
             {
-                selectedBuild.Spells = new List<Spell>();
-                selectedBuild.Spells.Add(new Spell());
-                clearSpells();
+                selectedBuild.Spells = new List<Spell> { new Spell() };
+                ClearSpells();
             }
 
             if(championBuild.Runes != null && championBuild.Runes.Count > 0)
@@ -1024,37 +1020,35 @@ namespace LoL_Assist_WAPP.ViewModels
             }
             else
             {
-                selectedBuild.Runes = new List<Rune>();
-                selectedBuild.Runes.Add(new Rune());
-                clearRunes();
+                selectedBuild.Runes = new List<Rune> { new Rune() };
+                ClearRunes();
             }
             
         }
 
         #region Space junk
 
-        private void isChanged()
+        private void IsChanged()
         {
-            var sBuild = JsonConvert.SerializeObject(selectedBuild);
+            var serializedBuild = JsonConvert.SerializeObject(selectedBuild);
 
-            if(SelectedGameMode != GameMode.NONE && SelectedBuildName != null)
+            if (!string.IsNullOrWhiteSpace(SelectedBuildName) && SelectedGameMode != GameMode.NONE)
             {
-                if ((!sBuild.Equals(referenceBuild) ||
-                !Path.GetFileNameWithoutExtension(SelectedBuildName).Equals(FileName))
-                && !SelectedBuildName.Equals(CREATE_NEW))
-                    SaveInfo = "*Unsaved";
-                else if (SelectedBuildName.Equals(CREATE_NEW))
-                    SaveInfo = "New* Unsaved";
-                else SaveInfo = null;
+                var buildNameWithoutExtension = Path.GetFileNameWithoutExtension(SelectedBuildName);
+                var isUnsaved = (!serializedBuild.Equals(referenceBuild, StringComparison.Ordinal)
+                                || !buildNameWithoutExtension.Equals(FileName))
+                                && !string.Equals(SelectedBuildName, CREATE_NEW);
+
+                SaveInfo = isUnsaved ? "*Unsaved" : (SelectedBuildName.Equals(CREATE_NEW) ? "New* Unsaved" : null);
             }
         }
 
-        private ItemImageModel removeDup(ItemImageModel s1, ItemImageModel s2)
+        private ItemImageModel RemoveDup(ItemImageModel s1, ItemImageModel s2)
         {
-            if (s1 != null && s2 != null 
-            && !string.IsNullOrEmpty(s1.Text))
+            if (s1 != null && s2 != null && !string.IsNullOrEmpty(s1.Text))
                 return s1.Equals(s2) ? null : s2;
-            else return s2;
+
+            return s2;
         }
 
         public void ClearSmallInfo()
@@ -1067,28 +1061,25 @@ namespace LoL_Assist_WAPP.ViewModels
         {
             SelectedBuildName = null;
             referenceBuild = null;
-            selectedBuild = new ChampionBuild();
 
-            // GOOFY
-            selectedBuild.Spells = new List<Spell>(); 
-            selectedBuild.Runes = new List<Rune>();
-            selectedBuild.Spells.Add(new Spell());
-            selectedBuild.Runes.Add(new Rune());
-            // : D
+            selectedBuild = new ChampionBuild() {
+                Spells = new List<Spell>() { new Spell() },
+                Runes = new List<Rune>() { new Rune() }
+            };
 
             FileName = null;
 
-            clearSpells();
-            clearRunes();
+            ClearSpells();
+            ClearRunes();
         }
 
-        private void clearSpells()
+        private void ClearSpells()
         {
             SelectedSpell1 = null;
             SelectedSpell2 = null;
         }
 
-        private void clearRunes()
+        private void ClearRunes()
         {
             RuneName = null;
             SelectedPerk1 = null;
@@ -1104,7 +1095,7 @@ namespace LoL_Assist_WAPP.ViewModels
             SelectedShard3 = null;
         }
 
-        private async Task saved()
+        private async Task Saved()
         {
             SaveInfo = "Saved!";
             await Task.Delay(2500);

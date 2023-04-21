@@ -153,7 +153,7 @@
                 Margin="0,0,6,0" ToolTip="Minimize to tray"  Width="12" Height="12" Command="{Binding MinimizeToTrayCommand}" CommandParameter="tray"/>
                 <Button Template="{DynamicResource IconButtonTemplate}" Tag="M6 19h12v2H6z" Margin="0,0,6,0" ToolTip="Minimize"  Width="12" Height="12" Command="{Binding MinimizeWindowCommand}"/>
 
-                <Button Template="{DynamicResource IconStyleButtonRed}" Command="{Binding ShutdownAppCommand}" ToolTip="Exit" Width="12" Height="12" Tag="{StaticResource XmarkIcon}"/>
+                <Button Template="{DynamicResource IconStyleButtonRed}" Command="{Binding ShutdownAppCommand}" ToolTip="Close" Width="12" Height="12" Tag="{StaticResource XmarkIcon}"/>
             </DockPanel>
             <Border VerticalAlignment="Bottom" Height="1" Background="{DynamicResource bBrushPrimary}"/>
         </Grid>

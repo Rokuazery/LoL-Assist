@@ -16,7 +16,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewmodels:MessageViewModel}">
-        <views:MessagePanel/>
+        <views:AutoMessagePanel/>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type viewmodels:RuneEditorViewModel}">

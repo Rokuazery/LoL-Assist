@@ -44,14 +44,10 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     var document = new HtmlDocument();
                     document.LoadHtml(html);
 
-                    Task<List<Rune>> runeTasks = null;
-                    Task<List<Spell>> spellTasks = null;
+                    var runeTasks = GetRunesAsync(championData.id, championData.name, gameMode, role, document);
+                    var spellTasks = GetSpellCombosAsync(championData.id, gameMode, role, document);
 
-                    List<Task> tasks = new List<Task> {
-                        (runeTasks = GetRunesAsync(championData.id, championData.name, gameMode, role, document)),
-                        (spellTasks = GetSpellCombosAsync(championData.id, gameMode, role, document))
-                    };
-                    Parallel.ForEach(tasks, async task => { await task; });
+                    await Task.WhenAll(runeTasks, spellTasks);
 
                     championBuild.Id = championData.id;
                     championBuild.Name = championData.name;
@@ -91,7 +87,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     var runeContainer = document.DocumentNode.SelectSingleNode($"//div[@id='{MetasrcClass.s_Key.Perks}']");
                     //Console.WriteLine(runeContainer.InnerHtml); // Debug
 
-                    if (runeContainer == null) throw new Exception();
+                    if (runeContainer == null) throw new Exception("Rune container not found!");
 
                     runeContainerHtml.LoadHtml(runeContainer.InnerHtml);
                     if (string.IsNullOrEmpty(runeContainerHtml.DocumentNode.InnerHtml))
@@ -100,7 +96,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     runeToolTips = runeContainerHtml.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.TipRB}']");
                 });
 
-                if (runeToolTips.Count == 0) throw new Exception();
+                if (runeToolTips.Count == 0) throw new Exception("Rune tooltip class not found");
 
                 var runeIds = new List<int>();
                 foreach (var runeToolTip in runeToolTips)

@@ -22,7 +22,7 @@ namespace LoL_Assist_WAPP.ViewModels
             {
                 if (_closeDownloadPanelCommand == null)
                 {
-                    _closeDownloadPanelCommand = new Command(p => hideUserControl(p));
+                    _closeDownloadPanelCommand = new Command(p => HideUserControl(p));
                 }
                 return _closeDownloadPanelCommand;
             }
@@ -144,12 +144,12 @@ namespace LoL_Assist_WAPP.ViewModels
             DownloadSelectContainerVisibility = Visibility.Visible;
             DownloadigContainerVisibility = Visibility.Collapsed;
             cancellationTokenSource = new CancellationTokenSource();
-            DownloadCommand = new Command(key => download(key.ToString()));
-            CancelDownloadCommand = new Command(_ => { cancelChampionAssetsDownload(); });
+            DownloadCommand = new Command(key => Download(key.ToString()));
+            CancelDownloadCommand = new Command(_ => { CancelChampionAssetsDownload(); });
         }
 
         private bool isDownloading = false;
-        private void reportProgressChanged(object sender, ProgressReportModel e)
+        private void ReportProgressChanged(object sender, ProgressReportModel e)
         {
             DownloadPercentage = $"{e.Percent}%";
             DownloadProgress = e.Percent;
@@ -157,33 +157,23 @@ namespace LoL_Assist_WAPP.ViewModels
             DownloadedTotal = e.DownloadedTotal;
         }
         Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
-        private void download(string key)
+        private void Download(string key)
         {
             if (!isDownloading)
             {
                 isDownloading = true;
                 cancellationTokenSource = new CancellationTokenSource();
                 progress = new Progress<ProgressReportModel>();
-                progress.ProgressChanged += reportProgressChanged;
+                progress.ProgressChanged += ReportProgressChanged;
 
                 DownloadigContainerVisibility = Visibility.Visible;
                 DownloadSelectContainerVisibility = Visibility.Collapsed;
 
-                downloadChampionAssetsWorker(progress, cancellationTokenSource.Token);
-                //switch (key)
-                //{
-                //    case "asst":
-
-                //        break;
-                //    case "ugg":
-                //        break;
-                //    case "meta":
-                //        break;
-                //}
+                DownloadChampionAssetsWorker(progress, cancellationTokenSource.Token);
             }
         }
 
-        private async void downloadChampionAssetsWorker(IProgress<ProgressReportModel> progress, CancellationToken cancellationToken)
+        private async void DownloadChampionAssetsWorker(IProgress<ProgressReportModel> progress, CancellationToken cancellationToken)
         {
             int downloadedIndex = 0;
             var progressReportModel = new ProgressReportModel {
@@ -229,29 +219,29 @@ namespace LoL_Assist_WAPP.ViewModels
                     progressReportModel.DownloadedTotal = null;
                     progress.Report(progressReportModel);
 
-                    downloadWorkerCompleted();
+                    DownloadWorkerCompleted();
                 }
                 catch (OperationCanceledException)
                 {
-                    resetDownloadStatus();
+                    ResetDownloadStatus();
                 }
             });
         }
 
-        private void cancelChampionAssetsDownload() 
+        private void CancelChampionAssetsDownload() 
             => cancellationTokenSource.Cancel();
 
-        private void downloadWorkerCompleted()
+        private void DownloadWorkerCompleted()
         {
-            progress.ProgressChanged -= reportProgressChanged;
+            progress.ProgressChanged -= ReportProgressChanged;
             CancelBtnVisibility = Visibility.Hidden;
             DownloadStatus = "Download Completed!";
             isDownloading = false;
         }
 
-        private void resetDownloadStatus()
+        private void ResetDownloadStatus()
         {
-            progress.ProgressChanged -= reportProgressChanged;
+            progress.ProgressChanged -= ReportProgressChanged;
             DownloadSelectContainerVisibility = Visibility.Visible;
             DownloadigContainerVisibility = Visibility.Collapsed;
             DownloadStatus = null;
@@ -260,7 +250,7 @@ namespace LoL_Assist_WAPP.ViewModels
             isDownloading = false;
         }
 
-        private void hideUserControl(object p)
+        private void HideUserControl(object p)
         {
             if(!isDownloading)
             {
@@ -268,7 +258,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 return;
             }
 
-            showMsgBox(new Action(() =>
+            ShowMsgBox(new Action(() =>
             {
                 cancellationTokenSource.Cancel();
                 Utils.Animation.FadeOut(p as UserControl); }), 
@@ -277,15 +267,15 @@ namespace LoL_Assist_WAPP.ViewModels
         }
 
         #region space junk
-        private async void setTopMostContent(object obj)
+        private async void SetTopMostContent(object obj)
         {
             TopMostContent = null;
             await Task.Delay(1); // Fix
             TopMostContent = obj;
         }
-        private void showMsgBox(Action action, string msg, double width = 330, double height = 220)
+        private void ShowMsgBox(Action action, string msg, double width = 330, double height = 220)
         {
-            setTopMostContent(new MessageBoxModel()
+            SetTopMostContent(new MessageBoxModel()
             {
                 Message = msg,
                 Width = width,

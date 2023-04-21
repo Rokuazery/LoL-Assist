@@ -18,24 +18,24 @@ namespace LoL_Assist_WAPP.ViewModels
     public class RuneEditorViewModel: ViewModelBase
     {
         #region Commands
-        public ICommand OpenBuildEditorCommand { get; set; }
-        public ICommand SaveRunePageCommand { get; set; }
-        public ICommand ReloadRunePagesCommand { get; set; }
-        public ICommand CloseRuneEditorCommand { get; set; }
+        public ICommand OpenBuildEditorCommand { get; }
+        public ICommand SaveRunePageCommand { get; }
+        public ICommand ReloadRunePagesCommand { get; }
+        public ICommand CloseRuneEditorCommand { get; }
 
         #region Perk Commands
-        public ICommand PrimaryPathSelectCommand { get; set; }
-        public ICommand KeystoneSelectCommand { get; set; }
-        public ICommand Perk1SelectCommand { get; set; }
-        public ICommand Perk2SelectCommand { get; set; }
-        public ICommand Perk3SelectCommand { get; set; }
-        public ICommand SecondaryPathSelectCommand { get; set; }
-        public ICommand Perk4SelectCommand { get; set; }
-        public ICommand Perk5SelectCommand { get; set; }
-        public ICommand Perk6SelectCommand { get; set; }
-        public ICommand Shard1SelectCommand { get; set; }
-        public ICommand Shard2SelectCommand { get; set; }
-        public ICommand Shard3SelectCommand { get; set; }
+        public ICommand PrimaryPathSelectCommand { get; }
+        public ICommand KeystoneSelectCommand { get; }
+        public ICommand Perk1SelectCommand { get; }
+        public ICommand Perk2SelectCommand { get; }
+        public ICommand Perk3SelectCommand { get; }
+        public ICommand SecondaryPathSelectCommand { get; }
+        public ICommand Perk4SelectCommand { get; }
+        public ICommand Perk5SelectCommand { get; }
+        public ICommand Perk6SelectCommand { get; }
+        public ICommand Shard1SelectCommand { get; }
+        public ICommand Shard2SelectCommand { get; }
+        public ICommand Shard3SelectCommand { get; }
         #endregion
 
         #endregion
@@ -240,7 +240,7 @@ namespace LoL_Assist_WAPP.ViewModels
                     if(!string.IsNullOrEmpty(value))
                     {
                         RunePageName = value;
-                        setSelectedRunePageByName(value);
+                        SetSelectedRunePageByName(value);
                     }
 
                     OnPropertyChanged(nameof(SelectedRunePageName));
@@ -286,7 +286,24 @@ namespace LoL_Assist_WAPP.ViewModels
         private readonly List<RunePage> r_runePages = new List<RunePage>();
         public RuneEditorViewModel()
         {
-            initCommands();
+            PrimaryPathSelectCommand = new Command(path => UpdatePrimaryPath(path.ToString()));
+            KeystoneSelectCommand = new Command(keystone => UpdateKeystone(keystone?.ToString()));
+            Perk1SelectCommand = new Command(perk => UpdatePrimaryPathSlot(perk?.ToString(), 1));
+            Perk2SelectCommand = new Command(perk => UpdatePrimaryPathSlot(perk?.ToString(), 2));
+            Perk3SelectCommand = new Command(perk => UpdatePrimaryPathSlot(perk?.ToString(), 3));
+            SecondaryPathSelectCommand = new Command(path => UpdateSecondaryPath(path.ToString()));
+            Perk4SelectCommand = new Command(perk => UpdateSecondPathSlot(perk?.ToString(), 0));
+            Perk5SelectCommand = new Command(perk => UpdateSecondPathSlot(perk?.ToString(), 1));
+            Perk6SelectCommand = new Command(perk => UpdateSecondPathSlot(perk?.ToString(), 2));
+            Shard1SelectCommand = new Command(shard => UpdateShard(shard?.ToString(), 1));
+            Shard2SelectCommand = new Command(shard => UpdateShard(shard?.ToString(), 2));
+            Shard3SelectCommand = new Command(shard => UpdateShard(shard?.ToString(), 3));
+
+            CloseRuneEditorCommand = new Command(usercontrol => CloseRuneEditor(usercontrol));
+            OpenBuildEditorCommand = new Command(_ => Helper.ShowBuildEditorWindow());
+            ReloadRunePagesCommand = new Command(_ => LoadRunePages());
+            SaveRunePageCommand = new Command(_ => SaveRunePage());
+
             PrimaryPaths = new ObservableCollection<ItemImageModel>();
             SecondaryPaths = new ObservableCollection<ItemImageModel>();
             Keystones = new ObservableCollection<ItemImageModel>();
@@ -300,32 +317,11 @@ namespace LoL_Assist_WAPP.ViewModels
 
             rune = new Rune();
 
-            loadRunePages();
-        }
-
-        private void initCommands()
-        {
-            PrimaryPathSelectCommand = new Command(path => updatePrimaryPath(path.ToString()));
-            KeystoneSelectCommand = new Command(keystone => updateKeystone(keystone?.ToString()));
-            Perk1SelectCommand = new Command(perk => updatePrimaryPathSlot(perk?.ToString(), 1));
-            Perk2SelectCommand = new Command(perk => updatePrimaryPathSlot(perk?.ToString(), 2));
-            Perk3SelectCommand = new Command(perk => updatePrimaryPathSlot(perk?.ToString(), 3));
-            SecondaryPathSelectCommand = new Command(path => updateSecondaryPath(path.ToString()));
-            Perk4SelectCommand = new Command(perk => updateSecondPathSlot(perk?.ToString(), 0));
-            Perk5SelectCommand = new Command(perk => updateSecondPathSlot(perk?.ToString(), 1));
-            Perk6SelectCommand = new Command(perk => updateSecondPathSlot(perk?.ToString(), 2));
-            Shard1SelectCommand = new Command(shard => updateShard(shard?.ToString(), 1));
-            Shard2SelectCommand = new Command(shard => updateShard(shard?.ToString(), 2));
-            Shard3SelectCommand = new Command(shard => updateShard(shard?.ToString(), 3));
-
-            CloseRuneEditorCommand = new Command(usercontrol => closeRuneEditor(usercontrol));
-            OpenBuildEditorCommand = new Command(_ => Helper.ShowBuildEditorWindow());
-            ReloadRunePagesCommand = new Command(_ => loadRunePages());
-            SaveRunePageCommand = new Command(_ => saveRunePage());
+            LoadRunePages();
         }
 
         private bool isSaving = false;
-        private async void saveRunePage()
+        private async void SaveRunePage()
         {
             if (!isSaving)
             {
@@ -347,7 +343,7 @@ namespace LoL_Assist_WAPP.ViewModels
                             runePage.isActive = selectedRunePage.isActive;
 
                             if (await LCUWrapper.AddRunePageAsync(runePage))
-                                loadRunePages(); // reload pages
+                                LoadRunePages(); // reload pages
                         }
                     }
                 }
@@ -355,7 +351,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private async void loadRunePages()
+        private async void LoadRunePages()
         {
             var runePageNameTemp = SelectedRunePageName;
             SelectedRunePageName = null;
@@ -382,37 +378,37 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private void closeRuneEditor(object usercontrol)
+        private void CloseRuneEditor(object usercontrol)
         {
             var control = usercontrol as UserControl;
             Animation.FadeOut(control);
         }
 
-        private void setSelectedRunePageByName(string runePageName)
+        private void SetSelectedRunePageByName(string runePageName)
         {
             var selectedRunePage = r_runePages.Find(runePage => runePage.name == runePageName);
 
             if (selectedRunePage != null)
-                setCurrentRunePage(selectedRunePage);
+                SetCurrentRunePage(selectedRunePage);
         }
 
-        private void setCurrentRunePage(RunePage runePage)
+        private void SetCurrentRunePage(RunePage runePage)
         {
             rune = Converter.RunePageToRune(runePage);
-            updatePrimaryPath(Converter.PathIdToName(rune.PrimaryPath));
-            updateKeystone(Converter.PerkIdToName(rune.Keystone));
-            updatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot1), 1);
-            updatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot2), 2);
-            updatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot3), 3);
-            updateSecondaryPath(Converter.PathIdToName(rune.SecondaryPath));
+            UpdatePrimaryPath(Converter.PathIdToName(rune.PrimaryPath));
+            UpdateKeystone(Converter.PerkIdToName(rune.Keystone));
+            UpdatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot1), 1);
+            UpdatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot2), 2);
+            UpdatePrimaryPathSlot(Converter.PerkIdToName(rune.Slot3), 3);
+            UpdateSecondaryPath(Converter.PathIdToName(rune.SecondaryPath));
 
             updateSecondaryPathSlots(Converter.PerkIdToName(rune.Slot4), Converter.PerkIdToName(rune.Slot5));
-            updateShard(DataConverter.ShardIdToShardDescription(rune.Shard1), 1);
-            updateShard(DataConverter.ShardIdToShardDescription(rune.Shard2), 2);
-            updateShard(DataConverter.ShardIdToShardDescription(rune.Shard3), 3);
+            UpdateShard(DataConverter.ShardIdToShardDescription(rune.Shard1), 1);
+            UpdateShard(DataConverter.ShardIdToShardDescription(rune.Shard2), 2);
+            UpdateShard(DataConverter.ShardIdToShardDescription(rune.Shard3), 3);
         }
 
-        private void updatePrimaryPath(string selectedPath = "")
+        private void UpdatePrimaryPath(string selectedPath = "")
         {
             if (currentPrimaryPath != selectedPath)
             {
@@ -430,7 +426,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 });
 
                 currentPrimaryPath = selectedPath;
-                updatePrimaryPathSlots(currentPrimaryPath);
+                UpdatePrimaryPathSlots(currentPrimaryPath);
 
                 foreach (var path in PrimaryPaths)
                 {
@@ -463,9 +459,9 @@ namespace LoL_Assist_WAPP.ViewModels
         }
 
         private string[,] secondSlot = null;
-        private void updateSecondaryPath(string selectedSecondaryPath)
+        private void UpdateSecondaryPath(string selectedSecondaryPath)
         {
-            var newSecondaryPaths = itemImageModels(currentSecondaryPath, selectedSecondaryPath, SecondaryPaths);
+            var newSecondaryPaths = ItemImageModels(currentSecondaryPath, selectedSecondaryPath, SecondaryPaths);
 
             if (newSecondaryPaths != null)
             {
@@ -479,15 +475,15 @@ namespace LoL_Assist_WAPP.ViewModels
                 currentPerk5 = null;
                 currentPerk6 = null;
 
-                Perks4 = populateSecondaryPathSlot(currentSecondaryPath, null, 0);
-                Perks5 = populateSecondaryPathSlot(currentSecondaryPath, null, 1);
-                Perks6 = populateSecondaryPathSlot(currentSecondaryPath, null, 2);
+                Perks4 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 0);
+                Perks5 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 1);
+                Perks6 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 2);
             }
         }
 
-        private void updateKeystone(string selectedKeystone)
+        private void UpdateKeystone(string selectedKeystone)
         {
-            var newKeystones = itemImageModels(currentKeystone, selectedKeystone, Keystones);
+            var newKeystones = ItemImageModels(currentKeystone, selectedKeystone, Keystones);
 
             if (newKeystones != null)
             {
@@ -499,13 +495,13 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private void updatePrimaryPathSlot(string selectedPerk, int slot)
+        private void UpdatePrimaryPathSlot(string selectedPerk, int slot)
         {
             ObservableCollection<ItemImageModel> newPerks;
             switch (slot)
             {
                 case 1:
-                    newPerks = itemImageModels(currentPerk1, selectedPerk, Perks1);
+                    newPerks = ItemImageModels(currentPerk1, selectedPerk, Perks1);
 
                     if(newPerks != null)
                     {
@@ -517,7 +513,7 @@ namespace LoL_Assist_WAPP.ViewModels
                     }
                     break;
                 case 2:
-                    newPerks = itemImageModels(currentPerk2, selectedPerk, Perks2);
+                    newPerks = ItemImageModels(currentPerk2, selectedPerk, Perks2);
 
                     if (newPerks != null)
                     {
@@ -529,7 +525,7 @@ namespace LoL_Assist_WAPP.ViewModels
                     }
                     break;
                 case 3:
-                    newPerks = itemImageModels(currentPerk3, selectedPerk, Perks3);
+                    newPerks = ItemImageModels(currentPerk3, selectedPerk, Perks3);
 
                     if (newPerks != null)
                     {
@@ -543,7 +539,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private ObservableCollection<ItemImageModel> populateSecondaryPathSlot(string secondaryPath, string selectedPerk, int index)
+        private ObservableCollection<ItemImageModel> PopulateSecondaryPathSlot(string secondaryPath, string selectedPerk, int index)
         {
             secondSlot = RuneModel.r_SecondPath[secondaryPath];
             var newPerks = new ObservableCollection<ItemImageModel>();
@@ -564,7 +560,7 @@ namespace LoL_Assist_WAPP.ViewModels
 
         private int lastSlotIndex = 0;
         private readonly int[] lastSelectedSlot = new int[] {-1, -1};
-        private void updateSecondPathSlot(string selectedPerk, int index = -1)
+        private void UpdateSecondPathSlot(string selectedPerk, int index = -1)
         {
             var changeNeeded = false;
 
@@ -586,37 +582,37 @@ namespace LoL_Assist_WAPP.ViewModels
                 switch (index)
                 {
                     case 0:
-                        selectSecondaryPerk(selectedPerk, currentPerk4, currentPerk5, currentPerk6, index);
+                        SelectSecondaryPerk(selectedPerk, currentPerk4, currentPerk5, currentPerk6, index);
                         break;
                     case 1:
-                        selectSecondaryPerk(selectedPerk, currentPerk5, currentPerk4, currentPerk6, index);
+                        SelectSecondaryPerk(selectedPerk, currentPerk5, currentPerk4, currentPerk6, index);
                         break;
                     case 2:
-                        selectSecondaryPerk(selectedPerk, currentPerk6, currentPerk4, currentPerk5, index);
+                        SelectSecondaryPerk(selectedPerk, currentPerk6, currentPerk4, currentPerk5, index);
                         break;
                 }
             }
         }
 
-        private void selectSecondaryPerk(string selectedPerk, string perk1, string perk2, string perk3, int index)
+        private void SelectSecondaryPerk(string selectedPerk, string perk1, string perk2, string perk3, int index)
         {
-            var selectedPerkIndex = getSecondaryPathSlotIndex(selectedPerk);
-            var perk1Index = getSecondaryPathSlotIndex(perk1);
-            var perk2Index = getSecondaryPathSlotIndex(perk2);
-            var perk3Index = getSecondaryPathSlotIndex(perk3);
+            var selectedPerkIndex = GetSecondaryPathSlotIndex(selectedPerk);
+            var perk1Index = GetSecondaryPathSlotIndex(perk1);
+            var perk2Index = GetSecondaryPathSlotIndex(perk2);
+            var perk3Index = GetSecondaryPathSlotIndex(perk3);
 
             int lastSlot = lastSelectedSlot[lastSlotIndex];
             var lastIndex = lastSlotIndex;
+            bool isSlotChanged = !string.IsNullOrEmpty(selectedPerk);
 
-            if (!string.IsNullOrEmpty(selectedPerk))
-                lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
+            lastSlotIndex = isSlotChanged ? (lastSlotIndex == 0 ? 1 : 0) : lastSlotIndex;
 
-            var perks = populateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
+            var perks = PopulateSecondaryPathSlot(currentSecondaryPath, selectedPerk, index);
 
-            setSecondaryPathPerksByIndex(perks, index);
+            SetSecondaryPathPerksByIndex(perks, index);
 
             var perk1Temp = perk1;
-            perk1 = setSecondaryPathCurrentPerkByIndex(selectedPerk, index);
+            perk1 = SetSecondaryPathCurrentPerkByIndex(selectedPerk, index);
 
             if (perk1 != null)
             {
@@ -631,39 +627,39 @@ namespace LoL_Assist_WAPP.ViewModels
                 {
                     if (lastSlot == perk2Index)
                     {
-                        setSecondaryPathRuneSlot(selectedPerk, perk2);
+                        SetSecondaryPathRuneSlot(selectedPerk, perk2);
 
-                        perk2 = setSecondaryPathCurrentPerkByIndex(null, perk2Index);
-                        setSecondaryPathPerksByIndex(populateSecondaryPathSlot(currentSecondaryPath, perk2, perk2Index), perk2Index);
+                        perk2 = SetSecondaryPathCurrentPerkByIndex(null, perk2Index);
+                        SetSecondaryPathPerksByIndex(PopulateSecondaryPathSlot(currentSecondaryPath, perk2, perk2Index), perk2Index);
                     }
                     else if (lastSlot == perk3Index)
                     {
-                        setSecondaryPathRuneSlot(selectedPerk, perk3);
+                        SetSecondaryPathRuneSlot(selectedPerk, perk3);
 
-                        perk3 = setSecondaryPathCurrentPerkByIndex(null, perk3Index);
-                        setSecondaryPathPerksByIndex(populateSecondaryPathSlot(currentSecondaryPath, perk3, perk3Index), perk3Index);
+                        perk3 = SetSecondaryPathCurrentPerkByIndex(null, perk3Index);
+                        SetSecondaryPathPerksByIndex(PopulateSecondaryPathSlot(currentSecondaryPath, perk3, perk3Index), perk3Index);
                     }
 
-                    lastSelectedSlot[lastIndex] = getSecondaryPathSlotIndex(perk1);
+                    lastSelectedSlot[lastIndex] = GetSecondaryPathSlotIndex(perk1);
                 }
                 else if ((perk1Index == -1 && perk2Index == -1 && perk3Index != -1)
                 || (perk1Index == -1 && perk2Index != -1 && perk3Index == -1))
                 {
                     var currentRune = perk2Index != -1 ? perk2 : perk3;
-                    setSecondaryPathRuneSlot(selectedPerk, currentRune);
+                    SetSecondaryPathRuneSlot(selectedPerk, currentRune);
 
                     lastSlotIndex = 0;
                     lastSelectedSlot[1] = selectedPerkIndex;
                 }
                 else if (perk1Index != -1)
                 {
-                    setSecondaryPathRuneSlot(selectedPerk, perk1Temp);
+                    SetSecondaryPathRuneSlot(selectedPerk, perk1Temp);
                     lastSlotIndex = lastSlotIndex == 0 ? 1 : 0;
                 }
             }
         }
 
-        private void setSecondaryPathRuneSlot(string selectedPerk, string currentPerk)
+        private void SetSecondaryPathRuneSlot(string selectedPerk, string currentPerk)
         {
             if (rune.Slot4 == Converter.PerkNameToId(currentPerk))
                 rune.Slot4 = Converter.PerkNameToId(selectedPerk);
@@ -694,12 +690,12 @@ namespace LoL_Assist_WAPP.ViewModels
         {
             secondSlot = RuneModel.r_SecondPath[currentSecondaryPath];
 
-            Perks4 = populateSecondaryPathSlot(currentSecondaryPath, null, 0);
-            Perks5 = populateSecondaryPathSlot(currentSecondaryPath, null, 1);
-            Perks6 = populateSecondaryPathSlot(currentSecondaryPath, null, 2);
+            Perks4 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 0);
+            Perks5 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 1);
+            Perks6 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 2);
 
-            var slot4Index = getSecondaryPathSlotIndex(selectedPerk4);
-            var slot5Index = getSecondaryPathSlotIndex(selectedPerk5);
+            var slot4Index = GetSecondaryPathSlotIndex(selectedPerk4);
+            var slot5Index = GetSecondaryPathSlotIndex(selectedPerk5);
 
             lastSlotIndex = 0; // reset last slot index
 
@@ -720,8 +716,8 @@ namespace LoL_Assist_WAPP.ViewModels
                     newPerks4.Add(itemImageModel);
                 }
 
-                setSecondaryPathPerksByIndex(newPerks4, slot4Index);
-                setSecondaryPathCurrentPerkByIndex(selectedPerk4, slot4Index);
+                SetSecondaryPathPerksByIndex(newPerks4, slot4Index);
+                SetSecondaryPathCurrentPerkByIndex(selectedPerk4, slot4Index);
             }
 
             if(slot5Index != -1)
@@ -741,35 +737,26 @@ namespace LoL_Assist_WAPP.ViewModels
                     newPerks5.Add(itemImageModel);
                 }
 
-                setSecondaryPathPerksByIndex(newPerks5, slot5Index);
-                setSecondaryPathCurrentPerkByIndex(selectedPerk5, slot5Index);
+                SetSecondaryPathPerksByIndex(newPerks5, slot5Index);
+                SetSecondaryPathCurrentPerkByIndex(selectedPerk5, slot5Index);
             }
         }
 
-        private int getSecondaryPathSlotIndex(string selectedPerk)
+        private int GetSecondaryPathSlotIndex(string selectedPerk)
         {
-            if(selectedPerk != null)
+            if (selectedPerk == null) return -1;
+
+            for (int i = 0; i < 3; i++)
             {
-                for (int i = 0; i < secondSlot.GetLength(1); i++)
+                for (int j = 0; j < secondSlot.GetLength(1); j++)
                 {
-                    if (secondSlot[0, i] == selectedPerk)
-                        return 0;
-                }
-                for (int i = 0; i < secondSlot.GetLength(1); i++)
-                {
-                    if (secondSlot[1, i] == selectedPerk)
-                        return 1;
-                }
-                for (int i = 0; i < secondSlot.GetLength(1); i++)
-                {
-                    if (secondSlot[2, i] == selectedPerk)
-                        return 2;
+                    if (secondSlot[i, j] == selectedPerk) return i;
                 }
             }
             return -1;
         }
 
-        private void updateShard(string selectedShard, int row)
+        private void UpdateShard(string selectedShard, int row)
         {
             bool changeNeeded = false;
 
@@ -818,7 +805,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private void updatePrimaryPathSlots(string selectedPath)
+        private void UpdatePrimaryPathSlots(string selectedPath)
         {
             Perks1 = new ObservableCollection<ItemImageModel>();
             Perks2 = new ObservableCollection<ItemImageModel>();
@@ -864,7 +851,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private string setSecondaryPathCurrentPerkByIndex(string perk, int index)
+        private string SetSecondaryPathCurrentPerkByIndex(string perk, int index)
         {
             switch (index)
             {
@@ -881,7 +868,7 @@ namespace LoL_Assist_WAPP.ViewModels
             return perk;
         }
 
-        private void setSecondaryPathPerksByIndex(ObservableCollection<ItemImageModel> perks, int index)
+        private void SetSecondaryPathPerksByIndex(ObservableCollection<ItemImageModel> perks, int index)
         {
             switch (index)
             {
@@ -897,7 +884,7 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private ObservableCollection<ItemImageModel> itemImageModels(string currentValue, string newValue, ObservableCollection<ItemImageModel> itemModels)
+        private ObservableCollection<ItemImageModel> ItemImageModels(string currentValue, string newValue, ObservableCollection<ItemImageModel> itemModels)
         {
             if (currentValue != newValue)
             {

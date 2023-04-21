@@ -47,7 +47,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{getCurrentPatch()}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
 
             #if DEBUG
-            Console.WriteLine(apiUrl);
+            Log(apiUrl, LogType.DBUG);
             #endif
             return apiUrl;
         }
@@ -189,80 +189,57 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
 
                 // For some reason with the new API version of U.GG they randomize the index for the runeIds or I just don't know what's happening
                 // Wonky way to fix 
+
                 for (int i = 0; i < 3; i++)
                 {
-                    bool isFound = false;
                     foreach (var path in primaryPerks)
                     {
-                        if (isFound) break;
                         foreach (var runeInfo in path.slots[primaryPerkSlot].runes)
                         {
-                            if (isFound) break;
-                            foreach (var runeId in runeIds)
+                            if (runeIds.Contains(runeInfo.id))
                             {
-                                if (runeId == runeInfo.id)
+                                switch (primaryPerkSlot)
                                 {
-                                    isFound = true;
-                                    if (primaryPerkSlot == 1)
-                                    {
-                                        rune.Slot1 = runeId;
-                                        primaryPerkSlot++;
+                                    case 1:
+                                        rune.Slot1 = runeInfo.id;
                                         break;
-                                    }
-
-                                    if(primaryPerkSlot == 2)
-                                    {
-                                        rune.Slot2 = runeId;
-                                        primaryPerkSlot++;
+                                    case 2:
+                                        rune.Slot2 = runeInfo.id;
                                         break;
-                                    }
-
-                                    if (primaryPerkSlot == 3)
-                                    {
-                                        rune.Slot3 = runeId;
-                                        primaryPerkSlot++;
+                                    case 3:
+                                        rune.Slot3 = runeInfo.id;
                                         break;
-                                    }
                                 }
+                                primaryPerkSlot++;
+                                break;
                             }
                         }
+                        if (primaryPerkSlot > i) break;
                     }
                 }
 
                 rune.SecondaryPath = secondaryPath;
-                var secondaryPerks = s_Perks.Where(p => p.id == rune.SecondaryPath).ToList();
 
                 int secondaryPerkFound = 0;
                 int tempSecondaryPerkFound = 0;
 
-                foreach (var path in secondaryPerks)
-                {
-                    foreach (var slot in path.slots)
-                    {
-                        foreach (var runeInfo in slot.runes)
-                        {
-                            foreach (var runeId in runeIds)
-                            {
-                                if(runeId == runeInfo.id && runeId != tempSecondaryPerkFound)
-                                {
-                                    if(secondaryPerkFound == 0)
-                                    {
-                                        //Console.WriteLine($"First Found: {runeId}");
-                                        tempSecondaryPerkFound = runeId;
-                                        rune.Slot4 = runeId;
-                                        secondaryPerkFound++;
-                                        continue;
-                                    }
+                var availableRunes = s_Perks.Where(p => p.id == rune.SecondaryPath)
+                    .SelectMany(path => path.slots)
+                    .SelectMany(slot => slot.runes)
+                    .Where(runeInfo => runeIds.Contains(runeInfo.id) && runeInfo.id != tempSecondaryPerkFound);
 
-                                    if(secondaryPerkFound == 1)
-                                    {
-                                        //Console.WriteLine($"Second Found: {runeId}");
-                                        rune.Slot5 = runeId;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                foreach (var runeInfo in availableRunes)
+                {
+                    if (secondaryPerkFound == 0)
+                    {
+                        tempSecondaryPerkFound = runeInfo.id;
+                        rune.Slot4 = runeInfo.id;
+                        secondaryPerkFound++;
+                    }
+                    else if (secondaryPerkFound == 1)
+                    {
+                        rune.Slot5 = runeInfo.id;
+                        break;
                     }
                 }
 
@@ -280,45 +257,6 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             }
         }
 
-        //private static Rune filterRune(JToken root, string runeName)
-        //{
-        //    Log("Filtering rune...", LogType.INFO);
-        //    try
-        //    {
-        //        var rune = new Rune();
-
-        //        var perksRoot = root.First();
-        //        var shardsRoot = root[8][2];
-
-        //        var primaryPath = perksRoot[2].ToObject<int>();
-        //        var secondaryPath = perksRoot[3].ToObject<int>();
-        //        var runeIds = perksRoot[4].Select(p => p.ToObject<int>())  // perks
-        //       .Concat(shardsRoot.Select(s => int.Parse(s.ToString()))) // shards
-        //       .ToArray();
-
-        //        rune.Name = runeName;
-        //        rune.PrimaryPath = primaryPath;
-        //        rune.Keystone = runeIds[0];
-        //        rune.Slot1 = runeIds[1];
-        //        rune.Slot2 = runeIds[2];
-        //        rune.Slot3 = runeIds[3];
-        //        rune.SecondaryPath = secondaryPath;
-        //        rune.Slot4 = runeIds[4];
-        //        rune.Slot5 = runeIds[5];
-        //        rune.Shard1 = runeIds[6];
-        //        rune.Shard2 = runeIds[7];
-        //        rune.Shard3 = runeIds[8];
-
-        //        return rune;
-        //    }
-        //    catch
-        //    {
-        //        Log("Failed to filter rune", LogType.EROR);
-        //        Environment.Exit(0);
-        //        return null;
-        //    }
-        //}
-
         public static  List<Spell> GetSpellCombos(GameMode gm, Role role, JObject championData)
         {
             Log("Loading in spell combo", LogType.INFO);
@@ -331,10 +269,10 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 var root = championData[((int)role).ToString()].First();
                 var spellRoots = root[1][2];
 
-                var spell = new Spell();
-                spell.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
-                spell.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
-                spells.Add(spell);
+                var spellTemp = new Spell();
+                spellTemp.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
+                spellTemp.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
+                spells.Add(spellTemp);
             }
             else
             {

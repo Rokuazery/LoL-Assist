@@ -163,9 +163,6 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        public void RemoveItem(ItemViewModel item)
-        {
-            _itemViewModels.Remove(item);
-        }
+        public void RemoveItem(ItemViewModel item) => _itemViewModels.Remove(item);
     }
 }

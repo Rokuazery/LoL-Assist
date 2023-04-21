@@ -23,9 +23,7 @@ namespace LoL_Assist_WAPP.Commands
         {
             return true;
         }
-        protected void OnCanExecuteChanged()
-        {
+        protected void OnCanExecuteChanged() =>
             this.CanExecuteChanged?.Invoke(this, new EventArgs());
-        }
     }
 }

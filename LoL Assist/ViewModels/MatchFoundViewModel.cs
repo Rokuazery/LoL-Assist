@@ -26,7 +26,7 @@ namespace LoL_Assist_WAPP.ViewModels
             {
                 if (_hideUserControlCommand == null)
                 {
-                    _hideUserControlCommand = new Command(p => hideUserControl(p));
+                    _hideUserControlCommand = new Command(p => HideUserControl(p));
                 }
                 return _hideUserControlCommand;
             }
@@ -95,70 +95,67 @@ namespace LoL_Assist_WAPP.ViewModels
 
         public MatchFoundViewModel()
         {
-            matchFound();
-            AcceptMatchCommand = new Command(_ => { accept(); }); 
-            DeclineMatchCommand = new Command(_ => { decline(); });
-            LoLAWrapper.s_PhaseMonitor.PhaseChanged += phase_Changed;
+            MatchFound();
+            AcceptMatchCommand = new Command(_ => { Accept(); }); 
+            DeclineMatchCommand = new Command(_ => { Decline(); });
+            LoLAWrapper.s_PhaseMonitor.PhaseChanged += Phase_Changed;
         }
 
-        private void phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e) 
+        private void Phase_Changed(object sender, PhaseMonitor.PhaseChangedArgs e) 
         {
-            if (e.currentPhase != Phase.ReadyCheck) closeMatchFound();
+            if (e.currentPhase != Phase.ReadyCheck) CloseMatchFound();
         }
 
-        private void closeMatchFound()
+        private void CloseMatchFound()
         {
-            LoLAWrapper.s_PhaseMonitor.PhaseChanged -= phase_Changed;
+            LoLAWrapper.s_PhaseMonitor.PhaseChanged -= Phase_Changed;
             MatchfoundVisibility = Visibility.Collapsed;
             isMatchFound = false;
             isDecided = false;
         }
 
-        private async void matchFound()
+        private async void MatchFound()
         {
-            await Task.Run(async() => {
-                isMatchFound = true;
-                isDecided = false;
+            isMatchFound = true;
+            isDecided = false;
 
-                consoleBeep();
+            ConsoleBeep();
 
-                while (isMatchFound)
+            while (isMatchFound)
+            {
+                var matchInfo = await LCUWrapper.GetMatchmakingInfo();
+                var timer = matchInfo?.timer == null ? 0 : (int)matchInfo.timer;
+
+                // update UI timer
+                TimeoutTimer = $"{10 - timer}s";
+                if (!isDecided)
                 {
-                    var matchInfo = await LCUWrapper.GetMatchmakingInfo();
-                    var timer = matchInfo?.timer == null ? 0 : (int)matchInfo.timer;
-
-                    // update UI timer
-                    TimeoutTimer = $"{10 - timer}s";
-                    if (!isDecided)
+                    if (ConfigModel.s_Config.AutoAccept)
                     {
-                        if (ConfigModel.s_Config.AutoAccept)
-                        {
-                            if (r_autoAcceptTimer <= timer) accept();
-                            else AcceptStatus = $"Auto Accept in {r_autoAcceptTimer - timer}s";
-                        } else AcceptStatus = "Auto Accept is disabled";
+                        if (r_autoAcceptTimer <= timer) Accept();
+                        else AcceptStatus = $"Auto Accept in {r_autoAcceptTimer - timer}s";
                     }
-
-                    Application.Current.Dispatcher.Invoke(() => {
-                        if (matchInfo?.playerResponse != "None")
-                            AcceptStatus = matchInfo?.playerResponse;
-
-                        TimeoutValue = timer * 10;
-                    });
-                    //if (timer == 10) HideMatchFound();
-                    Thread.Sleep(1000);
+                    else AcceptStatus = "Auto Accept is disabled";
                 }
-            });
+
+                if (matchInfo?.playerResponse != "None")
+                    AcceptStatus = matchInfo?.playerResponse;
+
+                TimeoutValue = timer * 10;
+
+                await Task.Delay(1000);
+            }
         }
 
-        private async void accept() => isDecided = await LCUWrapper.AcceptMatchmakingAsync();
-        private async void decline() => isDecided = await LCUWrapper.DeclineMatchmakingAsync();
+        private async void Accept() => isDecided = await LCUWrapper.AcceptMatchmakingAsync();
+        private async void Decline() => isDecided = await LCUWrapper.DeclineMatchmakingAsync();
 
-        private void consoleBeep() // Beep sound
+        private void ConsoleBeep() // Beep sound
         {
             Console.Beep();
             Console.Beep();
         }
 
-        private void hideUserControl(object p) => Utils.Animation.FadeOut(p as UserControl);
+        private void HideUserControl(object p) => Utils.Animation.FadeOut(p as UserControl);
     }
 }

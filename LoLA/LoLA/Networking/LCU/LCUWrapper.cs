@@ -42,7 +42,9 @@ namespace LoLA.Networking.LCU
                     return true;
                 }
             }
-            catch { }
+            catch(Exception ex) {
+                Log(ex.Message, LogType.EROR);
+            }
             return false;
         }
 

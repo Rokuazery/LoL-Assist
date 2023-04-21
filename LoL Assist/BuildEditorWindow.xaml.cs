@@ -42,7 +42,7 @@ namespace LoL_Assist_WAPP
                     Utils.Animation.FadeOut(BackDrop, 0.13);
                     Utils.Animation.Margin(exitMsg, ConfigModel.r_MarginOpen, new Thickness(0, Height, 0, 0), 0.13);
                 };
-                animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
+                Animate(exitMsg, new Thickness(0, Height, 0, 0), ConfigModel.r_MarginOpen, 0.13);
             }
         }
 
@@ -65,7 +65,7 @@ namespace LoL_Assist_WAPP
                     {
                         var championBuildConfig = JsonConvert.DeserializeObject<ChampionBuild>(ImportFromPath);
                         if (championBuildConfig != null)
-                            animateOpen(ImportPanel);
+                            AnimateOpen(ImportPanel);
                     }
                     catch { saveStatus.Text = "Invalid Build Config"; }
                     
@@ -73,7 +73,7 @@ namespace LoL_Assist_WAPP
             }
         }
 
-        private void CancelImportBtn_Click(object sender, RoutedEventArgs e) => animateClose(ImportPanel);
+        private void CancelImportBtn_Click(object sender, RoutedEventArgs e) => AnimateClose(ImportPanel);
         private void ImportBtn_Click(object sender, RoutedEventArgs e)
         {
             var fileName = Path.GetFileName(ImportFromPath);
@@ -90,7 +90,7 @@ namespace LoL_Assist_WAPP
                 viewModel.SelectedGameMode = gameMode;
                 viewModel.SelectedBuildName = fileName;
                 viewModel.FetchBuild();
-                animateClose(ImportPanel);
+                AnimateClose(ImportPanel);
             }
             ImportChampionList.SelectedValue = null;
             ImportGameModeList.SelectedValue = null;
@@ -98,18 +98,18 @@ namespace LoL_Assist_WAPP
 
         #region Animations
 
-        private void animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
+        private void Animate(FrameworkElement element, Thickness from, Thickness to, double time = 0.2)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.Margin(element, from, to, time);
         }
 
-        private void animateOpen(FrameworkElement element, double time = 0.13)
+        private void AnimateOpen(FrameworkElement element, double time = 0.13)
         {
             Utils.Animation.FadeIn(BackDrop, time);
             Utils.Animation.FadeIn(element, time);
         }
-        private void animateClose(FrameworkElement element, double time = 0.13)
+        private void AnimateClose(FrameworkElement element, double time = 0.13)
         {
             Utils.Animation.FadeOut(BackDrop, time);
             Utils.Animation.FadeOut(element, time);
