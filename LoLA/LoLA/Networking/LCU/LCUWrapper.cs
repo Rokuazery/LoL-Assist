@@ -99,7 +99,7 @@ namespace LoLA.Networking.LCU
 
             try
             {
-                string phase = (await getDataRequestAsync(RequestMethod.GET, "/lol-gameflow/v1/gameflow-phase"))?.Trim('"');
+                string phase = (await GetDataRequestAsync(RequestMethod.GET, "/lol-gameflow/v1/gameflow-phase"))?.Trim('"');
                 return (Phase)Enum.Parse(typeof(Phase), phase);
             } catch { return Phase.None; }
         }
@@ -109,7 +109,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            string result = await getDataRequestAsync(RequestMethod.GET, "/lol-perks/v1/pages");
+            string result = await GetDataRequestAsync(RequestMethod.GET, "/lol-perks/v1/pages");
             return await Objects.JsonConverter.JsonToRunePagesAsync(result);
         }
 
@@ -118,7 +118,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            string result = await getDataRequestAsync(RequestMethod.GET, "/lol-perks/v1/currentpage");
+            string result = await GetDataRequestAsync(RequestMethod.GET, "/lol-perks/v1/currentpage");
             return await Objects.JsonConverter.JsonToRunePageAsync(result);
         }
 
@@ -128,15 +128,15 @@ namespace LoLA.Networking.LCU
                 return false;
 
             byte[] data = Encoding.UTF8.GetBytes(await Objects.JsonConverter.RunePageToJsonAsync(pageJson));
-            return await sendDataRequestAsync(RequestMethod.POST, "/lol-perks/v1/pages", data);
+            return await SendDataRequestAsync(RequestMethod.POST, "/lol-perks/v1/pages", data);
         }
 
         public static async Task<bool> DeleteRunePageAsync(ulong id) 
-            => await getResponseRequestAsync(RequestMethod.DELETE, $"/lol-perks/v1/pages/{id}");
+            => await GetResponseRequestAsync(RequestMethod.DELETE, $"/lol-perks/v1/pages/{id}");
         public static async Task<bool> AcceptMatchmakingAsync() 
-            => await getResponseRequestAsync(RequestMethod.POST, "/lol-matchmaking/v1/ready-check/accept");
+            => await GetResponseRequestAsync(RequestMethod.POST, "/lol-matchmaking/v1/ready-check/accept");
         public static async Task<bool> DeclineMatchmakingAsync() 
-            => await getResponseRequestAsync(RequestMethod.POST, "/lol-matchmaking/v1/ready-check/decline");
+            => await GetResponseRequestAsync(RequestMethod.POST, "/lol-matchmaking/v1/ready-check/decline");
 
         public static async Task<SessionData> GetSessionDataAsync()
         {
@@ -147,7 +147,7 @@ namespace LoLA.Networking.LCU
             sessionData.GameMode = await GetCurrentGameModeAsync();
             try
             {
-                var json = await getDataRequestAsync(RequestMethod.GET, "/lol-gameflow/v1/session");
+                var json = await GetDataRequestAsync(RequestMethod.GET, "/lol-gameflow/v1/session");
                 var session = JObject.Parse(json);
                 var gameDataPath = session["gameData"];
                 var queuePath = gameDataPath["queue"];
@@ -169,7 +169,7 @@ namespace LoLA.Networking.LCU
 
             try
             {
-                var json = await getDataRequestAsync(RequestMethod.GET, "/lol-lobby/v2/lobby");
+                var json = await GetDataRequestAsync(RequestMethod.GET, "/lol-lobby/v2/lobby");
 
                 var obj = JObject.Parse(json);
                 var gameConfig = obj["gameConfig"] as JObject;
@@ -183,7 +183,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            return await getDataRequestAsync(RequestMethod.GET, "/lol-champ-select-legacy/v1/current-champion");
+            return await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select-legacy/v1/current-champion");
         }
 
         public static async Task<string> GetCurrentChampionAsyncV2()
@@ -191,7 +191,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return string.Empty;
 
-            string json = await getDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/skin-selector-info");
+            string json = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/skin-selector-info");
 
             try
             {
@@ -206,7 +206,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            string result = await getDataRequestAsync(RequestMethod.GET, "/lol-summoner/v1/current-summoner");
+            string result = await GetDataRequestAsync(RequestMethod.GET, "/lol-summoner/v1/current-summoner");
 
             if (!string.IsNullOrEmpty(result))
                 return await Objects.JsonConverter.JsonToSummonerAsync(result);
@@ -219,7 +219,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            var currentSessionJson = await getDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
+            var currentSessionJson = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
 
             return JsonConvert.DeserializeObject<JObject>(currentSessionJson);;
         }
@@ -231,7 +231,7 @@ namespace LoLA.Networking.LCU
 
             if (await GetGamePhaseAsync() == Phase.ReadyCheck)
             {
-                string json = await getDataRequestAsync(RequestMethod.GET, "/lol-matchmaking/v1/ready-check");
+                string json = await GetDataRequestAsync(RequestMethod.GET, "/lol-matchmaking/v1/ready-check");
                 return JsonConvert.DeserializeObject<Matchmaking>(json);
             }
             return null;
@@ -251,7 +251,7 @@ namespace LoLA.Networking.LCU
             string urlRequest = isAramOrUrf ? mySelection0 : mySelection1;
 
             byte[] data = Encoding.UTF8.GetBytes(json);
-            return await sendDataRequestAsync(RequestMethod.PATCH, urlRequest, data);
+            return await SendDataRequestAsync(RequestMethod.PATCH, urlRequest, data);
         }
 
         public static async Task<string[]> GetCurrentSpellsAsync()
@@ -274,7 +274,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            var json = await getDataRequestAsync(RequestMethod.GET, $"/lol-chat/v1/conversations{id}/messages");
+            var json = await GetDataRequestAsync(RequestMethod.GET, $"/lol-chat/v1/conversations{id}/messages");
             return json != null ? JArray.Parse(json) : null;
         }
 
@@ -283,7 +283,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            var json = await getDataRequestAsync(RequestMethod.GET, "/lol-chat/v1/conversations");
+            var json = await GetDataRequestAsync(RequestMethod.GET, "/lol-chat/v1/conversations");
             return json != null ? JArray.Parse(json) : null;
         }
 
@@ -296,7 +296,7 @@ namespace LoLA.Networking.LCU
                     var conversationId = conversation["id"].ToString();
 
                     var body = Encoding.UTF8.GetBytes("{\"body\":\"" + message + "\"}");
-                    await sendDataRequestAsync(RequestMethod.POST, $"/lol-chat/v1/conversations/{conversationId}/messages", body);
+                    await SendDataRequestAsync(RequestMethod.POST, $"/lol-chat/v1/conversations/{conversationId}/messages", body);
                 }
             }
         }
@@ -304,7 +304,7 @@ namespace LoLA.Networking.LCU
 
         #region Request
 
-        private static  HttpWebRequest createRequest(RequestMethod requestMethod, string url)
+        private static  HttpWebRequest CreateRequest(RequestMethod requestMethod, string url)
         {
             HttpWebRequest request = _webRequestEx.CreateRequest(url);
             request.Method = requestMethod.ToString().ToUpper();
@@ -312,11 +312,11 @@ namespace LoLA.Networking.LCU
             return request;
         }
 
-        private static async Task<bool> sendDataRequestAsync(RequestMethod requestMethod, string url, byte[] data = null)
+        private static async Task<bool> SendDataRequestAsync(RequestMethod requestMethod, string url, byte[] data = null)
         {
             try
             {
-                var request = createRequest(requestMethod, url);
+                var request = CreateRequest(requestMethod, url);
 
                 Stream newStream = request.GetRequestStream();
                 newStream.Write(data, 0, data.Length);
@@ -331,14 +331,16 @@ namespace LoLA.Networking.LCU
             catch { return false; }
         }
 
-        private static async Task<bool> getResponseRequestAsync(RequestMethod requestMethod, string url)
+        private static async Task<bool> GetResponseRequestAsync(RequestMethod requestMethod, string url)
         {
             if (!await InitAsync())
                 return false;
 
             try
             {
-                var request = createRequest(requestMethod, url);
+                var request = CreateRequest(requestMethod, url);
+
+                if (request == null) return false;
 
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
 
@@ -357,11 +359,13 @@ namespace LoLA.Networking.LCU
             }
             catch { return false; }
         }
-        private static async Task<string> getDataRequestAsync(RequestMethod requestMethod, string url)
+        private static async Task<string> GetDataRequestAsync(RequestMethod requestMethod, string url)
         {
             try
             {
-                var request = createRequest(requestMethod, url);
+                var request = CreateRequest(requestMethod, url);
+
+                if (request == null) return null;
 
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                 return Misc.ReadStream(response.GetResponseStream());

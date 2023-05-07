@@ -1,5 +1,6 @@
-﻿using LoLA.Networking.WebWrapper.DataProviders.METAsrc;
-using LoLA.Networking.WebWrapper.DataProviders.UGG;
+﻿//using LoLA.Networking.WebWrapper.DataProviders.METAsrc;
+//using LoLA.Networking.WebWrapper.DataProviders.UGG;
+using LoLA.Networking.WebWrapper.DataProviders;
 using LoLA.Networking.WebWrapper.DataDragon;
 using static LoLA.Utils.Logger.LogService;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ using LoLA.Data.Enums;
 using System.IO;
 using LoLA.Data;
 using System;
+using LoLA.Networking.WebWrapper.DataProviders.METAsrc;
+using LoLA.Networking.WebWrapper.DataProviders.UGG;
 
 namespace LoLA
 {
@@ -37,7 +40,8 @@ namespace LoLA
 
         public static async Task<ChampionBuild> RequestBuildsData(string championId, GameMode gameMode, Provider provider, Role role = Role.RECOMENDED, int index = 0)
         {
-            ChampionBuild championBuild = new ChampionBuild();
+            ChampionBuild championBuild;
+            IDataProvider dataProvider= null;
 
             switch (provider)
             {
@@ -46,17 +50,18 @@ namespace LoLA
                     championBuild = LocalBuild.FetchData(championId, Path.GetFileNameWithoutExtension(buildName), gameMode);
                     break;
                 case Provider.METAsrc:
-                    championBuild = await MetasrcWrapper.FetchDataAsync(championId, gameMode, role);
+                    dataProvider = new MetasrcWrapper();
                     break;
                 case Provider.UGG:
                     if(gameMode == GameMode.CLASSIC || gameMode == GameMode.PRACTICETOOL || gameMode == GameMode.ARAM)
-                        championBuild = await UGGWrapper.FetchDataAsync(championId, gameMode, role, index);
-                    else
-                        championBuild = await MetasrcWrapper.FetchDataAsync(championId, gameMode, role);
+                        dataProvider = new UGGWrapper();
+                    else dataProvider = new MetasrcWrapper();
                     break;
                 case Provider.Mobafire:
                     break;
             }
+
+            championBuild = await dataProvider?.FetchDataAsync(championId, gameMode, role);
             return championBuild;
         }
 

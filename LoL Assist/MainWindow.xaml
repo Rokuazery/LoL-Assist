@@ -172,17 +172,17 @@
                     </Grid>
 
                     <ComboBox ItemsSource="{Binding Path=Roles}" Visibility="{Binding Path=RoleSelectVisibility}" HorizontalAlignment="Left" VerticalAlignment="Top" ItemContainerStyle="{DynamicResource FlatItemContainerStyle}" 
-                    Style="{DynamicResource FlatComboboxStyle}" Width="135" SelectedItem="{Binding Path=SelectedRole, UpdateSourceTrigger=PropertyChanged}" Margin="-5,10,0,0" >
+                    Style="{DynamicResource FlatComboboxStyle}" Width="135" SelectedItem="{Binding Path=SelectedRole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="-5,10,0,0" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel>
                                     <Border CornerRadius="5" Width="18" Height="18" Margin="0,0,5,0" VerticalAlignment="Center">
                                         <Border.Background>
-                                            <ImageBrush ImageSource="{Binding Image}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                            <ImageBrush ImageSource="{Binding Path=., Converter={StaticResource RoleImageConverter}}" RenderOptions.BitmapScalingMode="HighQuality"/>
                                         </Border.Background>
                                     </Border>
 
-                                    <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Text}" Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" Margin="0,0,0,1"/>
+                                    <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="{Binding Path=.}" Foreground="{DynamicResource FontPrimaryBrush}" FontSize="11" Margin="0,0,0,1"/>
                                 </DockPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>

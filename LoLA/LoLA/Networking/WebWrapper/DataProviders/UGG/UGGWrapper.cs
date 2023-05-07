@@ -17,7 +17,7 @@ using System;
 
 namespace LoLA.Networking.WebWrapper.DataProviders.UGG
 {
-    public static class UGGWrapper
+    public class UGGWrapper: IDataProvider
     {
         private const string UGG_API_VERSION = "1.5";
         private const string UGG_OVERVIEW_VERSION = "1.5.0";
@@ -26,10 +26,10 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
         private const int OVERVIEW_WORLD = 12;
         private const int OVERVIEW_PLATINUM_PLUS = 10;
 
-        private static string getCurrentPatch()
+        private string GetCurrentPatch()
             => GetPatchMM().Replace('.', '_');
 
-        private static string getOverviewUrl(string championKey, GameMode gameMode)
+        private string GetOverviewUrl(string championKey, GameMode gameMode)
         {
             string gameModeUrlPath = string.Empty;
 
@@ -44,7 +44,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                     break;  
             }
 
-            var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{getCurrentPatch()}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
+            var apiUrl = $"{Protocol.HTTPS}{UGG_API_URL}{UGG_API_VERSION}/overview/{GetCurrentPatch()}/{gameModeUrlPath}/{championKey}/{UGG_OVERVIEW_VERSION}.json";
 
             #if DEBUG
             Log(apiUrl, LogType.DBUG);
@@ -52,7 +52,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return apiUrl;
         }
 
-        public static async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED, int index = -1)
+        public async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED)
         {
             ChampionBuild championBuild = new ChampionBuild();
             var championData = s_Champions.Data[championId]; 
@@ -96,9 +96,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return championBuild;
         }
 
-        public static async Task<JObject> GetChampionDataAsync(string championKey, GameMode gm)
+        public async Task<JObject> GetChampionDataAsync(string championKey, GameMode gm)
         {
-            var rawDataObject = await WebEx.DlDe<JObject>(getOverviewUrl(championKey, gm));
+            var rawDataObject = await WebEx.DlDe<JObject>(GetOverviewUrl(championKey, gm));
             if (gm != GameMode.ARAM)
             {
                 var championJObject = (JObject)rawDataObject[OVERVIEW_WORLD.ToString()][OVERVIEW_PLATINUM_PLUS.ToString()];
@@ -107,7 +107,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return rawDataObject;
         }
 
-        public static Role[] GetPossibleRoles(JObject jObject)
+        public Role[] GetPossibleRoles(JObject jObject)
         {
             JToken championData = jObject;
             int totalGames = championData.Sum(o => ((JProperty)o).Value[0][0][0].ToObject<int>());
@@ -120,7 +120,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 .ToArray();
         }
 
-        public static List<Rune> GetRunes(string championName, GameMode gm, Role role, JObject championData)
+        public List<Rune> GetRunes(string championName, GameMode gm, Role role, JObject championData)
         {
             Log("Loading in runes", LogType.INFO);
             List<Rune> runes = new List<Rune>();
@@ -133,7 +133,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                     role = GetPossibleRoles(championData)[0];
 
                 var root = championData[((int)role).ToString()].First();
-                var rune = filterRune(root, $"U.GG: {championName} {(roleTemp != Role.RECOMENDED ? $"[{role}]" : string.Empty)}");
+                var rune = FilterRune(root, $"U.GG: {championName} {(roleTemp != Role.RECOMENDED ? $"[{role}]" : string.Empty)}");
                 runes.Add(rune);
             }
             else
@@ -147,7 +147,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 foreach (var token in tokens)
                 {
                     var root = token.First();
-                    var runeTemp = filterRune(root, $"U.GG: {championName} ARAM[{runeIndex}]");
+                    var runeTemp = FilterRune(root, $"U.GG: {championName} ARAM[{runeIndex}]");
 
                     runes.Add(runeTemp);
                     runeIndex++;
@@ -162,7 +162,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             return runes;
         }
 
-        private static Rune filterRune(JToken root, string runeName)
+        private static Rune FilterRune(JToken root, string runeName)
         {
             Log("Filtering rune...", LogType.INFO);
             try
@@ -257,7 +257,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             }
         }
 
-        public static  List<Spell> GetSpellCombos(GameMode gm, Role role, JObject championData)
+        public List<Spell> GetSpellCombos(GameMode gm, Role role, JObject championData)
         {
             Log("Loading in spell combo", LogType.INFO);
             List<Spell> spells = new List<Spell>();
@@ -269,9 +269,11 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 var root = championData[((int)role).ToString()].First();
                 var spellRoots = root[1][2];
 
-                var spellTemp = new Spell();
-                spellTemp.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
-                spellTemp.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
+                var spellTemp = new Spell
+                {
+                    First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>()),
+                    Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>())
+                };
                 spells.Add(spellTemp);
             }
             else

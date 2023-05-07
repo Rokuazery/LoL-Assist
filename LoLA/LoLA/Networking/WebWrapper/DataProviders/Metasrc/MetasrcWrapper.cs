@@ -18,9 +18,9 @@ using System;
 
 namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
 {
-    public static class MetasrcWrapper
+    public class MetasrcWrapper: IDataProvider
     {
-        public static async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED)
+        public async Task<ChampionBuild> FetchDataAsync(string championId, GameMode gameMode, Role role = Role.RECOMENDED)
         {
             ChampionBuild championBuild = new ChampionBuild();
             var championData = s_Champions.Data[championId];
@@ -44,16 +44,14 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     var document = new HtmlDocument();
                     document.LoadHtml(html);
 
-                    var runeTasks = GetRunesAsync(championData.id, championData.name, gameMode, role, document);
-                    var spellTasks = GetSpellCombosAsync(championData.id, gameMode, role, document);
-
-                    await Task.WhenAll(runeTasks, spellTasks);
+                    var runes = GetRunes(championData.id, championData.name, gameMode, role, document);
+                    var spells = GetSpellCombos(championData.id, gameMode, role, document);
 
                     championBuild.Id = championData.id;
                     championBuild.Name = championData.name;
 
-                    championBuild.Runes = await runeTasks;
-                    championBuild.Spells = await spellTasks;
+                    championBuild.Runes = runes;
+                    championBuild.Spells = spells;
 
                     jsonContent = JsonConvert.SerializeObject(championBuild);
 
@@ -74,27 +72,24 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             return championBuild;
         }
 
-        public static async Task<List<Rune>> GetRunesAsync(string championId, string championName, GameMode gameMode, Role role,HtmlDocument document)
+        public List<Rune> GetRunes(string championId, string championName, GameMode gameMode, Role role,HtmlDocument document)
         {
             List<Rune> runes = new List<Rune>();
-            HtmlNodeCollection runeToolTips = null;
             HtmlDocument runeContainerHtml = new HtmlDocument();
 
             try
             {
                 Log("Loading in runes...", LogType.INFO);
-                await Task.Run(() => {
-                    var runeContainer = document.DocumentNode.SelectSingleNode($"//div[@id='{MetasrcClass.s_Key.Perks}']");
-                    //Console.WriteLine(runeContainer.InnerHtml); // Debug
+                var runeContainer = document.DocumentNode.SelectSingleNode($"//div[@id='{MetasrcClass.s_Key.Perks}']");
+                //Console.WriteLine(runeContainer.InnerHtml); // Debug
 
-                    if (runeContainer == null) throw new Exception("Rune container not found!");
+                if (runeContainer == null) throw new Exception("Rune container not found!");
 
-                    runeContainerHtml.LoadHtml(runeContainer.InnerHtml);
-                    if (string.IsNullOrEmpty(runeContainerHtml.DocumentNode.InnerHtml))
-                        File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
+                runeContainerHtml.LoadHtml(runeContainer.InnerHtml);
+                if (string.IsNullOrEmpty(runeContainerHtml.DocumentNode.InnerHtml))
+                    File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
 
-                    runeToolTips = runeContainerHtml.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.TipRB}']");
-                });
+                HtmlNodeCollection runeToolTips = runeContainerHtml.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.TipRB}']");
 
                 if (runeToolTips.Count == 0) throw new Exception("Rune tooltip class not found");
 
@@ -133,38 +128,37 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
             return runes;
         }
 
-        public static async Task<List<Spell>> GetSpellCombosAsync(string championId, GameMode gameMode, Role role, HtmlDocument document)
+        public List<Spell> GetSpellCombos(string championId, GameMode gameMode, Role role, HtmlDocument document)
         {
             List<Spell> spells = new List<Spell>();
             HtmlDocument spellContainerHtml = new HtmlDocument();
-            await Task.Run(() => {
-                try
-                {
-                    Log("Loading in spell combo...", LogType.INFO);
-                    var spellContainer = document.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.Spells}']")[MetasrcClass.s_Key.IndexSP];
+            try
+            {
+                Log("Loading in spell combo...", LogType.INFO);
+                var spellContainer = document.DocumentNode.SelectNodes($"//div[@class='{MetasrcClass.s_Key.Spells}']")[MetasrcClass.s_Key.IndexSP];
 
-                    if (spellContainer == null || string.IsNullOrEmpty(spellContainer.InnerHtml))
-                        File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
-                    spellContainerHtml.LoadHtml(spellContainer.InnerHtml);
-
-                    var spellsImage = spellContainerHtml.DocumentNode.SelectNodes($"//img[@class='{MetasrcClass.s_Key.ImgSP}']");
-
-                    var spell = new Spell();
-
-                    spell.First = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.FirstSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
-                    spell.Second = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.SecondSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"));
-                    spells.Add(spell);
-                }
-                catch
-                {
-                    Log("Failed to get spell combo", LogType.EROR);
+                if (spellContainer == null || string.IsNullOrEmpty(spellContainer.InnerHtml))
                     File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
-                }
-            });
+                spellContainerHtml.LoadHtml(spellContainer.InnerHtml);
+
+                var spellsImage = spellContainerHtml.DocumentNode.SelectNodes($"//img[@class='{MetasrcClass.s_Key.ImgSP}']");
+
+                var spell = new Spell {
+                    First = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.FirstSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value")),
+                    Second = Path.GetFileNameWithoutExtension(spellsImage[MetasrcClass.s_Key.SecondSP].GetAttributeValue(MetasrcClass.s_Key.SrcSP, "value"))
+                };
+
+                spells.Add(spell);
+            }
+            catch
+            {
+                Log("Failed to get spell combo", LogType.EROR);
+                File.Delete(DataPath(championId, gameMode, role, Provider.METAsrc));
+            }
             return spells;
         }
 
-        public static async Task<string> GetHtmlAsync(string championId, GameMode gameMode, Role role)
+        public async Task<string> GetHtmlAsync(string championId, GameMode gameMode, Role role)
         {
             try
             {

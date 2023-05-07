@@ -22,6 +22,7 @@ using System.Linq;
 using LoLA.Data;
 using System;
 using LoLA;
+using System.Collections.ObjectModel;
 
 namespace LoL_Assist_WAPP.ViewModels
 {
@@ -155,8 +156,8 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private List<ItemImageModel> _roles;
-        public List<ItemImageModel> Roles
+        private ObservableCollection<Role> _roles;
+        public ObservableCollection<Role> Roles
         {
             get => _roles;
             set
@@ -169,8 +170,8 @@ namespace LoL_Assist_WAPP.ViewModels
             }
         }
 
-        private ItemImageModel _selectedRole;
-        public ItemImageModel SelectedRole
+        private Role _selectedRole;
+        public Role SelectedRole
         {
             get => _selectedRole;
             set
@@ -365,9 +366,9 @@ namespace LoL_Assist_WAPP.ViewModels
         }
         #endregion
 
-        private bool isBusy = false;
-        private SessionData currentSessionData = new SessionData();
-        private readonly StringBuilder warningStringBuilder = new StringBuilder();
+        private bool IsBusy = false;
+        private SessionData CurrentSessionData = new SessionData();
+        private readonly StringBuilder WarningStringBuilder = new StringBuilder();
 
         private const string PROCESS_NAME = "LeagueClient";
         private const string CONNECTING = "Connecting";
@@ -376,18 +377,19 @@ namespace LoL_Assist_WAPP.ViewModels
         private string getCurrentTime { get => $"[{DateTime.Now:hh:mm:ss}]"; }
 
         public MainViewModel()
-        { 
-            GMode = currentSessionData.GameMode;
-            DebugCommand = new Command(_ => { DebugExecute(); });
-            ManualImportCommand = new Command(_ => { ReImport(); });
-            ShutdownAppCommand = new Command(_ => { ShutdownAppExecute(); });
-            ShowEditRunesPanelCommand = new Command(_ => { ShowRuneEditorPanel(); });
-            ShowDownloadPanelCommand = new Command(_ => { SetTopMostContent(new DownloadViewModel()); });
-            ShowAutoMessagePanelCommand = new Command(_ => { SetTopMostContent(new MessageViewModel()); });
+        {
+            SelectedRole = Role.RECOMENDED;
+            GMode = CurrentSessionData.GameMode;
+            DebugCommand = new Command(_ => DebugExecute());
+            ManualImportCommand = new Command(_ => ReImport());
+            ShutdownAppCommand = new Command(_ => ShutdownAppExecute());
+            ShowEditRunesPanelCommand = new Command(_ => ShowRuneEditorPanel());
+            ShowDownloadPanelCommand = new Command(_ => SetTopMostContent(new DownloadViewModel()));
+            ShowAutoMessagePanelCommand = new Command(_ => SetTopMostContent(new MessageViewModel()));
             MoveWindowCommand = new Command(_ => { Application.Current.MainWindow.DragMove(); });
 
-            MinimizeToTrayCommand = new Command(_ => { MinimizeToTray(); });
-            MinimizeWindowCommand = new Command(_ => { Application.Current.MainWindow.WindowState = WindowState.Minimized; });
+            MinimizeToTrayCommand = new Command(_ => MinimizeToTray());
+            MinimizeWindowCommand = new Command(_ => Application.Current.MainWindow.WindowState = WindowState.Minimized);
 
             InitTrayIcon();
 
@@ -397,9 +399,7 @@ namespace LoL_Assist_WAPP.ViewModels
             WorkingStatus = "Loading in configuration...";
             ConfigModel.LoadConfig();
 
-           var roles = Enum.GetValues(typeof(Role)).Cast<Role>();
-
-            Roles = new List<ItemImageModel>();
+            Roles = new ObservableCollection<Role>(Enum.GetValues(typeof(Role)).Cast<Role>());
 
             Providers = new List<ItemImageModel>() {
               ItemImage("METAsrc.com", ImageSrc("metasrc")),
@@ -408,15 +408,6 @@ namespace LoL_Assist_WAPP.ViewModels
 
             var provider = Converters.ProviderConverter.ToName(ConfigModel.s_Config.Provider);
             SelectedProvider = Providers.FirstOrDefault(p => p.Text.Equals(provider));
-
-            foreach (var role in roles)
-            {
-                var image = role == Role.RECOMENDED ? 
-                $"{ConfigModel.RESOURCE_PATH}Fill.png" :
-                $"{ConfigModel.RESOURCE_PATH}{role.ToString().Replace("BOTTOM", "adc")}.png";
-
-                Roles.Add(ItemImage(role.ToString(), image));
-            }
 
             InitLoLA();
         }
@@ -444,7 +435,6 @@ namespace LoL_Assist_WAPP.ViewModels
             s_PhaseMonitor.MonitorDelay = ConfigModel.s_Config.UpdateDelay;
             s_PhaseMonitor.PhaseChanged += PhaseChanged;
             ResetStatus();
-            //setTopMostContent(new ChampionPickerViewModel());
         }
 
         private async void ImportBuilds(string championName, bool forceRuneUpdate = false)
@@ -456,23 +446,17 @@ namespace LoL_Assist_WAPP.ViewModels
 
             ClearChamp(false);
 
-            while (isBusy)
+            while (IsBusy)
                 Thread.Sleep(ConfigModel.s_Config.UpdateDelay);
 
-            isBusy = true;
-            var isError = new List<bool>();
+            IsBusy = true;
             int ReplaceMeINT1 = 0;
             int ReplaceMeINT2 = 0;
             Stopwatch sw = Stopwatch.StartNew();
             ChampionName = championName;
             try
             {
-                var currentRole = Role.RECOMENDED;
-                var gameMode = currentSessionData.GameMode;
-
-                if (gameMode.Equals(GameMode.CLASSIC) || gameMode.Equals(GameMode.PRACTICETOOL))
-                    currentRole = (Role)(!string.IsNullOrEmpty(SelectedRole.Text) ? Enum.Parse(typeof(Role), SelectedRole.Text) : currentRole);
-
+                var gameMode = CurrentSessionData.GameMode;
                 var currentChampionId = Converter.ChampionNameToId(championName);
                 var defaultConfigName = LocalBuild.GetLocalBuildName(currentChampionId, gameMode);
 
@@ -487,11 +471,17 @@ namespace LoL_Assist_WAPP.ViewModels
                 Task<string> championImageTask;
 
                 Task[] tasks = new Task[] {
-                    (championBuildTask = Main.RequestBuildsData(currentChampionId, gameMode, provider, currentRole, SelectedBuildIndex)),
+                    (championBuildTask = Main.RequestBuildsData(currentChampionId, gameMode, provider, SelectedRole, SelectedBuildIndex)),
                     (championImageTask = DataDragonWrapper.GetChampionImage(currentChampionId))
                 };
 
-                await Task.WhenAll(tasks);
+                Parallel.ForEach(tasks, async task => await task);
+
+                for (int t = 0; t < tasks.Length; t++)
+                {
+                    if (tasks[t].Exception != null)
+                        SetWarning(t, true);
+                }
 
                 ChampionImage = championImageTask.Result;
 
@@ -501,18 +491,20 @@ namespace LoL_Assist_WAPP.ViewModels
                 var selectedRune = championBuild?.Runes[ReplaceMeINT1];
                 var selectedSpellCombo = championBuild?.Spells[ReplaceMeINT2];
 
-                //Console.WriteLine(runes[ReplaceMeINT1].Name);
-                //Console.WriteLine(runes[ReplaceMeINT1].PrimaryPath);
-                //Console.WriteLine(runes[ReplaceMeINT1].SecondaryPath);
-                //Console.WriteLine(runes[ReplaceMeINT1].Keystone);
-                //Console.WriteLine(runes[ReplaceMeINT1].Slot1);
-                //Console.WriteLine(runes[ReplaceMeINT1].Slot2);
-                //Console.WriteLine(runes[ReplaceMeINT1].Slot3);
-                //Console.WriteLine(runes[ReplaceMeINT1].Slot4);
-                //Console.WriteLine(runes[ReplaceMeINT1].Slot5);
-                //Console.WriteLine(runes[ReplaceMeINT1].Shard1);
-                //Console.WriteLine(runes[ReplaceMeINT1].Shard2);
-                //Console.WriteLine(runes[ReplaceMeINT1].Shard3);
+//#if DEBUG
+//                Console.WriteLine(runes[ReplaceMeINT1].Name);
+//                Console.WriteLine(runes[ReplaceMeINT1].PrimaryPath);
+//                Console.WriteLine(runes[ReplaceMeINT1].SecondaryPath);
+//                Console.WriteLine(runes[ReplaceMeINT1].Keystone);
+//                Console.WriteLine(runes[ReplaceMeINT1].Slot1);
+//                Console.WriteLine(runes[ReplaceMeINT1].Slot2);
+//                Console.WriteLine(runes[ReplaceMeINT1].Slot3);
+//                Console.WriteLine(runes[ReplaceMeINT1].Slot4);
+//                Console.WriteLine(runes[ReplaceMeINT1].Slot5);
+//                Console.WriteLine(runes[ReplaceMeINT1].Shard1);
+//                Console.WriteLine(runes[ReplaceMeINT1].Shard2);
+//                Console.WriteLine(runes[ReplaceMeINT1].Shard3);
+//#endif
 
                 if (championBuild != null)
                 {
@@ -526,58 +518,77 @@ namespace LoL_Assist_WAPP.ViewModels
 
                     await Task.WhenAll(importTasks);
 
-                    foreach (var task in importTasks)
-                        isError.Add(task.Exception != null);
+                    for (int t = 0; t < tasks.Length; t++)
+                    {
+                        if (tasks[t].Exception != null)
+                            SetWarning(ConfigModel.s_Config.AutoSpells && !ConfigModel.s_Config.AutoRunes ? 1 : t, false);
+                    }
 
                     currentPerks = null;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                WarningStatus = $"{getCurrentTime} Failed to import Runes & Spells.";
-                warningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Runes & Spells.");
-                SetImportStatus("Uh oh, LoL Assist failed to import Runes & Spells", LogType.EROR);
+                WarningStringBuilder.AppendLine($"{getCurrentTime} Unexcpected error: {ex.Message}");
+                WarningStatus = WarningStringBuilder.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                SetImportStatus($"Unexcpected error: {ex.Message}", LogType.EROR);
             }
             finally
             {
                 sw.Stop();
-
-                if (isError[0] && isError[1])
-                {
-                    warningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Runes.");
-                    warningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Spells.");
-                    SetImportStatus($"Uh Oh, something went wrong.\nTry deleting {FixedName(ChampionName)} data. It might fix the issues you're having.", LogType.EROR);
-                }
-                else if (isError[0])
-                {
-                    warningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Runes.");
-                    SetImportStatus($"Failed to import {FixedName(ChampionName)} Runes.", LogType.EROR);
-                }
-                else if (isError[1])
-                {
-                    warningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Spells.");
-                    SetImportStatus($"Failed to import {FixedName(ChampionName)} Spells.", LogType.EROR);
-                }
-                else
-                {
-                    SetImportStatus($"Runes & Spells have been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]");
-                }
-
-                WarningStatus = warningStringBuilder.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                IsBusy = false;
+                SetImportStatus($"Runes & Spells have been imported successfully! Elapsed [{sw.ElapsedMilliseconds}ms]");
             }
-            isBusy = false;
         }
+
+        private void SetWarning(int errorCode, bool isFetch)
+        {
+            if(isFetch)
+            {
+                switch (errorCode)
+                {
+                    case 0:
+                        WarningStringBuilder.AppendLine($"{getCurrentTime} Failed to fetch {FixedName(ChampionName)} Runes & Spells data.");
+                        break;
+                    case 1:
+                        WarningStringBuilder.AppendLine($"{getCurrentTime} Failed to fetch {FixedName(ChampionName)} image.");
+                        break;
+                    default:
+                        return;
+
+                }
+
+                WarningStatus = WarningStringBuilder.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                return;
+            }
+
+            switch (errorCode)
+            {
+                case 0:
+                    WarningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Runes.");
+                    break;
+                case 1:
+                    WarningStringBuilder.AppendLine($"{getCurrentTime} Failed to import {FixedName(ChampionName)} Spells.");
+                    break;
+                default:
+                    return;
+
+            }
+
+            WarningStatus = WarningStringBuilder.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+        }
+
 
         private async void PhaseChanged(object sender, PhaseMonitor.PhaseChangedArgs e)
         {
             Topmost = e.currentPhase == Phase.ChampSelect || e.currentPhase == Phase.ReadyCheck;
-            currentSessionData = await LCUWrapper.GetSessionDataAsync();
-            SetSessionDetail(currentSessionData);
+            CurrentSessionData = await LCUWrapper.GetSessionDataAsync();
+            SetSessionDetail(CurrentSessionData);
 
             if (e.currentPhase != Phase.InProgress)
             {
                 DispatcherInvoke(() => { // Needs to be invoke to fix delay issue
-                    GMode = currentSessionData.GameMode;
+                    GMode = CurrentSessionData.GameMode;
                     if (GMode == GameMode.CLASSIC
                     || GMode == GameMode.PRACTICETOOL)
                     {
@@ -592,6 +603,7 @@ namespace LoL_Assist_WAPP.ViewModels
             switch (e.currentPhase)
             {
                 case Phase.ChampSelect:
+                    SelectedRole = Role.RECOMENDED;
                     ExecuteAutoMessage();
                     DispatcherInvoke(() => {
                         ImportStatus = "Selecting a champion...";

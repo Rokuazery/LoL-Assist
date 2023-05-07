@@ -118,8 +118,9 @@
     <Compile Include="Networking\WebWrapper\DataDragon\Data\Perk.cs" />
     <Compile Include="Networking\WebWrapper\DataDragon\Data\RuneInfo.cs" />
     <Compile Include="Networking\WebWrapper\DataDragon\Data\SpellInfo.cs" />
-    <Compile Include="Networking\WebWrapper\DataProviders\Metasrc\MetasrcClass.cs" />
-    <Compile Include="Networking\WebWrapper\DataProviders\Metasrc\MetasrcWrapper.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\IDataProvider.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\METASrc\MetasrcClass.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\METASrc\MetasrcWrapper.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\UGG\UGGWrapper.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\Utils\Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

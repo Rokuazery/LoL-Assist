@@ -258,8 +258,7 @@ namespace LoL_Assist_WAPP.ViewModels
                 return;
             }
 
-            ShowMsgBox(new Action(() =>
-            {
+            ShowMsgBox(new Action(() => {
                 cancellationTokenSource.Cancel();
                 Utils.Animation.FadeOut(p as UserControl); }), 
             "A download is still in progress. Do you want to close the Download Panel and cancel the download?",

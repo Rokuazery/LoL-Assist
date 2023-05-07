@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>LoL_Assist_WAPP</RootNamespace>
     <AssemblyName>LoL Assist</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -67,9 +67,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LoLA, Version=2.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="LoLA, Version=2.0.0.5, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\LoLA\LoLA\bin\x64\Release\LoLA.dll</HintPath>
+      <HintPath>..\LoLA\LoLA\bin\x64\Debug\LoLA.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -104,6 +104,7 @@
     <Compile Include="Commands\ItemRemovedCommand.cs" />
     <Compile Include="Converters\ChampionToImageConverter.cs" />
     <Compile Include="Converters\EmptyToNoneConverter.cs" />
+    <Compile Include="Converters\RoleImageConverter.cs" />
     <Compile Include="Converters\NullToCollapseConverter.cs" />
     <Compile Include="Converters\NullToVisibleConverter.cs" />
     <Compile Include="Converters\RunePerkToolTipConverter.cs" />

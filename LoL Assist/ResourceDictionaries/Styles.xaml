@@ -19,6 +19,7 @@
     <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
     <converters:TextToForegroundConverter x:Key="TextToForegroundConverter"/>
     <converters:RunePerkToolTipConverter x:Key="RunePerkToolTipConverter"/>
+    <converters:RoleImageConverter x:Key="RoleImageConverter"/>
 
     <Style x:Key="FocusVisual">
         <Setter Property="Control.Template">

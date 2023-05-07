@@ -1,13 +1,12 @@
 ﻿using LoLA.Networking.LCU.Objects;
 using LoLA.Networking.LCU.Events;
-using System.Collections.Generic;
 using Converter = LoLA.Networking.WebWrapper.DataDragon.Data.Converter;
 using LoLA.Networking.LCU.Enums;
 using System.Threading.Tasks;
 using LoLA.Networking.LCU;
+using System.Linq;
 using LoLA.Data;
 using LoLA;
-using System.Linq;
 
 namespace LoL_Assist_WAPP.Models
 {
