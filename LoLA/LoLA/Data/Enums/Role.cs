@@ -12,7 +12,7 @@ namespace LoLA.Data.Enums
         TOP = 4,
         JUNGLE = 1,
         MID = 5,
-        BOTTOM = 3,
+        ADC = 3,
         SUPPORT = 2,
     }
 }

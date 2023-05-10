@@ -7,6 +7,7 @@ namespace LoLA.Data
         public string Name { get; set; }
         public string Id { get; set; }
         public string Role { get; set; } = "fill";
+        public ChampionSkill ChampionSkill { get; set; }
 
         public List<Rune> Runes = new List<Rune>();
         public List<Spell> Spells = new List<Spell>();

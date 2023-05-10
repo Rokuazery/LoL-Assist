@@ -8,7 +8,9 @@ namespace LoLA.Networking.LCU.Objects
     {
         #region Json to Object
         public static async Task<RunePage> JsonToRunePageAsync(string json)
-            => await Task.Run(() => JsonConvert.DeserializeObject<RunePage>(json));
+            => await Task.Run(() => {
+                return !string.IsNullOrEmpty(json) ? JsonConvert.DeserializeObject<RunePage>(json) : null;
+            });
 
         public static async Task<List<RunePage>> JsonToRunePagesAsync(string json)
             => await Task.Run(() => JsonConvert.DeserializeObject<List<RunePage>>(json));

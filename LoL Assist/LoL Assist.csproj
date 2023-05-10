@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0BD0D0DA-C57A-43F1-A986-0B92F2235045}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LoL_Assist_WAPP</RootNamespace>
     <AssemblyName>LoL Assist</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -104,6 +104,9 @@
     <Compile Include="Commands\ItemRemovedCommand.cs" />
     <Compile Include="Converters\ChampionToImageConverter.cs" />
     <Compile Include="Converters\EmptyToNoneConverter.cs" />
+    <Compile Include="Converters\ProviderToAvailabilityConverter.cs" />
+    <Compile Include="Converters\ProviderToImageConverter.cs" />
+    <Compile Include="Converters\ProviderToNameConverter.cs" />
     <Compile Include="Converters\RoleImageConverter.cs" />
     <Compile Include="Converters\NullToCollapseConverter.cs" />
     <Compile Include="Converters\NullToVisibleConverter.cs" />
@@ -147,6 +150,9 @@
     <Compile Include="Views\ChampionPickerPanel.xaml.cs">
       <DependentUpon>ChampionPickerPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChampionSkillView.xaml.cs">
+      <DependentUpon>ChampionSkillView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ConfigPanel.xaml.cs">
       <DependentUpon>ConfigPanel.xaml</DependentUpon>
     </Compile>
@@ -170,6 +176,12 @@
     </Compile>
     <Compile Include="Views\RuneEditorPanel.xaml.cs">
       <DependentUpon>RuneEditorPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RuneView.xaml.cs">
+      <DependentUpon>RuneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SpellView.xaml.cs">
+      <DependentUpon>SpellView.xaml</DependentUpon>
     </Compile>
     <Page Include="BuildEditorWindow.xaml">
       <SubType>Designer</SubType>
@@ -207,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ChampionSkillView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ConfigPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -236,6 +252,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RuneEditorPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RuneView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SpellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -803,6 +827,8 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\opgg.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -14,6 +14,7 @@ using System.Net;
 using System.IO;
 using LoLA.Data;
 using System;
+using System.Linq;
 
 namespace LoLA.Networking.LCU
 {
@@ -50,7 +51,7 @@ namespace LoLA.Networking.LCU
 
         private static WebRequestEx getAuth()
         {
-            string lolPath = LeagueClient.GetLocation();
+            var lolPath = LeagueClient.GetLocation();
             if (lolPath == null) return null;
 
             Dictionary<string, string> argsDict = getArguments(lolPath);
@@ -193,6 +194,7 @@ namespace LoLA.Networking.LCU
 
             string json = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/skin-selector-info");
 
+            //Console.ForegroundColor
             try
             {
                 JObject obj = JObject.Parse(json);
@@ -221,7 +223,9 @@ namespace LoLA.Networking.LCU
 
             var currentSessionJson = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
 
-            return JsonConvert.DeserializeObject<JObject>(currentSessionJson);;
+            if (string.IsNullOrEmpty(currentSessionJson)) return null;
+
+            return JsonConvert.DeserializeObject<JObject>(currentSessionJson);
         }
 
         public static async Task<Matchmaking> GetMatchmakingInfo()
@@ -254,20 +258,43 @@ namespace LoLA.Networking.LCU
             return await SendDataRequestAsync(RequestMethod.PATCH, urlRequest, data);
         }
 
-        public static async Task<string[]> GetCurrentSpellsAsync()
+        public static async Task<int> GetCurrentChampionIdAsync(ulong summonerId)
+        {
+            var currentSession = await GetCurrentSessionAsync();
+
+            if (currentSession != null)
+            {
+                var currentSummoner = currentSession["myTeam"].FirstOrDefault(t => (ulong)t["summonerId"] == summonerId);
+                if (currentSummoner == null) return 0;
+
+                return (int)currentSummoner["championId"];
+            }
+            return 0;
+        }
+
+        public static async Task<string[]> GetCurrentSpellsAsync(ulong summonerId)
         {
             var currentSession = await GetCurrentSessionAsync();
             string[] spells = new string[2];
 
             if (currentSession != null)
             {
-                var currentSummoner = currentSession["myTeam"][0];
-                spells[0] = DataConverter.SpellKeyToSpellName((int)currentSummoner["spell1Id"]);
-                spells[1] = DataConverter.SpellKeyToSpellName((int)currentSummoner["spell2Id"]);
+                var currentSummoner = currentSession["myTeam"].FirstOrDefault(t => (ulong)t["summonerId"] == summonerId);
+                spells[0] = DataConverter.SpellKeyToSpellName(currentSummoner["spell1Id"].ToObject<string>());
+                spells[1] = DataConverter.SpellKeyToSpellName(currentSummoner["spell2Id"].ToObject<string>());
                 return spells;
             }
             return null;
         }
+
+        //public static async Task<ulong> GetSummonerId()
+        //{
+        //    var summoner = await GetCurrentSummonerAsync();
+
+        //    if(summoner == null) return 0;
+
+        //    return summoner.summonerId;
+        //}
 
         public static async Task<JArray> GetMessagesAsync(string id)
         {

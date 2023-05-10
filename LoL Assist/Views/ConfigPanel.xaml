@@ -127,13 +127,13 @@
                             <Border Background="{DynamicResource bBrushPrimary}" Height="1" Margin="0,0,0,7"/>
 
                             <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="CreateDesktopIconBtn"
-                            Command="{Binding Path=CreateShortcutCommand}" Height="24" Content="Create desktop shortcut" Margin="0,0,0,5"/>
+                            Command="{Binding Path=CreateShortcutCommand}" Content="Create desktop shortcut" Margin="0,0,0,5"/>
 
                             <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="ShowFolderBtn"
-                            Command="{Binding Path=ShowFolderInExCommand}" Height="24" Content="Open cache folder" Margin="0,0,0,5"/>
+                            Command="{Binding Path=ShowFolderInExCommand}" Content="Open cache folder" Margin="0,0,0,5"/>
 
                             <Button Template="{DynamicResource FlatStyleButton}" Grid.Column="0" x:Name="clearCacheBtn"
-                            Click="clearCacheBtn_Click" Height="24"  Content="Clear cache" Margin="0,0,0,5"/>
+                            Click="clearCacheBtn_Click" Content="Clear cache" Margin="0,0,0,5"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
@@ -158,7 +158,7 @@
 
                 <DockPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,7,0">
                     <Button Template="{DynamicResource FlatStyleButton}" Margin="5,0,0,0" Grid.Column="0" x:Name="resetConfigBtn"
-                Click="ResetConfigBtn_Click" Width="90" Height="24" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset config"/>
+                Click="ResetConfigBtn_Click" Width="90" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Reset config"/>
                 </DockPanel>
             </Grid>
         </Grid>

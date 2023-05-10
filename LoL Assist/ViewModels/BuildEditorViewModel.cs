@@ -17,6 +17,7 @@ using LoLA.Data;
 using System.IO;
 using System;
 using LoLA;
+using LoLA.DataProviders;
 
 namespace LoL_Assist_WAPP.ViewModels
 {

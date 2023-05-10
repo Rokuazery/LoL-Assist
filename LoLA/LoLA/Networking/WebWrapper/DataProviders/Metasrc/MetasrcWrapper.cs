@@ -44,22 +44,21 @@ namespace LoLA.Networking.WebWrapper.DataProviders.METAsrc
                     var document = new HtmlDocument();
                     document.LoadHtml(html);
 
-                    var runes = GetRunes(championData.id, championData.name, gameMode, role, document);
-                    var spells = GetSpellCombos(championData.id, gameMode, role, document);
-
                     championBuild.Id = championData.id;
                     championBuild.Name = championData.name;
 
-                    championBuild.Runes = runes;
-                    championBuild.Spells = spells;
+                    championBuild.Runes = GetRunes(championData.id, championData.name, gameMode, role, document);
+                    championBuild.Spells = GetSpellCombos(championData.id, gameMode, role, document);
 
                     jsonContent = JsonConvert.SerializeObject(championBuild);
 
                     if (!File.Exists(filePath))
                         File.Create(filePath).Dispose();
 
-                    using var stream = new StreamWriter(filePath);
-                    stream.Write(jsonContent);
+                    using(var stream = new StreamWriter(filePath))
+                    {
+                        stream.Write(jsonContent);
+                    }
                 }
                 else
                 {

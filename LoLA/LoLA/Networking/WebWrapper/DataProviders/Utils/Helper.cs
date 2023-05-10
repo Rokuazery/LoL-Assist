@@ -12,6 +12,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.Utils
 {
     public static class Helper
     {
+        public static bool IsClassicGameMode(GameMode gameMode) =>
+             gameMode == GameMode.CLASSIC || gameMode == GameMode.PRACTICETOOL;
+
         public static bool IsBuildFileValid(string championId, GameMode gameMode, Role role, Provider provider)
         {
             Log("Checking for build file...", LogType.INFO);

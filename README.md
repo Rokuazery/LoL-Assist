@@ -11,7 +11,6 @@
 <a href="https://github.com/Rokuazery/LoL-Assist/network/members">
   <img src="https://img.shields.io/github/forks/rokuazery/lol-assist?color=blue&logo=github&style=for-the-badge">
 </a>
-
 <br>
 
 <a href="https://github.com/Rokuazery/LoL-Assist/releases/latest">
@@ -24,7 +23,7 @@
 </div>
 
 <p align="center" styles="word-wrap: break-word;">
-LoL Assist is a tool designed to help League of Legends players improve their gameplay by automatically importing popular or commonly used runes and spells for their champions from external sources like <a href="https://www.metasrc.com">METAsrc</a> and <a href="https://u.gg">U.GG</a>. The program features a simple user interface that makes it easy to use. Additionally, the program offers an auto-accept matchmaking feature, which allows players to accept matches without having to worry about missing out when the match found. Overall, LoL Assist is a helpful tool that can save players time and effort in selecting the right runes and spells for their champions, allowing them to focus on playing the game.
+LoL Assist is a tool designed to help League of Legends players improve their gameplay by automatically importing popular or commonly used runes and spells for their champions from external sources like <a href="https://www.metasrc.com">METAsrc</a>(ARAM, ARURF, URF, NORMAL), <a href="https://op.gg">OP.GG</a>(ARAM, URF, NORMAL) and <a href="https://u.gg">U.GG</a>(ARAM, NORMAL). The program features a simple user interface that makes it easy to use. Additionally, the program offers an auto-accept matchmaking feature, which allows players to accept matches without having to worry about missing out when the match found. Overall, LoL Assist is a helpful tool that can save players time and effort in selecting the right runes and spells for their champions, allowing them to focus on playing the game.
 </p>
 
 <p align="center" styles="word-wrap: break-word;">
@@ -50,7 +49,6 @@ You can get the latest release of LoL Assist by clicking the following link: <a 
 <p>
 Auto role detection for ranked ❌<br>
 Items importer ❌<br>
-Korean Builds? ❌<br>
 Customizable rune options ❌
 </p>
 </div>

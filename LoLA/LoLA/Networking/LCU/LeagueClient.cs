@@ -2,22 +2,29 @@
 using System.Linq;
 using System.IO;
 using System;
+using LoLA.Utils.Logger;
 
 namespace LoLA.Networking.LCU
 {
     public static class LeagueClient
     {
-        public const string PROCC_NAME = "LeagueClient";
+        public const string PROCC_NAME = "LeagueClientUx";
         public static string GetLocation()
         {
-            var process = Process.GetProcessesByName(PROCC_NAME);
-            if (process.Length > 0)
+            var processList = Process.GetProcessesByName(PROCC_NAME).ToList();  
+            if (processList != null && processList.Count > 0)
             {
+                var procc = processList.FirstOrDefault();
                 try
                 {
-                    var fullPath = process?.First()?.MainModule?.FileName;
-                    return Path.GetDirectoryName(fullPath);
-                } catch(NullReferenceException) {  }
+                    string fullPath = procc.MainModule?.FileName;
+                    return fullPath == null ? fullPath : Path.GetDirectoryName(fullPath);
+                }
+                catch (Exception ex)
+                {
+                    LogService.Log($"Error getting process module: {ex.Message}", LogType.DBUG);
+                    return null;
+                }
             }
             return null;
         }

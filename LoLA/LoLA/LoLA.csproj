@@ -84,10 +84,12 @@
     <Compile Include="Data\Enums\Role.cs" />
     <Compile Include="Data\ItemSet.cs" />
     <Compile Include="Data\Rune.cs" />
+    <Compile Include="Data\ChampionSkill.cs" />
     <Compile Include="Data\Spell.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="LibInfo.cs" />
-    <Compile Include="LocalBuild.cs" />
+    <Compile Include="Networking\LCU\Data\ItemSet.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\LocalBuild.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Networking\Extensions\WebClientEx.cs">
       <SubType>Component</SubType>
@@ -121,6 +123,10 @@
     <Compile Include="Networking\WebWrapper\DataProviders\IDataProvider.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\METASrc\MetasrcClass.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\METASrc\MetasrcWrapper.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGChampionData.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGRankedRoot.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGWrapper.cs" />
+    <Compile Include="Networking\WebWrapper\DataProviders\UGG\AramChampionData.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\UGG\UGGWrapper.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\Utils\Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

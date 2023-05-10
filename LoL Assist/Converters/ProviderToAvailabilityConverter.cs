@@ -1,5 +1,4 @@
-﻿using LoL_Assist_WAPP.Models;
-using LoLA.Data.Enums;
+﻿using LoLA.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,18 +9,22 @@ using System.Windows.Data;
 
 namespace LoL_Assist_WAPP.Converters
 {
-    public class RoleImageConverter : IValueConverter
+    public class ProviderToAvailabilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Enum)
+            var provider = (Provider)value;
+            switch (provider)
             {
-                var role = (Role)value;
-                if (role == Role.RECOMENDED) return $"{ConfigModel.RESOURCE_PATH}fill.png";
-                string roleName = Enum.GetName(typeof(Role), role);
-                return $"{ConfigModel.RESOURCE_PATH}{roleName}.png";
+                case Provider.UGG:
+                    return "NORMAL - ARAM";
+                case Provider.OPGG:
+                    return "NORMAL - ARAM - URF";
+                case Provider.METAsrc:
+                    return "NORMAL - ARAM - ARURF - URF";
+                case Provider.Local:
+                    return null;
             }
-
             return null;
         }
 

@@ -44,7 +44,7 @@ namespace LoLA.Networking.WebWrapper.DataDragon
             tasks.Add(championTasks = WebEx.DlDeAndSaveToFile<Champions>(championsWebModel));
             tasks.Add(perkTasks = WebEx.DlDeAndSaveToFile<List<Perk>>(perksWebModel));
 
-            Parallel.ForEach(tasks, async task => { await task; });
+            await Task.WhenAll(tasks);
 
             s_Champions = await championTasks;
             s_Perks = await perkTasks;

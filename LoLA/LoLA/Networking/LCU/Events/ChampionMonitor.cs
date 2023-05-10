@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using LoLA.Utils.Logger;
+using LoLA.Networking.WebWrapper.DataDragon.Data;
 
 namespace LoLA.Networking.LCU.Events
 {
@@ -29,22 +31,23 @@ namespace LoLA.Networking.LCU.Events
         public bool IsMonitoring { get; set; } = true;
         public int MonitorDelay { get; set; } = 300;
         private string LastChampion { get; set; }
+        public ulong SummonerId { get; set; }
 
         private async void championMonitor()
         {
             while (true)
             {
-                if (!IsMonitoring)
+                if (!IsMonitoring || SummonerId == 0)
                 {
                     Thread.Sleep(MonitorDelay * 2);
                     continue;
                 }
 
                 var phase = await LCUWrapper.GetGamePhaseAsync();
-                if (phase != Phase.InProgress)
+                if (phase == Phase.ChampSelect)
                 {
-                    var currentChampion = await LCUWrapper.GetCurrentChampionAsyncV2();
-
+                    var currentChampion = (await LCUWrapper.GetCurrentChampionIdAsync(SummonerId)).ToString();
+                    currentChampion = Converter.ChampionKeyToName(currentChampion);
                     if (LastChampion != currentChampion)
                     {
                         LastChampion = currentChampion;

@@ -6,7 +6,7 @@ using LoLA.Utils;
 using LoLA.Data;
 using System.IO;
 
-namespace LoLA
+namespace LoLA.DataProviders
 {
     public static class LocalBuild
     {

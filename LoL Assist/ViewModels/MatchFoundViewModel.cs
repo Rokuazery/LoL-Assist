@@ -143,7 +143,7 @@ namespace LoL_Assist_WAPP.ViewModels
 
                 TimeoutValue = timer * 10;
 
-                await Task.Delay(1000);
+                await Task.Delay(500);
             }
         }
 

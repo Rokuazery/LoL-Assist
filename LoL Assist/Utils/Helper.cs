@@ -6,6 +6,9 @@ using System.IO;
 using System;
 using LoLA;
 using System.Windows;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace LoL_Assist_WAPP.Utils
 {
@@ -67,5 +70,19 @@ namespace LoL_Assist_WAPP.Utils
         }
 
         #endregion
+
+        public static async Task WhenAllWithCancellation(IEnumerable<Task> tasks, CancellationToken cancellationToken)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+
+            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
+            {
+                var completedTask = await Task.WhenAny(Task.WhenAll(tasks), taskCompletionSource.Task);
+
+                await completedTask; // Propagate any exceptions
+
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
 {
     public class UGGWrapper: IDataProvider
     {
+        // Get available roles/positions here https://stats2.u.gg/lol/1.5/champion_ranking/world/13_9/ranked_solo_5x5/platinum_plus/1.5.0.json
         private const string UGG_API_VERSION = "1.5";
         private const string UGG_OVERVIEW_VERSION = "1.5.0";
         private const string UGG_API_URL = "stats2.u.gg/lol/";
@@ -59,6 +60,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             var jsonContent = string.Empty;
 
             var filePath = DataPath(championId, gameMode, role, Provider.UGG);
+
             if (IsBuildFileValid(championId, gameMode, role, Provider.UGG))
             {
                 Log($"Loading in {Misc.FixedName(championId)} build data from {Provider.UGG}...", LogType.INFO);
@@ -70,31 +72,36 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                 Log($"Downloading {Misc.FixedName(championId)} build data from {Provider.UGG}...", LogType.INFO);
                 var championJObject = await GetChampionDataAsync(championData.key, gameMode);
 
-                if (championJObject != null)
-                {
-                    championBuild.Id = championData.id;
-                    championBuild.Name = championData.name;
-                    championBuild.Runes = GetRunes(championData.name, gameMode, role, championJObject);
-                    championBuild.Spells = GetSpellCombos(gameMode, role, championJObject);
-
-                    jsonContent = JsonConvert.SerializeObject(championBuild);
-
-                    if (!File.Exists(filePath))
-                        File.Create(filePath).Dispose();
-
-                    using var stream = new StreamWriter(filePath);
-                    stream.Write(jsonContent);
-                }
-                else
+                if (championJObject == null)
                 {
                     Log("JObject [0] NULL", LogType.WARN);
                     return null;
+                }
+
+                role = role == Role.RECOMENDED && IsClassicGameMode(gameMode)
+                ? GetPossibleRoles(championJObject)[0] : role;
+
+                championBuild.Id = championData.id;
+                championBuild.Name = championData.name;
+                championBuild.Runes = GetRunes(championData.name, gameMode, role, championJObject);
+                championBuild.Spells = GetSpellCombos(gameMode, role, championJObject);
+                championBuild.ChampionSkill = GetSkillOrder(gameMode, role, championJObject);
+
+                jsonContent = JsonConvert.SerializeObject(championBuild);
+
+                if (!File.Exists(filePath))
+                    File.Create(filePath).Dispose();
+
+                using (var stream = new StreamWriter(filePath))
+                {
+                    stream.Write(jsonContent);
                 }
             }
 
             Log("Build data fetched successfully", LogType.INFO);
             return championBuild;
         }
+
 
         public async Task<JObject> GetChampionDataAsync(string championKey, GameMode gm)
         {
@@ -127,38 +134,33 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
 
             if (gm != GameMode.ARAM)
             {
-                var roleTemp = role;
-
-                if (role == Role.RECOMENDED)
-                    role = GetPossibleRoles(championData)[0];
-
-                var root = championData[((int)role).ToString()].First();
-                var rune = FilterRune(root, $"U.GG: {championName} {(roleTemp != Role.RECOMENDED ? $"[{role}]" : string.Empty)}");
-                runes.Add(rune);
+                var root = championData[((int)role).ToString()].FirstOrDefault();
+                var rune = FilterRune(root, $"U.GG: {championName} [{role}]");
+                runes.Add(rune); 
+                return runes;
             }
-            else
+
+            List<JToken> tokens = new List<JToken>();
+            foreach (var item in championData.Children())
+                item.ToList().ForEach(i => tokens.Add(i["8"]["6"]));
+
+            int runeIndex = 0;
+
+            foreach (var token in tokens)
             {
-                List<JToken> tokens = new List<JToken>();
-                foreach (var item in championData.Children())
-                    item.ToList().ForEach(i => tokens.Add(i["8"]["6"]));
+                var root = token.FirstOrDefault();
+                var runeTemp = FilterRune(root, $"U.GG: {championName} ARAM[{runeIndex}]");
 
-                int runeIndex = 0;
-
-                foreach (var token in tokens)
-                {
-                    var root = token.First();
-                    var runeTemp = FilterRune(root, $"U.GG: {championName} ARAM[{runeIndex}]");
-
-                    runes.Add(runeTemp);
-                    runeIndex++;
-                }
-
-                if (runes.Count == 0)
-                {
-                    Log("Runes [0] NULL", LogType.WARN);
-                    return null;
-                }
+                runes.Add(runeTemp);
+                runeIndex++;
             }
+
+            if (runes.Count == 0)
+            {
+                Log("Runes [0] NULL", LogType.WARN);
+                return null;
+            }
+
             return runes;
         }
 
@@ -252,7 +254,6 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             catch
             {
                 Log("Failed to filter rune", LogType.EROR);
-                Environment.Exit(0);
                 return null;
             }
         }
@@ -263,16 +264,13 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             List<Spell> spells = new List<Spell>();
             if (gm != GameMode.ARAM)
             {
-                if (role == Role.RECOMENDED)
-                    role = GetPossibleRoles(championData)[0];
-
-                var root = championData[((int)role).ToString()].First();
+                var root = championData[((int)role).ToString()].FirstOrDefault();
                 var spellRoots = root[1][2];
 
                 var spellTemp = new Spell
                 {
-                    First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>()),
-                    Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>())
+                    First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<string>()),
+                    Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<string>())
                 };
                 spells.Add(spellTemp);
             }
@@ -290,8 +288,8 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
                     var root = token.First();
                     var spellRoots = root[1][2];
 
-                    spellTemp.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<int>());
-                    spellTemp.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<int>());
+                    spellTemp.First = DataConverter.SpellKeyToSpellId(spellRoots[0].ToObject<string>());
+                    spellTemp.Second = DataConverter.SpellKeyToSpellId(spellRoots[1].ToObject<string>());
 
                     spells.Add(spellTemp);
                 }
@@ -304,6 +302,31 @@ namespace LoLA.Networking.WebWrapper.DataProviders.UGG
             }
 
             return spells;
+        }
+
+        public ChampionSkill GetSkillOrder(GameMode gm, Role role, JObject championData)
+        {
+            Log("Loading in skill order", LogType.INFO);
+            ChampionSkill championSkill = new ChampionSkill();
+
+            var root = gm != GameMode.ARAM ? championData[((int)role).ToString()].FirstOrDefault() : championData.Children().FirstOrDefault();
+            var champSkill = gm != GameMode.ARAM ? root[4] : root.FirstOrDefault()["8"]["6"][0][4];
+
+
+            var order = champSkill[2].Select(o => o.ToString()).ToArray();
+            championSkill.Order = new ChampSkill[order.Length];
+
+            for (int i = 0; i < order.Length; i++)
+            {
+                championSkill.Order[i] = new ChampSkill()
+                {
+                    Index = i + 1,
+                    Skill = order[i]
+                };
+            }
+           
+            championSkill.Priority = champSkill[3].ToString();
+            return championSkill;
         }
     }
 }

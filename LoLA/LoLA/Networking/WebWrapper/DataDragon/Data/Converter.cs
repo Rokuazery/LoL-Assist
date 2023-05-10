@@ -168,6 +168,7 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
         #region champion
         public static string ChampionIdToName(string championId)
         {
+            if (DataDragonWrapper.s_Champions.Data == null) return null;
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championId == data.id)
@@ -178,6 +179,8 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
 
         public static string ChampionNameToId(string championName)
         {
+            if (DataDragonWrapper.s_Champions.Data == null) return null;
+
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championName == data.name)
@@ -188,6 +191,8 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
 
         public static string ChampionKeyToId(string championKey)
         {
+            if (DataDragonWrapper.s_Champions.Data == null) return null;
+
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championKey == data.key)
@@ -198,6 +203,8 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
 
         public static string ChampionKeyToName(string championKey)
         {
+            if(DataDragonWrapper.s_Champions.Data == null) return null;
+
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championKey == data.key)
@@ -208,6 +215,8 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
 
         public static string ChampionNameToKey(string championName)
         {
+            if (DataDragonWrapper.s_Champions.Data == null) return null;
+
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championName == data.name)
@@ -218,6 +227,8 @@ namespace LoLA.Networking.WebWrapper.DataDragon.Data
 
         public static string ChampionIdToKey(string championId)
         {
+            if (DataDragonWrapper.s_Champions.Data == null) return null;
+
             foreach (var data in DataDragonWrapper.s_Champions.Data.Values)
             {
                 if (championId == data.id)

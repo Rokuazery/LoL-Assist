@@ -11,7 +11,7 @@ namespace LoL_Assist_WAPP.Models
     public static class ConfigModel
     {
         public static Config s_Config = new Config();
-        public static Provider s_CurrentProvider = Provider.METAsrc;
+        public static Provider s_CurrentProvider = Provider.OPGG;
         public static readonly Thickness r_MarginOpen = new Thickness(0, 0, 0, 0);
         public static readonly Thickness r_MarginClose = new Thickness(505, 0, 0, 0); // Main window width
         public static readonly string r_Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -109,7 +109,7 @@ namespace LoL_Assist_WAPP.Models
             #endregion
 
             #region Misc
-            private bool _logging = false;
+            private bool _logging = true;
             public bool Logging
             {
                 get => _logging;
@@ -165,7 +165,7 @@ namespace LoL_Assist_WAPP.Models
                 }
             }
            
-            public Provider Provider { get; set; } = Provider.METAsrc;
+            public Provider Provider { get; set; } = Provider.OPGG;
             #endregion
 
             #region AutoMessage

@@ -7,13 +7,14 @@ using LoLA.Networking.LCU;
 using System.Linq;
 using LoLA.Data;
 using LoLA;
+using System;
 
 namespace LoL_Assist_WAPP.Models
 {
     public class LoLAWrapper
     {
-        public static PhaseMonitor s_PhaseMonitor = new PhaseMonitor();
-        public static ChampionMonitor s_ChampMonitor = new ChampionMonitor();
+        public static PhaseMonitor s_PhaseMonitor;
+        public static ChampionMonitor s_ChampMonitor;
 
         public static async Task<bool> SetRuneAsync(Rune rune, RunePage CurrentRunePage, bool forceUpdate = false)
         {
@@ -38,7 +39,7 @@ namespace LoL_Assist_WAPP.Models
             return await LCUWrapper.AddRunePageAsync(newRunePage);
         }
 
-        public async static Task ImportSpellsAsync(Spell spell, GameMode gameMode)
+        public async static Task<bool> ImportSpellsAsync(Spell spell, GameMode gameMode)
         {
             var flashId = "SummonerFlash";
 
@@ -49,7 +50,13 @@ namespace LoL_Assist_WAPP.Models
 
             spell.First = DataConverter.SpellIdToSpellKey(spell.First).ToString();
             spell.Second = DataConverter.SpellIdToSpellKey(spell.Second).ToString();
+
+            // if the value not found then the SpellIdToSpellKey should be returning -1 which is invalid value
+            if (spell.First == null || spell.Second == null) return false;
+
             await LCUWrapper.SetSummonerSpellsAsync(spell, gameMode);
+
+            return true;
         }
     }
 }
