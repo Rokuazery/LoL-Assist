@@ -46,8 +46,14 @@ namespace LoLA.Networking.LCU.Events
                 var phase = await LCUWrapper.GetGamePhaseAsync();
                 if (phase == Phase.ChampSelect)
                 {
+             
                     var currentChampion = (await LCUWrapper.GetCurrentChampionIdAsync(SummonerId)).ToString();
                     currentChampion = Converter.ChampionKeyToName(currentChampion);
+
+                    // Fallback if the mode doesn't support /lol-champ-select-legacy/v1/session
+                    if (string.IsNullOrEmpty(currentChampion))
+                        currentChampion = await LCUWrapper.GetCurrentChampionAsyncV2();
+
                     if (LastChampion != currentChampion)
                     {
                         LastChampion = currentChampion;

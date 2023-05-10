@@ -221,7 +221,7 @@ namespace LoLA.Networking.LCU
             if (!await InitAsync())
                 return null;
 
-            var currentSessionJson = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select/v1/session");
+            var currentSessionJson = await GetDataRequestAsync(RequestMethod.GET, "/lol-champ-select-legacy/v1/session");
 
             if (string.IsNullOrEmpty(currentSessionJson)) return null;
 

@@ -822,6 +822,11 @@ namespace LoL_Assist_WAPP.ViewModels
         private async void ReImport() => await Task.Run(async () => {
             var currentChampion = (await LCUWrapper.GetCurrentChampionIdAsync(SummonerId)).ToString();
             currentChampion = Converter.ChampionKeyToName(currentChampion);
+
+            // Fallback if the mode doesn't support /lol-champ-select-legacy/v1/session
+            if (string.IsNullOrEmpty(currentChampion))
+                currentChampion = await LCUWrapper.GetCurrentChampionAsyncV2();
+
             ImportBuilds(currentChampion, true); 
         });
 
