@@ -126,7 +126,6 @@
     <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGChampionData.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGRankedRoot.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\OPGG\OPGGWrapper.cs" />
-    <Compile Include="Networking\WebWrapper\DataProviders\UGG\AramChampionData.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\UGG\UGGWrapper.cs" />
     <Compile Include="Networking\WebWrapper\DataProviders\Utils\Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

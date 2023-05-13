@@ -688,6 +688,8 @@ namespace LoL_Assist_WAPP.ViewModels
 
         private void updateSecondaryPathSlots(string selectedPerk4, string selectedPerk5)
         {
+            if (string.IsNullOrEmpty(currentSecondaryPath)) return;
+
             secondSlot = RuneModel.r_SecondPath[currentSecondaryPath];
 
             Perks4 = PopulateSecondaryPathSlot(currentSecondaryPath, null, 0);

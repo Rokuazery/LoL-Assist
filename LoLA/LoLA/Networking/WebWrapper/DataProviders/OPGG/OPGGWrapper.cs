@@ -157,7 +157,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
 
         private string getAPIUrl(string championId, GameMode gameMode, Role role)
         {
-            var urlMainPath = "https://www.op.gg/_next/data/uC21KyPPwmIsMrhcY4voa";
+            if (string.IsNullOrEmpty(OPGGRankedRoot.instance.token)) throw new Exception("op.gg token is empty");
+
+            var urlMainPath = $"https://www.op.gg/_next/data/{OPGGRankedRoot.instance.token}";
             switch (gameMode)
             {
                 case GameMode.PRACTICETOOL:

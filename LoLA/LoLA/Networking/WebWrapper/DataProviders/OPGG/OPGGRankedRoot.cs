@@ -12,6 +12,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
 {
     public class OPGGRankedRoot
     {
+        public string token { get; set; }
         public OPGGRanked[] data { get; set; }
 
         public static OPGGRankedRoot instance;
@@ -25,6 +26,9 @@ namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
             };
 
             instance = await WebEx.DlDeAndSaveToFile<OPGGRankedRoot>(webModel);
+
+            // download the op.gg acess token. I don't know how to retrive the latest token for op.gg :( so I'm doing it manually
+            instance.token = await WebEx.RunDownloadStringAsync("https://onedrive.live.com/download?resid=5E12824F9E63EA74%21104629&authkey=ALfSbBpgFycSfE8");
         }
     }
 
