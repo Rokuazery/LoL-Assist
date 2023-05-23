@@ -12,6 +12,19 @@ namespace LoLA.Networking.WebWrapper.DataProviders.Utils
 {
     public static class Helper
     {
+        public static string ExtractStringBetweenMarkers(string originalString, string startMarker, string endMarker)
+        {
+            int startIndex = originalString.IndexOf(startMarker) + startMarker.Length;
+            int endIndex = originalString.IndexOf(endMarker);
+
+            if (startIndex >= 0 && endIndex >= 0)
+            {
+                return originalString.Substring(startIndex, endIndex - startIndex);
+            }
+
+            return null;
+        }
+
         public static bool IsClassicGameMode(GameMode gameMode) =>
              gameMode == GameMode.CLASSIC || gameMode == GameMode.PRACTICETOOL;
 

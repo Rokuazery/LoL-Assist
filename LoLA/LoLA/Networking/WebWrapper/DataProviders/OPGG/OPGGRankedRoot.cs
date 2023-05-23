@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LoLA.Networking.WebWrapper.DataProviders.Utils;
 
 namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
 {
@@ -18,7 +19,7 @@ namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
         public static OPGGRankedRoot instance;
         public static async Task InitializeOPGG()
         {
-            Log("Initializing OP.GG global ranked...", LogType.INFO);
+            Log("Initializing OP.GG...", LogType.INFO);
 
             var webModel = new WebModel() {
                 Path = $"{LibInfo.r_LibFolderPath}\\OPGG_Ranked.json", 
@@ -27,8 +28,10 @@ namespace LoLA.Networking.WebWrapper.DataProviders.OPGG
 
             instance = await WebEx.DlDeAndSaveToFile<OPGGRankedRoot>(webModel);
 
-            // download the op.gg acess token. I don't know how to retrive the latest token for op.gg :( so I'm doing it manually
-            instance.token = await WebEx.RunDownloadStringAsync("https://onedrive.live.com/download?resid=5E12824F9E63EA74%21104629&authkey=ALfSbBpgFycSfE8");
+            // download the op.gg access token.
+            var html = await WebEx.RunDownloadStringAsync("https://www.op.gg/");
+            instance.token = Helper.ExtractStringBetweenMarkers(html, "\"buildId\":\"", "\",\"assetPrefix\"");
+            Log($"OP.GG token acquired [{instance.token}]", LogType.INFO);
         }
     }
 

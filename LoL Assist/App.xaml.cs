@@ -33,7 +33,7 @@ namespace LoL_Assist_WAPP
             RuneModel.Init();
 
             #if DEBUG
-                Console.Title = "LoL Assist - Debug Console";
+                //Console.Title = "LoL Assist - Debug Console";
                 GlobalConfig.s_Debug = true;
             #else
                 GlobalConfig.s_Debug = false;

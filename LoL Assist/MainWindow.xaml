@@ -75,7 +75,7 @@
 
             <DockPanel Margin="5,0" HorizontalAlignment="Right">
                 <StackPanel x:Name="MorePanel" Orientation="Horizontal" Width="0">
-                    
+
                     <Button Template="{DynamicResource IconButtonTemplate}" Margin="0,0,6,0" Command="{Binding ShowDownloadPanelCommand}" ToolTip="Downloads" Width="12" Height="12" 
                 Tag="{StaticResource DownloadIcon}" Focusable="False"/>
                     <Button Template="{DynamicResource IconButtonTemplate}" x:Name="EditBtn" Margin="0,0,6,0" Command="{Binding ShowEditRunesPanelCommand}" ToolTip="Rune Editor" Width="12" Height="12" 
@@ -88,7 +88,7 @@
                 Tag="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
                     <Border Width="1" Margin="0,0,6,0" Background="{DynamicResource bBrushPrimary}"/>
                 </StackPanel>
-                
+
                 <ToggleButton x:Name="ToggleMenu" Style="{DynamicResource TransparentToggleButtonStyle}" Background="{DynamicResource bBrushSecondary}"
                 Height="13" HorizontalAlignment="Left" Focusable="False" ToolTip="More" IsChecked="False">
                     <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="12" Width="12">
@@ -183,10 +183,6 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-
-                <!--<TextBlock Foreground="{DynamicResource FontSecondaryBrush}" FontWeight="DemiBold" FontSize="11" VerticalAlignment="Center" Visibility="{Binding GDetail, Converter={StaticResource NullToCollapseConverter}}">
-
-                    </TextBlock>-->
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-5">
@@ -197,9 +193,9 @@
 
             <view:ChampionSkillView ChampionSkill="{Binding SelectedChampionSkill}" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 
-            <!--<StackPanel x:Name="RuneAndSpellsPreview" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <StackPanel x:Name="RuneAndSpellsPreview" HorizontalAlignment="Right" VerticalAlignment="Top">
                 
-                --><!--<Grid>
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -209,8 +205,8 @@
                     </Border>
 
                     <Border Grid.Column="1"/>
-                </Grid>--><!--
-            </StackPanel>-->
+                </Grid>
+            </StackPanel>
 
             <TextBlock x:Name="wStatus" Text="{Binding Path=WorkingStatus}" FontWeight="DemiBold" Visibility="{Binding Path=WorkingStatusVisibility}"
             Foreground="{DynamicResource FontSecondaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -222,7 +218,7 @@
             Foreground="{Binding ElementName=ConnectionStatus, Path=Text, Converter={StaticResource TextToForegroundConverter}}" TextAlignment="Right"/>
             </StackPanel>
 
-            <Grid x:Name="ChampionContainer" Visibility="{Binding Path=ChampionContainerVisibility}" VerticalAlignment="Center" Margin="0,-20,0,0" HorizontalAlignment="Center">
+            <Grid x:Name="ChampionContainer" Visibility="{Binding Path=ChampionContainerVisibility}" VerticalAlignment="Center" Margin="0,-24,0,0" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
@@ -233,22 +229,21 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" x:Name="ChampionImageContainer" Width="98" Height="98" Margin="0,0,0,5">
-                    <Border Margin="2" Background="{DynamicResource bBrushSecondary}" CornerRadius="50" BorderThickness="3" BorderBrush="{DynamicResource aBrushSecondary}"/>
-                    <Ellipse Margin="2">
-                        <Ellipse.Fill>
+                <Grid Grid.Row="0" x:Name="ChampionImageContainer" Width="86" Height="86" Margin="0,0,0,5">
+                    <Border Margin="2" CornerRadius="50" BorderBrush="{DynamicResource BorderGradientBrush}" BorderThickness="2">
+                        <Border.Background>
                             <ImageBrush ImageSource="{StaticResource NoIcon}" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </Ellipse.Fill>
-                        <Ellipse.Effect>
+                        </Border.Background>
+                        <Border.Effect>
                             <DropShadowEffect Opacity=".5"/>
-                        </Ellipse.Effect>
-                    </Ellipse>
+                        </Border.Effect>
+                    </Border>
                     <Ellipse Margin="5">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Path=ChampionImage, Converter={StaticResource StringToImageConverter}}" />
                         </Ellipse.Fill>
                     </Ellipse>
-                    
+
                     <Grid x:Name="WarningGrid" Visibility="{Binding Path=WarningGridVisibility, UpdateSourceTrigger=PropertyChanged}" ToolTipService.InitialShowDelay="50">
                         <Grid.ToolTip>
                             <ToolTip Background="Transparent" BorderThickness="0">
@@ -268,8 +263,8 @@
                         <Ellipse Fill="Black" Opacity="0.45" Margin="5"/>
                         <Path Data="{StaticResource ExclamationIcon}" Fill="{DynamicResource YellowBrush}" Stretch="UniformToFill" Width="25" Height="22" VerticalAlignment="Center" Margin="0,0,0,5"/>
                     </Grid>
-
                 </Grid>
+
 
                 <Border Grid.Row="1" Height="1" Background="{DynamicResource bBrushPrimary}" Margin="0,5"/>
 

@@ -78,20 +78,6 @@ namespace LoL_Assist_WAPP.Models
                 }
             }
 
-            //private bool _customRunesSpells = true;
-            //public bool CustomRunesSpells
-            //{
-            //    get => _customRunesSpells;
-            //    set
-            //    {
-            //        if (_customRunesSpells != value)
-            //        {
-            //            _customRunesSpells = value;
-            //            OnPropertyChanged(nameof(CustomRunesSpells));
-            //        }
-            //    }
-            //}
-
             private bool _flashPlacementToRight = false;
             public bool FlashPlacementToRight
             {
